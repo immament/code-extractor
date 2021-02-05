@@ -40,6 +40,14 @@ describe(' TreeBuilder', () => {
     test('should result be equals current', () => {
       expect(treeBuilder.getResult()).toBe(treeBuilder.current);
     });
+
+    test('methods with fluent behavioure', () => {
+      expect(treeBuilder.addChild()).toBe(treeBuilder);
+      expect(treeBuilder.addLevel()).toBe(treeBuilder);
+      expect(treeBuilder.up()).toBe(treeBuilder);
+      expect(treeBuilder.reset({})).toBe(treeBuilder);
+      expect(treeBuilder.toRoot()).toBe(treeBuilder);
+    });
   });
 
   describe('without adding childs', () => {
@@ -141,6 +149,15 @@ describe(' TreeBuilder', () => {
       expect(result).toBe(treeBuilder.current);
       expect(result.getChildCount()).toBe(0);
       expect(result.parent).toBeUndefined();
+    });
+
+    test('should  set current to root ', () => {
+      const root = treeBuilder.getResult();
+      treeBuilder.addLevel().addChild().addLevel().addLevel();
+      treeBuilder.toRoot();
+
+      expect(treeBuilder.current).toBe(root);
+      expect(treeBuilder.getResult()).toBe(root);
     });
   });
 });

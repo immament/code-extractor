@@ -78,4 +78,9 @@ export class TreeBuilder {
     }
     return this;
   }
+
+  toRoot() {
+    this._current = this.root;
+    return this;
+  }
 }

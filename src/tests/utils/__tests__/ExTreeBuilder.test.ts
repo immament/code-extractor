@@ -54,4 +54,15 @@ describe('Name of the group', () => {
       );
     });
   });
+
+  test('methods with fluent behavioure', () => {
+    builder = new ExTreeBuilder({});
+    expect(builder.addLevel()).toBe(builder);
+    expect(builder.addChild()).toBe(builder);
+    expect(builder.up()).toBe(builder);
+    expect(builder.reset({})).toBe(builder);
+    expect(builder.toRoot()).toBe(builder);
+    expect(builder.addChildWithCommonSymbol()).toBe(builder);
+    expect(builder.addLevelWithCommonSymbol()).toBe(builder);
+  });
 });
