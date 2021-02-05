@@ -16,5 +16,7 @@
     "titleBar.inactiveForeground": "#e7e7e799"
   },
 
-  "peacock.color": "#4e2ed5"
+  "peacock.color": "#4e2ed5",
+  "jest.autoEnable": false,
+  "editor.glyphMargin": false
 }
