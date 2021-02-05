@@ -1,16 +1,16 @@
 import ts from 'typescript';
 import {ExTreeBuilder} from '../../tests/utils/ExTreeBuilder';
-import {ConnectionSearcher} from '../ConnectionSearcher';
+import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 
 import {createTypeChecker} from './TypeCheckerStub';
 
-describe('ConnectionSearcher', () => {
+describe('ReferenceSearcher', () => {
   let builder: ExTreeBuilder;
-  let searcher: ConnectionSearcher;
+  let searcher: ReferenceSearcher;
 
   beforeEach(() => {
-    searcher = new ConnectionSearcher(createTypeChecker());
+    searcher = new ReferenceSearcher(createTypeChecker());
     builder = new ExTreeBuilder();
   });
 
@@ -134,4 +134,6 @@ describe('ConnectionSearcher', () => {
       expect(searcher.search(items)).toHaveLength(2);
     });
   });
+
+  describe('Search mulitpile items', () => {});
 });

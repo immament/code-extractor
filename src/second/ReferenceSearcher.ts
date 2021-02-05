@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import {Item} from './Item';
 
-export class ConnectionSearcher {
+export class ReferenceSearcher {
   constructor(private typeChecker: ts.TypeChecker) {}
 
   search(items: Item[]) {
