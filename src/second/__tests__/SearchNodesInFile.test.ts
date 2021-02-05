@@ -1,27 +1,37 @@
+import ts from 'typescript';
+import {TreeBuilder} from '../../tests/utils/TreeBuilder';
 import {Project} from '../Project';
-import {createSourceFile} from './createSourceFile';
-import {createNode} from './NodeStub';
 
-let project: Project;
-beforeAll(() => {
-  project = new Project();
-});
-
-describe('Search with filter', () => {
+describe('Search for one kind', () => {
   const kindSearched = 100;
+
+  let builder: TreeBuilder;
+  let project: Project;
+
+  beforeEach(() => {
+    project = new Project();
+    builder = new TreeBuilder({kind: ts.SyntaxKind.SourceFile});
+  });
 
   test('should not find any items when kind specified', () => {
     expect(
-      project.searchInFile(createSourceFile([createNode(), createNode()]), [
-        kindSearched,
-      ])
+      project.searchInFile(
+        builder.addLevel().addChild().addChild().getResult() as ts.SourceFile,
+        [kindSearched]
+      )
     ).toHaveLength(0);
   });
 
   test('should find 1 item with specified kind', () => {
     expect(
       project.searchInFile(
-        createSourceFile([createNode(), createNode({kind: kindSearched})]),
+        builder
+          .addLevel()
+          .addLevel()
+          .addLevel()
+          .addChild()
+          .addChild({kind: kindSearched})
+          .getResult() as ts.SourceFile,
         [kindSearched]
       )
     ).toHaveLength(1);
@@ -30,10 +40,11 @@ describe('Search with filter', () => {
   test('should find 2 items with specified kind', () => {
     expect(
       project.searchInFile(
-        createSourceFile([
-          createNode({kind: kindSearched}),
-          createNode({kind: kindSearched}),
-        ]),
+        builder
+          .addLevel()
+          .addChild({kind: kindSearched})
+          .addChild({kind: kindSearched})
+          .getResult() as ts.SourceFile,
         [kindSearched]
       )
     ).toHaveLength(2);
@@ -42,12 +53,11 @@ describe('Search with filter', () => {
   test('should find 2 items when one node is nested in another', () => {
     expect(
       project.searchInFile(
-        createSourceFile([
-          createNode({
-            kind: kindSearched,
-            nodes: [createNode({kind: kindSearched}), createNode({kind: 1})],
-          }),
-        ]),
+        builder
+          .addLevel({kind: kindSearched})
+          .addChild({kind: kindSearched})
+          .addChild()
+          .getResult() as ts.SourceFile,
         [kindSearched]
       )
     ).toHaveLength(2);
@@ -56,37 +66,21 @@ describe('Search with filter', () => {
   test('should find 3 items when nodes are nested in separated nodes', () => {
     expect(
       project.searchInFile(
-        createSourceFile([
-          createNode({
-            kind: kindSearched,
-            nodes: [createNode(), createNode()],
-          }),
-          createNode({
-            nodes: [createNode({kind: kindSearched}), createNode()],
-          }),
-          createNode({
-            nodes: [createNode(), createNode({kind: kindSearched})],
-          }),
-        ]),
+        builder
+          .addLevel({kind: kindSearched})
+          .addChild()
+          .addChild()
+          .up()
+          .addLevel()
+          .addChild({kind: kindSearched})
+          .addChild()
+          .up()
+          .addLevel()
+          .addChild()
+          .addChild({kind: kindSearched})
+          .getResult() as ts.SourceFile,
         [kindSearched]
       )
     ).toHaveLength(3);
-  });
-
-  test('should find 1 item when nodes are nested in 3 levels', () => {
-    expect(
-      project.searchInFile(
-        createSourceFile([
-          createNode({
-            nodes: [
-              createNode({
-                nodes: [createNode({kind: kindSearched})],
-              }),
-            ],
-          }),
-        ]),
-        [kindSearched]
-      )
-    ).toHaveLength(1);
   });
 });
