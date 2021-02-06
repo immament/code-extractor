@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import {Item} from './Item';
+import {Reference} from './Reference';
 
 export class ReferenceSearcher {
   private symbolMap: Map<ts.Symbol, Item> = new Map<ts.Symbol, Item>();
@@ -66,8 +67,4 @@ export class ReferenceSearcher {
       return symbolMap;
     }, new Map<ts.Symbol, Item>());
   }
-}
-
-export class Reference {
-  constructor(public from: Item, public to: Item) {}
 }

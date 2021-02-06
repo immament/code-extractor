@@ -3,7 +3,7 @@ import {TreeBuilderWithSymbols} from '../../tests/utils/TreeBuilderWithSymbols';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 
-import {createTypeChecker} from './TypeCheckerStub';
+import {createTypeChecker} from '../../tests/utils/TypeCheckerStub';
 
 describe('ReferenceSearcher', () => {
   let builder: TreeBuilderWithSymbols;
