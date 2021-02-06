@@ -136,21 +136,71 @@ describe('ReferenceSearcher', () => {
   });
 
   describe('Search references to mulitpile nodes', () => {
-    const symbolsCount = 4;
-    let items: Item[];
-    beforeEach(() => {
-      builder = new TreeBuilderWithSymbols({}, symbolsCount);
+    function createTreeBuilderWithChildNodesWithSymbol(childCount: number) {
+      const treeBuilder = new TreeBuilderWithSymbols({}, childCount);
       for (let index = 0; index < symbolsCount; index++) {
-        builder.addChildWithCommonSymbol(index);
+        treeBuilder.addChildWithCommonSymbol(index);
       }
+      return treeBuilder;
+    }
 
-      items = builder
+    function createItemsFromBuilder(builder: TreeBuilderWithSymbols) {
+      return builder
         .getResult()
         .getChildren()
         .map(node => new Item(node));
+    }
+
+    const symbolsCount = 4;
+    let items: Item[];
+
+    beforeEach(() => {
+      builder = createTreeBuilderWithChildNodesWithSymbol(symbolsCount);
+      items = createItemsFromBuilder(builder);
     });
-    test('should find one reference', () => {
+
+    test('should items count be equal used symbols', () => {
       expect(items).toHaveLength(symbolsCount);
+    });
+
+    test('should find nothing', () => {
+      expect(searcher.search(items)).toHaveLength(0);
+    });
+
+    test('should find 1 reference', () => {
+      builder.toChild().addLevelWithCommonSymbol(1);
+      expect(searcher.search(items)).toHaveLength(1);
+    });
+
+    test('should find 4 references', () => {
+      builder
+        .toChild()
+        .addLevelWithCommonSymbol(1)
+        .toRoot()
+        .toChild(1)
+        .addLevelWithCommonSymbol(2)
+        .toRoot()
+        .toChild(2)
+        .addLevelWithCommonSymbol(3)
+        .toRoot()
+        .toChild(3)
+        .addLevelWithCommonSymbol(0);
+
+      expect(searcher.search(items)).toHaveLength(4);
+    });
+    test('should find 3 references', () => {
+      builder
+        .toChild()
+        .addLevel()
+        .addChild()
+        .addLevelWithCommonSymbol(1) // should find
+        .addChildWithCommonSymbol(2) // should find
+        .addLevelWithCommonSymbol(1) // should find
+        .addChild()
+        .addLevelWithCommonSymbol(0) // should not find - reference to itself
+        .addChildWithCommonSymbol(0); // should not find - reference to itself
+
+      expect(searcher.search(items)).toHaveLength(3);
     });
   });
 });
