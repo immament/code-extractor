@@ -2,19 +2,21 @@ import {CreateNodeArgs, NodeStub} from './NodeStub';
 
 export class TreeBuilder {
   private _current?: NodeStub;
-  private root?: NodeStub;
+  get current() {
+    if (!this._current) {
+      throw new TreeBuilderError('Builder not init (current undefined)');
+    }
+    return this._current;
+  }
+  private _root?: NodeStub;
+  get root(): NodeStub | undefined {
+    return this._root;
+  }
 
   constructor(createNodeArgs?: CreateNodeArgs) {
     if (createNodeArgs) {
-      this.root = this._current = this.newNode(createNodeArgs);
+      this._root = this._current = this.newNode(createNodeArgs);
     }
-  }
-
-  get current() {
-    if (!this._current) {
-      throw Error('Builder not init (current undefined)');
-    }
-    return this._current;
   }
 
   get node() {
@@ -28,8 +30,8 @@ export class TreeBuilder {
       oldCurrent.addChild(this._current);
     }
 
-    if (!this.root) {
-      this.root = this._current;
+    if (!this._root) {
+      this._root = this._current;
     }
     return this;
   }
@@ -40,7 +42,7 @@ export class TreeBuilder {
 
   addChild(createNodeArgs: CreateNodeArgs = {}) {
     if (!this.current) {
-      throw Error('Can not add child to empty tree');
+      throw new TreeBuilderError('Can not add child to empty tree');
     }
     this.current.addChild(this.newNode(createNodeArgs));
     return this;
@@ -48,11 +50,11 @@ export class TreeBuilder {
 
   up() {
     if (!this._current) {
-      throw new Error(`Can not up in empty tree: ${this.current}`);
+      throw new TreeBuilderError(`Can not up in empty tree: ${this.current}`);
     }
 
     if (!this._current.parent) {
-      throw new Error(`no parent for current node: ${this.current}`);
+      throw new TreeBuilderError(`no parent for current node: ${this.current}`);
     }
 
     this._current = this._current.parent;
@@ -60,27 +62,45 @@ export class TreeBuilder {
     return this;
   }
 
-  getResult() {
-    if (!this.root) {
-      throw Error('Builder not init (root undefined)');
+  toChild(childIndex = 0) {
+    if (this.current.childs.length < childIndex) {
+      throw new TreeBuilderError(
+        `childIndex (${childIndex}) greater then childs count (${this.current.childs.length})`
+      );
     }
-    return this.root.asNode();
+    this._current = this._current?.childs[childIndex];
+    return this;
+  }
+
+  getResult() {
+    if (!this._root) {
+      throw new TreeBuilderError('Builder not init (root undefined)');
+    }
+    return this._root.asNode();
   }
 
   reset(createNodeArgs?: CreateNodeArgs) {
     if (createNodeArgs) {
-      this.root = this._current = new NodeStub({
+      this._root = this._current = new NodeStub({
         ...createNodeArgs,
         parent: undefined,
       });
     } else {
-      this.root = this._current = undefined;
+      this._root = this._current = undefined;
     }
     return this;
   }
 
   toRoot() {
-    this._current = this.root;
+    this._current = this._root;
     return this;
+  }
+}
+
+export class TreeBuilderError extends Error {
+  constructor(message: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, TreeBuilderError.prototype);
   }
 }

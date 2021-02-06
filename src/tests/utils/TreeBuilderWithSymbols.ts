@@ -2,16 +2,23 @@ import ts from 'typescript';
 import {CreateNodeArgs} from './NodeStub';
 import {TreeBuilder} from './TreeBuilder';
 
-export class ExTreeBuilder extends TreeBuilder {
-  private commonSymbol = this.newSymbol();
+export class TreeBuilderWithSymbols extends TreeBuilder {
+  private readonly commonSymbols: ts.Symbol[];
 
-  addLevelWithCommonSymbol() {
-    super.addLevel({symbol: this.commonSymbol});
+  constructor(createNodeArgs?: CreateNodeArgs, symbolCounts = 5) {
+    super(createNodeArgs);
+    this.commonSymbols = Array(symbolCounts)
+      .fill(undefined)
+      .map(() => this.newSymbol());
+  }
+
+  addLevelWithCommonSymbol(symbolIndex = 0) {
+    super.addLevel({symbol: this.commonSymbols[symbolIndex]});
     return this;
   }
 
-  addChildWithCommonSymbol() {
-    super.addChild({symbol: this.commonSymbol});
+  addChildWithCommonSymbol(symbolIndex = 0) {
+    super.addChild({symbol: this.commonSymbols[symbolIndex]});
     return this;
   }
 
@@ -36,6 +43,6 @@ export class ExTreeBuilder extends TreeBuilder {
     return ++this.lastId;
   }
   private newSymbol() {
-    return ({id: ExTreeBuilder.getNewId()} as unknown) as ts.Symbol;
+    return ({id: TreeBuilderWithSymbols.getNewId()} as unknown) as ts.Symbol;
   }
 }

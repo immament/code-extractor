@@ -1,17 +1,17 @@
 import ts from 'typescript';
-import {ExTreeBuilder} from '../../tests/utils/ExTreeBuilder';
+import {TreeBuilderWithSymbols} from '../../tests/utils/TreeBuilderWithSymbols';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 
 import {createTypeChecker} from './TypeCheckerStub';
 
 describe('ReferenceSearcher', () => {
-  let builder: ExTreeBuilder;
+  let builder: TreeBuilderWithSymbols;
   let searcher: ReferenceSearcher;
 
   beforeEach(() => {
     searcher = new ReferenceSearcher(createTypeChecker());
-    builder = new ExTreeBuilder();
+    builder = new TreeBuilderWithSymbols();
   });
 
   describe('Not find anything', () => {
@@ -135,5 +135,22 @@ describe('ReferenceSearcher', () => {
     });
   });
 
-  describe('Search mulitpile items', () => {});
+  describe('Search references to mulitpile nodes', () => {
+    const symbolsCount = 4;
+    let items: Item[];
+    beforeEach(() => {
+      builder = new TreeBuilderWithSymbols({}, symbolsCount);
+      for (let index = 0; index < symbolsCount; index++) {
+        builder.addChildWithCommonSymbol(index);
+      }
+
+      items = builder
+        .getResult()
+        .getChildren()
+        .map(node => new Item(node));
+    });
+    test('should find one reference', () => {
+      expect(items).toHaveLength(symbolsCount);
+    });
+  });
 });

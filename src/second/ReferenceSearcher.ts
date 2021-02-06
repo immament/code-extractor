@@ -2,69 +2,72 @@ import ts from 'typescript';
 import {Item} from './Item';
 
 export class ReferenceSearcher {
+  private symbolMap: Map<ts.Symbol, Item> = new Map<ts.Symbol, Item>();
+  private result: Reference[] = [];
+  private contextItem?: Item;
+
   constructor(private typeChecker: ts.TypeChecker) {}
 
   search(items: Item[]) {
-    const typeChecker = this.typeChecker;
-    const result: Connection[] = [];
-    const symbolMap = this.createSymbolToItemMap(items);
-    let contextItem: Item;
-    searchInsideItems(items);
+    this.result = [];
+    this.symbolMap = this.createSymbolToItemMap(items);
+    this.searchInsideItems(items);
 
-    function searchInsideItems(items: Item[]) {
-      items.forEach(item => {
-        contextItem = item;
+    return this.result;
+  }
 
-        searchInsideNode(item.getNode());
-      });
-    }
+  private searchInsideItems(items: Item[]) {
+    items.forEach(item => {
+      this.contextItem = item;
+      this.searchInsideNode(item.getNode());
+    });
+  }
 
-    function searchInsideNode(node: ts.Node) {
-      node.forEachChild(child => {
-        if (isConnection(child)) {
-          result.push(new Connection({} as Item, {} as Item));
-        }
-        searchInsideNode(child);
-      });
-    }
+  private searchInsideNode(node: ts.Node) {
+    node.forEachChild(child => {
+      if (this.isConnection(child)) {
+        this.addResult();
+      }
+      this.searchInsideNode(child);
+    });
+  }
 
-    function isConnection(node: ts.Node): boolean {
-      const symbol = getSymbol(node);
-      return !!symbol && isSymbolConnection(symbol);
-    }
+  private addResult() {
+    // TODO
+    this.result.push(new Reference({} as Item, {} as Item));
+  }
 
-    function isSymbolConnection(symbol: ts.Symbol): boolean {
-      const item = getItemForSymbol(symbol);
-      return !!item && isNotContextItem(item);
-    }
+  private isConnection(node: ts.Node): boolean {
+    const symbol = this.getSymbol(node);
+    return !!symbol && this.isSymbolConnection(symbol);
+  }
 
-    function getItemForSymbol(symbol: ts.Symbol) {
-      return symbolMap.get(symbol);
-    }
+  private isSymbolConnection(symbol: ts.Symbol): boolean {
+    const item = this.getItemForSymbol(symbol);
+    return !!item && this.isNotContextItem(item);
+  }
 
-    function isNotContextItem(item: Item): boolean {
-      return item.getNode() !== contextItem.getNode();
-    }
+  private getItemForSymbol(symbol: ts.Symbol) {
+    return this.symbolMap.get(symbol);
+  }
 
-    function getSymbol(node: ts.Node) {
-      return typeChecker.getSymbolAtLocation(node);
-    }
+  private isNotContextItem(item: Item): boolean {
+    return item.getNode() !== this.contextItem?.getNode();
+  }
 
-    return result;
+  private getSymbol(node: ts.Node) {
+    return this.typeChecker.getSymbolAtLocation(node);
   }
 
   private createSymbolToItemMap(items: Item[]) {
-    const symbolMap = new Map<ts.Symbol, Item>();
-    items.forEach(item => {
-      const symbol = this.typeChecker.getSymbolAtLocation(item.getNode());
-      if (symbol) {
-        symbolMap.set(symbol, item);
-      }
-    });
-    return symbolMap;
+    return items.reduce((symbolMap, item) => {
+      const symbol = this.getSymbol(item.getNode());
+      if (symbol) symbolMap.set(symbol, item);
+      return symbolMap;
+    }, new Map<ts.Symbol, Item>());
   }
 }
 
-export class Connection {
+export class Reference {
   constructor(public from: Item, public to: Item) {}
 }
