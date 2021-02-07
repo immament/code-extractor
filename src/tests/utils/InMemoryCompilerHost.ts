@@ -1,3 +1,4 @@
+import {EOL} from 'os';
 import ts from 'typescript';
 
 export class InMemoryCompilerHost implements ts.CompilerHost {
@@ -19,30 +20,15 @@ export class InMemoryCompilerHost implements ts.CompilerHost {
     );
   }
 
-  fileExists(fileName: string): boolean {
-    return this.filesMap.has(fileName);
-  }
-  readFile(fileName: string): string | undefined {
-    return this.filesMap.get(fileName);
-  }
-
-  getDefaultLibFileName(options: ts.CompilerOptions): string {
-    return '/' + ts.getDefaultLibFileName(options); // /lib.d.ts
-  }
-
-  getCurrentDirectory(): string {
-    return '/';
-  }
-  getCanonicalFileName(fileName: string): string {
-    return fileName;
-  }
-  useCaseSensitiveFileNames(): boolean {
-    return true;
-  }
-  getNewLine(): string {
-    return '\n';
-  }
-
+  fileExists = (fileName: string): boolean => this.filesMap.has(fileName);
+  readFile = (fileName: string): string | undefined =>
+    this.filesMap.get(fileName);
+  getDefaultLibFileName = (options: ts.CompilerOptions): string =>
+    '/' + ts.getDefaultLibFileName(options); // /lib.d.ts
+  getCurrentDirectory = (): string => '/';
+  getCanonicalFileName = (fileName: string): string => fileName;
+  useCaseSensitiveFileNames = (): boolean => true;
+  getNewLine = (): string => EOL;
   writeFile: ts.WriteFileCallback = () => {
     throw new Error('Method not implemented.');
   };

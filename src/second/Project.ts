@@ -11,7 +11,9 @@ export class Project {
       ? [this.createItem(node)]
       : [];
 
-    node.forEachChild(child => result.push(...this.searchInNode(child, kinds)));
+    node.forEachChild(child => {
+      result.push(...this.searchInNode(child, kinds));
+    });
     return result;
   }
 
