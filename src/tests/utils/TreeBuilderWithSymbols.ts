@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import {CreateNodeArgs} from './NodeStub';
+import {CreateNodeArgs} from '../stubs/NodeStub';
 import {TreeBuilder} from './TreeBuilder';
 
 export class TreeBuilderWithSymbols extends TreeBuilder {

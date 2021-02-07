@@ -3,7 +3,7 @@ import {TreeBuilderWithSymbols} from '../../tests/utils/TreeBuilderWithSymbols';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 
-import {createTypeChecker} from '../../tests/utils/TypeCheckerStub';
+import {createTypeChecker} from '../../tests/stubs/TypeCheckerStub';
 
 describe('ReferenceSearcher', () => {
   let builder: TreeBuilderWithSymbols;
@@ -11,10 +11,12 @@ describe('ReferenceSearcher', () => {
 
   beforeEach(() => {
     searcher = new ReferenceSearcher(createTypeChecker());
-    builder = new TreeBuilderWithSymbols();
   });
 
   describe('Not find anything', () => {
+    beforeEach(() => {
+      builder = new TreeBuilderWithSymbols();
+    });
     test('should not find anything', () => {
       const items: Item[] = [];
       expect(searcher.search(items)).toHaveLength(0);
@@ -38,6 +40,7 @@ describe('ReferenceSearcher', () => {
     let referencedNode: ts.Node;
 
     beforeEach(() => {
+      builder = new TreeBuilderWithSymbols();
       referencedNode = builder.addLevelWithCommonSymbol().getResult();
       builder.reset();
     });

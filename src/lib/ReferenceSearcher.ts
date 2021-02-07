@@ -10,11 +10,24 @@ export class ReferenceSearcher {
   constructor(private typeChecker: ts.TypeChecker) {}
 
   search(items: Item[]) {
-    this.result = [];
-    this.symbolMap = this.createSymbolToItemMap(items);
-    this.searchInsideItems(items);
+    this.init(items);
+    if (this.hasItemsToFound()) {
+      return this.searchInsideItems(items);
+    }
+    return [];
+  }
 
-    return this.result;
+  private hasItemsToFound() {
+    return this.symbolMap.size > 0;
+  }
+
+  private init(items: Item[]) {
+    this.resetResult();
+    this.symbolMap = this.createSymbolToItemMap(items);
+  }
+
+  private resetResult() {
+    this.result = [];
   }
 
   private searchInsideItems(items: Item[]) {
@@ -22,6 +35,8 @@ export class ReferenceSearcher {
       this.contextItem = item;
       this.searchInsideNode(item.getNode());
     });
+
+    return this.result;
   }
 
   private searchInsideNode(node: ts.Node) {
@@ -57,12 +72,20 @@ export class ReferenceSearcher {
   }
 
   private getSymbol(node: ts.Node) {
-    return this.typeChecker.getSymbolAtLocation(node);
+    return (
+      (node as {symbol?: ts.Symbol}).symbol ||
+      this.typeChecker.getSymbolAtLocation(node)
+    );
   }
 
   private createSymbolToItemMap(items: Item[]) {
     return items.reduce((symbolMap, item) => {
+      // TODO: temporary get symbol from name
       const symbol = this.getSymbol(item.getNode());
+      //  ||
+      // ((item.getNode() as any).name &&
+      //   this.getSymbol((item.getNode() as any).name));
+
       if (symbol) symbolMap.set(symbol, item);
       return symbolMap;
     }, new Map<ts.Symbol, Item>());

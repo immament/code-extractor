@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import {Project} from '../Project';
+import {createSourceFile} from '../../tests/utils/createSourceFile';
 
 test('should find variable declaration', () => {
   const project = new Project();
@@ -44,17 +45,3 @@ test('should find 5 declarations', () => {
     ])
   ).toHaveLength(6);
 });
-
-function createSourceFile(
-  fileName: string,
-  sourceText: string,
-  languageVersion: ts.ScriptTarget = ts.ScriptTarget.ES2018
-) {
-  return ts.createSourceFile(
-    fileName,
-    sourceText,
-    languageVersion,
-    true,
-    ts.ScriptKind.TS
-  );
-}

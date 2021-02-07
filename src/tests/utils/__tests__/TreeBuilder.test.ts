@@ -8,8 +8,6 @@ describe(' TreeBuilder', () => {
       builder = new TreeBuilder();
     });
 
-    describe('init state', () => {});
-
     test('should current throw Error after creation without parameters', () => {
       expect(() => builder.current).toThrow(TreeBuilderError);
     });

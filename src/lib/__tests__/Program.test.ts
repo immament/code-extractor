@@ -1,6 +1,6 @@
-import {InMemoryCompilerHost} from '../../tests/utils/InMemoryCompilerHost';
 import {Program} from '../Program';
 import {createInMemoryCompilerHost} from '../../tests/utils/createInMemoryCompilerHost';
+import {InMemoryCompilerHost} from '../../tests/stubs/InMemoryCompilerHost';
 
 describe('Program', () => {
   test('should create ts.Program', () => {

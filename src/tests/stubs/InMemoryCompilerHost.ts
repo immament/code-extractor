@@ -2,7 +2,7 @@ import {EOL} from 'os';
 import ts from 'typescript';
 
 export class InMemoryCompilerHost implements ts.CompilerHost {
-  private sourceFilesMap = new Map<string, ts.SourceFile>();
+  #sourceFilesMap = new Map<string, ts.SourceFile>();
 
   constructor(
     private filesMap: Map<string, string> = new Map<string, string>()
@@ -15,7 +15,7 @@ export class InMemoryCompilerHost implements ts.CompilerHost {
     // shouldCreateNewSourceFile?: boolean
   ): ts.SourceFile | undefined {
     return (
-      this.sourceFilesMap.get(fileName) ||
+      this.#sourceFilesMap.get(fileName) ||
       this.createSourceFile(fileName, languageVersion)
     );
   }
@@ -42,7 +42,7 @@ export class InMemoryCompilerHost implements ts.CompilerHost {
         languageVersion
       );
 
-      this.sourceFilesMap.set(fileName, sourceFile);
+      this.#sourceFilesMap.set(fileName, sourceFile);
       return sourceFile;
     }
     return;

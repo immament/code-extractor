@@ -7,6 +7,13 @@ export function createTypeChecker(): ts.TypeChecker {
 
 export class TypeCheckerStub {
   getSymbolAtLocation(node: NodeStub): ts.Symbol | undefined {
-    return node.getSymbol();
+    if (node.getSymbol) {
+      return node.getSymbol();
+    }
+    // console.log('node.symbol', !!node);
+    if (node.symbol) {
+      return node.symbol;
+    }
+    return;
   }
 }
