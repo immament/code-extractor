@@ -8,44 +8,45 @@ export interface CreateNodeArgs {
 }
 
 export class NodeStub {
-  private _symbol?: ts.Symbol;
-  get symbol(): ts.Symbol | undefined {
-    return this._symbol;
-  }
-  private _parent?: NodeStub | undefined;
+  #symbol?: ts.Symbol;
+  #parent?: NodeStub | undefined;
+  #kind: number;
+  #childs: NodeStub[] = [];
+
   get parent(): NodeStub | undefined {
-    return this._parent;
+    return this.#parent;
   }
-  private _kind: number;
+  get symbol(): ts.Symbol | undefined {
+    return this.#symbol;
+  }
   get kind() {
-    return this._kind;
+    return this.#kind;
   }
-  private _childs: NodeStub[] = [];
   get childs() {
-    return this._childs;
+    return this.#childs;
   }
 
   constructor({nodes = [], kind = -1, symbol, parent}: CreateNodeArgs = {}) {
-    this._childs = (nodes as unknown) as NodeStub[];
-    this._kind = kind;
-    this._symbol = symbol;
-    this._parent = parent;
+    this.#childs = (nodes as unknown[]) as NodeStub[];
+    this.#kind = kind;
+    this.#symbol = symbol;
+    this.#parent = parent;
   }
 
   getChildCount(): number {
-    return this._childs.length;
+    return this.#childs.length;
   }
 
   getChildren(): ts.Node[] {
-    return (this._childs as unknown[]) as ts.Node[];
+    return (this.#childs as unknown[]) as ts.Node[];
   }
 
   addChild(child: NodeStub) {
-    this._childs.push(child);
+    this.#childs.push(child);
   }
 
   forEachChild<T>(cbNode: (node: ts.Node) => T | undefined): T | undefined {
-    this._childs.forEach(node => cbNode(node.asNode()));
+    this.#childs.forEach(node => cbNode(node.asNode()));
     return;
   }
 
@@ -56,6 +57,6 @@ export class NodeStub {
   }
 
   getSymbol(): ts.Symbol | undefined {
-    return this._symbol;
+    return this.#symbol;
   }
 }

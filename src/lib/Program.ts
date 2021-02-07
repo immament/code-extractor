@@ -1,13 +1,13 @@
 import ts from 'typescript';
 
 export class Program {
-  private _tsProgram: ts.Program;
+  #tsProgram: ts.Program;
   get tsProgram(): ts.Program {
-    return this._tsProgram;
+    return this.#tsProgram;
   }
 
   constructor(options: ts.CreateProgramOptions) {
-    this._tsProgram = this.createProgram(options);
+    this.#tsProgram = this.createProgram(options);
   }
 
   private createProgram(options: ts.CreateProgramOptions) {
