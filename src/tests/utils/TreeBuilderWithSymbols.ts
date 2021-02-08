@@ -39,8 +39,6 @@ export class TreeBuilderWithSymbols extends TreeBuilder {
   addChild(createNodeArgs: CreateNodeArgs = {}) {
     if (!createNodeArgs.symbol) {
       createNodeArgs.symbol = this.newSymbol();
-    } else {
-      console.log('addChild createNodeArgs.symbol');
     }
     return super.addChild(createNodeArgs);
   }
