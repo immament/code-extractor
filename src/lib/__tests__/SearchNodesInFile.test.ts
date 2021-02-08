@@ -124,8 +124,6 @@ describe('Search for multiple kinds', () => {
       .addChildAndGoTo({kind: searchedKinds[4]})
       .getResult() as ts.SourceFile;
 
-    //console.log(sourceFile);
-
     expect(project.searchInFile(sourceFile, searchedKinds)).toHaveLength(5);
   });
 

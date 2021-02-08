@@ -35,10 +35,6 @@ export class TreeBuilder {
     return this;
   }
 
-  private newNode(createNodeArgs: CreateNodeArgs): NodeStub {
-    return new NodeStub({...createNodeArgs, parent: this.#currentNode});
-  }
-
   addChild(createNodeArgs: CreateNodeArgs = {}) {
     this.current.addChild(this.newNode(createNodeArgs));
     return this;
@@ -57,14 +53,15 @@ export class TreeBuilder {
   }
 
   toChild(childIndex = 0) {
-    const currentChilds = this.current.childs;
-    if (currentChilds.length < childIndex) {
-      throw new TreeBuilderError(
-        `childIndex (${childIndex}) greater then childs count (${currentChilds.length})`
-      );
+    const child = this.current.getChild(childIndex);
+    if (child) {
+      this.#currentNode = child;
+      return this;
     }
-    this.#currentNode = currentChilds[childIndex];
-    return this;
+
+    throw new TreeBuilderError(
+      `No child with specific index (${childIndex}) (${this.current.getChildCount()})`
+    );
   }
 
   getResult() {
@@ -89,6 +86,10 @@ export class TreeBuilder {
   toRoot() {
     this.#currentNode = this.#root;
     return this;
+  }
+
+  protected newNode(createNodeArgs: CreateNodeArgs): NodeStub {
+    return new NodeStub({...createNodeArgs, parent: this.#currentNode});
   }
 }
 

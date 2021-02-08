@@ -71,7 +71,7 @@ describe('TreeBuilder', () => {
       builder.addChildAndGoTo();
       const parent = builder.current;
       builder.addChildAndGoTo();
-      expect(parent.childs).toContain(builder.current);
+      expect(parent.getChildren()).toContain(builder.current);
     });
   });
 
@@ -90,7 +90,7 @@ describe('TreeBuilder', () => {
     test('should child node parent be current node ', () => {
       builder.addChild();
 
-      expect(builder.current.childs[0].parent).toBe(builder.current);
+      expect(builder.current.getChild(0).parent).toBe(builder.current);
     });
 
     test('should current child counts be 0 before add child', () => {
@@ -143,15 +143,25 @@ describe('TreeBuilder', () => {
     });
 
     test('should reset create new root node without childs and undefined parent', () => {
-      const oldRoot = builder.getResult();
       builder.addChildAndGoTo().addChild().addChildAndGoTo();
+      const oldRoot = builder.getResult();
       builder.reset({});
 
-      const result = builder.getResult();
-      expect(result).not.toBe(oldRoot);
-      expect(result).toBe(builder.current);
-      expect(result.getChildCount()).toBe(0);
-      expect(result.parent).toBeUndefined();
+      const root = builder.root!;
+      expect(root).not.toBe(oldRoot);
+      expect(root).toBe(builder.current);
+      expect(root.getChildCount()).toBe(0);
+      expect(root.parent).toBeUndefined();
+    });
+
+    test('should root and current be undefined after reset without args', () => {
+      builder.addChildAndGoTo().addChild().addChildAndGoTo();
+      builder.reset();
+
+      expect(builder.root).toBeUndefined();
+      expect(() => builder.current).toThrowErrorMatchingInlineSnapshot(
+        '"Builder not init (current undefined)"'
+      );
     });
 
     test('should set current to root ', () => {
@@ -174,8 +184,9 @@ describe('TreeBuilder', () => {
     });
 
     test('should change current to child with specified index', () => {
-      builder.addChild().addChild().addChild().toChild(2);
-      expect(builder.current).toBe(builder.root?.childs[2]);
+      const childIndex = 2;
+      builder.addChild().addChild().addChild().toChild(childIndex);
+      expect(builder.current).toBe(builder.root?.getChild(childIndex));
     });
 
     test('should use out of range index throw exception', () => {

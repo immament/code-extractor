@@ -4,8 +4,8 @@
  */
 
 module.exports = {
-  // coverageDirectory: 'coverage',
-  coverageProvider: 'v8',
+  coverageDirectory: 'coverage',
+  coverageProvider: 'babel',
   //coverageReporters: ['clover'],
   testEnvironment: 'node',
   testMatch: [

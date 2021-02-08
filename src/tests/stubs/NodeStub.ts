@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
 export interface CreateNodeArgs {
-  nodes?: ts.Node[];
+  childs?: NodeStub[];
   kind?: number;
   symbol?: ts.Symbol;
   parent?: NodeStub;
@@ -10,8 +10,8 @@ export interface CreateNodeArgs {
 export class NodeStub {
   #symbol?: ts.Symbol;
   #parent?: NodeStub | undefined;
-  #kind: number;
-  #childs: NodeStub[] = [];
+  private _kind: number;
+  private _childs: NodeStub[] = [];
 
   get parent(): NodeStub | undefined {
     return this.#parent;
@@ -20,37 +20,37 @@ export class NodeStub {
     return this.#symbol;
   }
   get kind() {
-    return this.#kind;
-  }
-  get childs() {
-    return this.#childs;
+    return this._kind;
   }
 
-  constructor({nodes = [], kind = -1, symbol, parent}: CreateNodeArgs = {}) {
-    this.#childs = (nodes as unknown[]) as NodeStub[];
-    this.#kind = kind;
+  constructor({childs = [], kind = -1, symbol, parent}: CreateNodeArgs) {
+    this._childs = childs;
+    this._kind = kind;
     this.#symbol = symbol;
     this.#parent = parent;
   }
 
-  getChildCount(): number {
-    return this.#childs.length;
-  }
-
   getChildren(): ts.Node[] {
-    return (this.#childs as unknown[]) as ts.Node[];
-  }
-
-  addChild(child: NodeStub) {
-    this.#childs.push(child);
+    return ([...this._childs] as unknown[]) as ts.Node[];
   }
 
   forEachChild<T>(cbNode: (node: ts.Node) => T | undefined): T | undefined {
-    this.#childs.forEach(node => cbNode(node.asNode()));
+    this._childs.map(node => cbNode(node.asNode()));
     return;
   }
 
   // #region Stub helpers
+  getChildCount(): number {
+    return this._childs.length;
+  }
+
+  getChild(index: number) {
+    return this._childs[index];
+  }
+
+  addChild(child: NodeStub) {
+    this._childs.push(child);
+  }
 
   asNode(): ts.Node {
     return (this as unknown) as ts.Node;
