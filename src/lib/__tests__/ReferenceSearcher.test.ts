@@ -1,5 +1,8 @@
 import ts from 'typescript';
-import {TreeBuilderWithSymbols} from '../../tests/utils/TreeBuilderWithSymbols';
+import {
+  AddFromObjectArgs,
+  TreeBuilderWithSymbols,
+} from '../../tests/utils/TreeBuilderWithSymbols';
 import {
   ReferenceSearcher,
   ReferenceSearcherContext,
@@ -52,7 +55,7 @@ describe('ReferenceSearcher', () => {
     test('should find one reference', () => {
       const nodeWithReference = builder
         .reset({})
-        .addChildWithSymbolAndGoTo()
+        .addChildWithSymbol()
         .getResult();
       const items = [new Item(nodeWithReference), new Item(referencedNode)];
 
@@ -63,7 +66,7 @@ describe('ReferenceSearcher', () => {
       const nodeWithReference = builder
         .addChildAndGoTo()
         .addChildAndGoTo()
-        .addChildWithSymbolAndGoTo()
+        .addChildWithSymbol()
         .getResult();
 
       const items: Item[] = [
@@ -78,7 +81,7 @@ describe('ReferenceSearcher', () => {
         .addChildAndGoTo()
         .addChildAndGoTo()
         .addChildAndGoTo()
-        .addChildWithSymbolAndGoTo()
+        .addChildWithSymbol()
         .getResult();
 
       const items: Item[] = [
@@ -93,7 +96,7 @@ describe('ReferenceSearcher', () => {
         .addChildAndGoTo()
         .addChildAndGoTo()
         .addChildWithSymbolAndGoTo()
-        .addChildWithSymbolAndGoTo()
+        .addChildWithSymbol()
         .getResult();
 
       const items: Item[] = [
@@ -123,13 +126,13 @@ describe('ReferenceSearcher', () => {
     test('should find 2 connections from 2 different items', () => {
       const nodeWithReference1 = builder
         .addChildAndGoTo()
-        .addChildWithSymbolAndGoTo()
+        .addChildWithSymbol()
         .getResult();
 
       const nodeWithReference2 = builder
         .reset()
         .addChildAndGoTo()
-        .addChildWithSymbolAndGoTo()
+        .addChildWithSymbol()
         .getResult();
 
       const items: Item[] = [
@@ -143,12 +146,95 @@ describe('ReferenceSearcher', () => {
   });
 
   describe('Search references to mulitpile nodes', () => {
-    function createTreeBuilderWithChildNodesWithSymbol(childCount: number) {
-      const treeBuilder = new TreeBuilderWithSymbols({}, childCount);
-      for (let index = 0; index < symbolsCount; index++) {
-        treeBuilder.addChildWithSymbol(index);
-      }
-      return treeBuilder;
+    const symbolsCount = 4;
+    let items: Item[];
+
+    test('should items count be equal 4', () => {
+      init({
+        childs: [{symbol: 0}, {symbol: 1}, {symbol: 2}, {symbol: 3}],
+      });
+      expect(items).toHaveLength(4);
+    });
+
+    test('should find nothing', () => {
+      init({
+        childs: [
+          {symbol: 0, childs: [{symbol: 0}]},
+          {symbol: 1, childs: [{}, {}]},
+          {symbol: 2, childs: [{}]},
+          {symbol: 3, childs: [{}]},
+        ],
+      });
+
+      expect(searcher.search(items)).toHaveLength(0);
+    });
+
+    test('should find 1 reference', () => {
+      init({
+        childs: [
+          {symbol: 0},
+          {symbol: 1, childs: [{symbol: 2}]},
+          {symbol: 2},
+          {symbol: 3},
+        ],
+      });
+      expect(searcher.search(items)).toHaveLength(1);
+    });
+
+    test('should find 4 references', () => {
+      init({
+        childs: [
+          {symbol: 0, childs: [{symbol: 1}]},
+          {symbol: 1, childs: [{symbol: 2}]},
+          {symbol: 2, childs: [{symbol: 3}]},
+          {symbol: 3, childs: [{symbol: 0}]},
+        ],
+      });
+
+      expect(searcher.search(items)).toHaveLength(4);
+    });
+
+    test('should find 3 references', () => {
+      init({
+        childs: [
+          {
+            symbol: 0,
+            childs: [
+              {
+                childs: [
+                  {},
+                  {
+                    symbol: 1, // should find
+                    childs: [
+                      {symbol: 2}, // should find
+                      {
+                        symbol: 1, // should find
+                        childs: [
+                          {},
+                          {
+                            symbol: 0, // should not find - reference to itself
+                            childs: [{symbol: 0}], // should not find - reference to itself
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {symbol: 1},
+          {symbol: 2},
+        ],
+      });
+
+      expect(searcher.search(items)).toHaveLength(3);
+    });
+
+    function init(addFromObjectArgs: AddFromObjectArgs) {
+      builder = new TreeBuilderWithSymbols(undefined, symbolsCount);
+      builder.addFromObject(addFromObjectArgs);
+      items = createItemsFromBuilder(builder);
     }
 
     function createItemsFromBuilder(builder: TreeBuilderWithSymbols) {
@@ -157,58 +243,6 @@ describe('ReferenceSearcher', () => {
         .getChildren()
         .map(node => new Item(node));
     }
-
-    const symbolsCount = 4;
-    let items: Item[];
-
-    beforeEach(() => {
-      builder = createTreeBuilderWithChildNodesWithSymbol(symbolsCount);
-      items = createItemsFromBuilder(builder);
-    });
-
-    test('should items count be equal used symbols', () => {
-      expect(items).toHaveLength(symbolsCount);
-    });
-
-    test('should find nothing', () => {
-      expect(searcher.search(items)).toHaveLength(0);
-    });
-
-    test('should find 1 reference', () => {
-      builder.toChild().addChildWithSymbolAndGoTo(1);
-      expect(searcher.search(items)).toHaveLength(1);
-    });
-
-    test('should find 4 references', () => {
-      builder
-        .toChild()
-        .addChildWithSymbolAndGoTo(1)
-        .toRoot()
-        .toChild(1)
-        .addChildWithSymbolAndGoTo(2)
-        .toRoot()
-        .toChild(2)
-        .addChildWithSymbolAndGoTo(3)
-        .toRoot()
-        .toChild(3)
-        .addChildWithSymbolAndGoTo(0);
-
-      expect(searcher.search(items)).toHaveLength(4);
-    });
-    test('should find 3 references', () => {
-      builder
-        .toChild()
-        .addChildAndGoTo()
-        .addChild()
-        .addChildWithSymbolAndGoTo(1) // should find
-        .addChildWithSymbol(2) // should find
-        .addChildWithSymbolAndGoTo(1) // should find
-        .addChild()
-        .addChildWithSymbolAndGoTo(0) // should not find - reference to itself
-        .addChildWithSymbol(0); // should not find - reference to itself
-
-      expect(searcher.search(items)).toHaveLength(3);
-    });
   });
 });
 

@@ -2,7 +2,7 @@ import ts from 'typescript';
 import {CreateNodeArgs} from '../stubs/NodeStub';
 import {TreeBuilder} from './TreeBuilder';
 
-interface AddFromObjectArgs {
+export interface AddFromObjectArgs {
   kind?: ts.SyntaxKind;
   symbol?: number;
   childs?: AddFromObjectArgs[];
