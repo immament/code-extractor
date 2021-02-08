@@ -4,12 +4,12 @@
  */
 
 module.exports = {
-  coverageDirectory: 'coverage',
+  // coverageDirectory: 'coverage',
   coverageProvider: 'v8',
-  rootDir: 'src',
+  //coverageReporters: ['clover'],
   testEnvironment: 'node',
   testMatch: [
-    '<rootDir>/**/__tests__/**/*.test.[jt]s?(x)',
+    '<rootDir>/src/**/__tests__/**/*.test.[jt]s?(x)',
     // '**/?(*.)+(spec|test).[tj]s?(x)',
   ],
   preset: 'ts-jest',

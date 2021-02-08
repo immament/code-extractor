@@ -16,7 +16,11 @@ describe('Search for one kind', () => {
   test('should not find any items ', () => {
     expect(
       project.searchInFile(
-        builder.addLevel().addChild().addChild().getResult() as ts.SourceFile,
+        builder
+          .addChildAndGoTo()
+          .addChild()
+          .addChild()
+          .getResult() as ts.SourceFile,
         [searchedKind]
       )
     ).toHaveLength(0);
@@ -26,9 +30,9 @@ describe('Search for one kind', () => {
     expect(
       project.searchInFile(
         builder
-          .addLevel()
-          .addLevel()
-          .addLevel()
+          .addChildAndGoTo()
+          .addChildAndGoTo()
+          .addChildAndGoTo()
           .addChild()
           .addChild({kind: searchedKind})
           .getResult() as ts.SourceFile,
@@ -41,7 +45,7 @@ describe('Search for one kind', () => {
     expect(
       project.searchInFile(
         builder
-          .addLevel()
+          .addChildAndGoTo()
           .addChild({kind: searchedKind})
           .addChild({kind: searchedKind})
           .getResult() as ts.SourceFile,
@@ -54,7 +58,7 @@ describe('Search for one kind', () => {
     expect(
       project.searchInFile(
         builder
-          .addLevel({kind: searchedKind})
+          .addChildAndGoTo({kind: searchedKind})
           .addChild({kind: searchedKind})
           .addChild()
           .getResult() as ts.SourceFile,
@@ -67,15 +71,15 @@ describe('Search for one kind', () => {
     expect(
       project.searchInFile(
         builder
-          .addLevel({kind: searchedKind})
+          .addChildAndGoTo({kind: searchedKind})
           .addChild()
           .addChild()
           .up()
-          .addLevel()
+          .addChildAndGoTo()
           .addChild({kind: searchedKind})
           .addChild()
           .up()
-          .addLevel()
+          .addChildAndGoTo()
           .addChild()
           .addChild({kind: searchedKind})
           .getResult() as ts.SourceFile,
@@ -98,7 +102,7 @@ describe('Search for multiple kinds', () => {
 
   test('should not find any items ', () => {
     const sourceFile = builder
-      .addLevel()
+      .addChildAndGoTo()
       .addChild()
       .addChild()
       .getResult() as ts.SourceFile;
@@ -108,16 +112,16 @@ describe('Search for multiple kinds', () => {
   test('should find 5 items with 5 different kinds', () => {
     const sourceFile = builder
       .addChild({kind: searchedKinds[0]})
-      .addLevel()
-      .addLevel()
-      .addLevel({kind: searchedKinds[1]})
+      .addChildAndGoTo()
+      .addChildAndGoTo()
+      .addChildAndGoTo({kind: searchedKinds[1]})
       .addChild()
       .addChild({kind: searchedKinds[2]})
-      .addLevel({kind: searchedKinds[3]})
+      .addChildAndGoTo({kind: searchedKinds[3]})
       .toRoot()
-      .addLevel()
-      .addLevel()
-      .addLevel({kind: searchedKinds[4]})
+      .addChildAndGoTo()
+      .addChildAndGoTo()
+      .addChildAndGoTo({kind: searchedKinds[4]})
       .getResult() as ts.SourceFile;
 
     //console.log(sourceFile);
@@ -128,16 +132,16 @@ describe('Search for multiple kinds', () => {
   test('should find 7 items with 2 different kinds', () => {
     const sourceFile = builder
       .addChild({kind: searchedKinds[0]})
-      .addLevel()
-      .addLevel()
-      .addLevel({kind: searchedKinds[1]})
+      .addChildAndGoTo()
+      .addChildAndGoTo()
+      .addChildAndGoTo({kind: searchedKinds[1]})
       .addChild()
       .addChild({kind: searchedKinds[0]})
-      .addLevel({kind: searchedKinds[1]})
+      .addChildAndGoTo({kind: searchedKinds[1]})
       .toRoot()
-      .addLevel({kind: searchedKinds[1]})
-      .addLevel({kind: searchedKinds[1]})
-      .addLevel({kind: searchedKinds[0]})
+      .addChildAndGoTo({kind: searchedKinds[1]})
+      .addChildAndGoTo({kind: searchedKinds[1]})
+      .addChildAndGoTo({kind: searchedKinds[0]})
       .getResult() as ts.SourceFile;
 
     expect(project.searchInFile(sourceFile, searchedKinds)).toHaveLength(7);

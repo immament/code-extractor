@@ -24,8 +24,4 @@ export class Project {
   private isSearchedKind(kinds: number[], node: ts.Node) {
     return kinds.includes(node.kind);
   }
-
-  searchInFiles() {
-    return;
-  }
 }

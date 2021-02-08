@@ -7,26 +7,28 @@ export class TreeBuilderWithSymbols extends TreeBuilder {
 
   constructor(createNodeArgs?: CreateNodeArgs, symbolCounts = 5) {
     super(createNodeArgs);
-    this.commonSymbols = Array(symbolCounts)
-      .fill(undefined)
-      .map(() => this.newSymbol());
+    this.commonSymbols = this.createSymbols(symbolCounts);
   }
 
-  addLevelWithCommonSymbol(symbolIndex = 0) {
-    super.addLevel({symbol: this.commonSymbols[symbolIndex]});
+  private createSymbols(symbolCounts: number) {
+    return [...Array(symbolCounts)].map(() => this.newSymbol());
+  }
+
+  addChildWithSymbolAndGoTo(symbolIndex = 0) {
+    super.addChildAndGoTo({symbol: this.commonSymbols[symbolIndex]});
     return this;
   }
 
-  addChildWithCommonSymbol(symbolIndex = 0) {
+  addChildWithSymbol(symbolIndex = 0) {
     super.addChild({symbol: this.commonSymbols[symbolIndex]});
     return this;
   }
 
-  addLevel(createNodeArgs: CreateNodeArgs = {}) {
+  addChildAndGoTo(createNodeArgs: CreateNodeArgs = {}) {
     if (!createNodeArgs.symbol) {
       createNodeArgs.symbol = this.newSymbol();
     }
-    super.addLevel(createNodeArgs);
+    super.addChildAndGoTo(createNodeArgs);
     return this;
   }
 
@@ -42,6 +44,7 @@ export class TreeBuilderWithSymbols extends TreeBuilder {
   private static getNewId() {
     return ++this.lastId;
   }
+
   private newSymbol() {
     return ({id: TreeBuilderWithSymbols.getNewId()} as unknown) as ts.Symbol;
   }

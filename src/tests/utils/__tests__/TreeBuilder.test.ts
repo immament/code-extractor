@@ -1,6 +1,6 @@
 import {TreeBuilder, TreeBuilderError} from '../TreeBuilder';
 
-describe(' TreeBuilder', () => {
+describe('TreeBuilder', () => {
   let builder: TreeBuilder;
 
   describe('create tree builder without parameters ', () => {
@@ -17,11 +17,11 @@ describe(' TreeBuilder', () => {
     });
 
     test('should property node throw Error after creation without parameters', () => {
-      expect(() => builder.node).toThrow(TreeBuilderError);
+      expect(() => builder.currentAsNode).toThrow(TreeBuilderError);
     });
 
     test('should current node be defined  after creation with parameter', () => {
-      expect(() => builder.node).toThrow(TreeBuilderError);
+      expect(() => builder.currentAsNode).toThrow(TreeBuilderError);
     });
   });
 
@@ -32,17 +32,17 @@ describe(' TreeBuilder', () => {
 
     test('should current node be defined', () => {
       expect(builder.current).toBeTruthy();
-      expect(builder.node).toBeTruthy();
+      expect(builder.currentAsNode).toBeTruthy();
     });
 
     test('should result be equals current', () => {
       expect(builder.getResult()).toBe(builder.current);
     });
 
-    test('methods with fluent behavioure', () => {
+    test('methods with fluent behaviour', () => {
       expect(builder.addChild()).toBe(builder);
       expect(builder.toChild()).toBe(builder);
-      expect(builder.addLevel()).toBe(builder);
+      expect(builder.addChildAndGoTo()).toBe(builder);
       expect(builder.up()).toBe(builder);
       expect(builder.reset({})).toBe(builder);
       expect(builder.toRoot()).toBe(builder);
@@ -55,22 +55,22 @@ describe(' TreeBuilder', () => {
     });
 
     test('should return current node after add some', () => {
-      builder.addLevel();
+      builder.addChildAndGoTo();
 
       expect(builder.current).toBeDefined();
     });
 
     test('should current node be diffrent after add two nodes', () => {
-      builder.addLevel();
+      builder.addChildAndGoTo();
       const current1 = builder.current;
-      builder.addLevel();
+      builder.addChildAndGoTo();
       expect(builder.current).not.toBe(current1);
     });
 
     test('should addlevel add new node to childs of current node', () => {
-      builder.addLevel();
+      builder.addChildAndGoTo();
       const parent = builder.current;
-      builder.addLevel();
+      builder.addChildAndGoTo();
       expect(parent.childs).toContain(builder.current);
     });
   });
@@ -104,7 +104,7 @@ describe(' TreeBuilder', () => {
     });
 
     test('should current child count be 0 after adds level', () => {
-      builder.addChild().addChild().addLevel();
+      builder.addChild().addChild().addChildAndGoTo();
 
       expect(builder.current?.getChildCount()).toBe(0);
     });
@@ -116,13 +116,17 @@ describe(' TreeBuilder', () => {
     });
 
     test('should throw exception on first level', () => {
-      expect(() => builder.up()).toThrow();
+      expect(() => builder.addChildAndGoTo().up()).toThrow(TreeBuilderError);
+    });
+
+    test('should throw exception if not nodes in tree', () => {
+      expect(() => builder.up()).toThrow(TreeBuilderError);
     });
 
     test('should current node be parent after use up ', () => {
-      builder.addLevel();
+      builder.addChildAndGoTo();
       const parent = builder.current;
-      builder.addLevel().up();
+      builder.addChildAndGoTo().up();
 
       expect(builder.current).toBe(parent);
     });
@@ -134,13 +138,13 @@ describe(' TreeBuilder', () => {
     });
     test('should result be root node', () => {
       const root = builder.current;
-      builder.addLevel().addChild().addLevel();
+      builder.addChildAndGoTo().addChild().addChildAndGoTo();
       expect(builder.getResult()).toBe(root);
     });
 
     test('should reset create new root node without childs and undefined parent', () => {
       const oldRoot = builder.getResult();
-      builder.addLevel().addChild().addLevel();
+      builder.addChildAndGoTo().addChild().addChildAndGoTo();
       builder.reset({});
 
       const result = builder.getResult();
@@ -152,7 +156,7 @@ describe(' TreeBuilder', () => {
 
     test('should set current to root ', () => {
       const root = builder.getResult();
-      builder.addLevel().addChild().addLevel().addLevel();
+      builder.addChildAndGoTo().addChild().addChildAndGoTo().addChildAndGoTo();
       builder.toRoot();
 
       expect(builder.current).toBe(root);
@@ -168,6 +172,7 @@ describe(' TreeBuilder', () => {
     beforeEach(() => {
       builder = new TreeBuilder({});
     });
+
     test('should change current to child with specified index', () => {
       builder.addChild().addChild().addChild().toChild(2);
       expect(builder.current).toBe(builder.root?.childs[2]);

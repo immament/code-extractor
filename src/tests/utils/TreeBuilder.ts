@@ -1,11 +1,11 @@
 import {CreateNodeArgs, NodeStub} from '../stubs/NodeStub';
 
 export class TreeBuilder {
-  #current?: NodeStub;
+  #currentNode?: NodeStub;
   #root?: NodeStub;
 
   get current() {
-    if (this.#current) return this.#current;
+    if (this.#currentNode) return this.#currentNode;
     throw new TreeBuilderError('Builder not init (current undefined)');
   }
   get root(): NodeStub | undefined {
@@ -14,60 +14,56 @@ export class TreeBuilder {
 
   constructor(createNodeArgs?: CreateNodeArgs) {
     if (createNodeArgs) {
-      this.#root = this.#current = this.newNode(createNodeArgs);
+      this.#root = this.#currentNode = this.newNode(createNodeArgs);
     }
   }
 
-  get node() {
+  get currentAsNode() {
     return this.current.asNode();
   }
 
-  addLevel(createNodeArgs: CreateNodeArgs = {}) {
-    const oldCurrent = this.#current;
-    this.#current = this.newNode(createNodeArgs);
+  addChildAndGoTo(createNodeArgs: CreateNodeArgs = {}) {
+    const oldCurrent = this.#currentNode;
+    const newNode = this.newNode(createNodeArgs);
     if (oldCurrent) {
-      oldCurrent.addChild(this.#current);
+      oldCurrent.addChild(newNode);
     }
 
-    if (!this.#root) {
-      this.#root = this.#current;
-    }
+    this.#currentNode = newNode;
+    this.#root ??= this.#currentNode;
+
     return this;
   }
 
   private newNode(createNodeArgs: CreateNodeArgs): NodeStub {
-    return new NodeStub({...createNodeArgs, parent: this.#current});
+    return new NodeStub({...createNodeArgs, parent: this.#currentNode});
   }
 
   addChild(createNodeArgs: CreateNodeArgs = {}) {
-    if (!this.current) {
-      throw new TreeBuilderError('Can not add child to empty tree');
-    }
     this.current.addChild(this.newNode(createNodeArgs));
     return this;
   }
 
   up() {
-    if (!this.#current) {
-      throw new TreeBuilderError(`Can not up in empty tree: ${this.current}`);
+    if (!this.current.parent) {
+      throw new TreeBuilderError(
+        `Can not move current. No parent for current node: ${this.current}`
+      );
     }
 
-    if (!this.#current.parent) {
-      throw new TreeBuilderError(`no parent for current node: ${this.current}`);
-    }
-
-    this.#current = this.#current.parent;
+    this.#currentNode = this.current.parent;
 
     return this;
   }
 
   toChild(childIndex = 0) {
-    if (this.current.childs.length < childIndex) {
+    const currentChilds = this.current.childs;
+    if (currentChilds.length < childIndex) {
       throw new TreeBuilderError(
-        `childIndex (${childIndex}) greater then childs count (${this.current.childs.length})`
+        `childIndex (${childIndex}) greater then childs count (${currentChilds.length})`
       );
     }
-    this.#current = this.#current?.childs[childIndex];
+    this.#currentNode = currentChilds[childIndex];
     return this;
   }
 
@@ -80,18 +76,18 @@ export class TreeBuilder {
 
   reset(createNodeArgs?: CreateNodeArgs) {
     if (createNodeArgs) {
-      this.#root = this.#current = new NodeStub({
+      this.#root = this.#currentNode = new NodeStub({
         ...createNodeArgs,
         parent: undefined,
       });
     } else {
-      this.#root = this.#current = undefined;
+      this.#root = this.#currentNode = undefined;
     }
     return this;
   }
 
   toRoot() {
-    this.#current = this.#root;
+    this.#currentNode = this.#root;
     return this;
   }
 }

@@ -11,7 +11,7 @@ describe('ReferenceSearcher', () => {
     // searcher = new ReferenceSearcher(createTypeChecker());
   });
 
-  test.only('should find one connection from 3 level', () => {
+  test('should find one connection from 3 level', () => {
     const files: [string, string][] = [
       [
         'index.ts',

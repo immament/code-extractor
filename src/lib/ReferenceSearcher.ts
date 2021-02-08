@@ -3,64 +3,75 @@ import {Item} from './Item';
 import {Reference} from './Reference';
 
 export class ReferenceSearcher {
-  private symbolMap: Map<ts.Symbol, Item> = new Map<ts.Symbol, Item>();
-  private result: Reference[] = [];
-  private contextItem?: Item;
-
   constructor(private typeChecker: ts.TypeChecker) {}
 
   search(items: Item[]) {
-    this.init(items);
-    if (this.hasItemsToFound()) {
-      return this.searchInsideItems(items);
+    const context = this.createContext(items);
+    return context.hasItemsToFound()
+      ? this.searchInsideItems(items, context)
+      : [];
+  }
+
+  private createContext(items: Item[]) {
+    return new ReferenceSearcherContext(this.typeChecker, items);
+  }
+
+  private searchInsideItems(items: Item[], context: ReferenceSearcherContext) {
+    items.forEach(item => {
+      context.setContextItem(item);
+      this.searchInsideNode(item.getNode(), context);
+    });
+
+    return context.getResult();
+  }
+
+  private searchInsideNode(node: ts.Node, context: ReferenceSearcherContext) {
+    node.forEachChild(child => {
+      const connectedItem = context.getConnectedItem(child);
+      if (connectedItem) {
+        context.addReference(connectedItem);
+      }
+      this.searchInsideNode(child, context);
+    });
+  }
+}
+
+export class ReferenceSearcherContext {
+  #contextItem?: Item;
+  private result: Reference[] = [];
+  private symbolMap: Map<ts.Symbol, Item>;
+
+  private get contextItem() {
+    if (!this.#contextItem) {
+      throw new ReferenceSearcherError('Context item not set');
     }
-    return [];
+    return this.#contextItem;
   }
 
-  private hasItemsToFound() {
-    return this.symbolMap.size > 0;
-  }
-
-  private init(items: Item[]) {
-    this.resetResult();
+  constructor(private typeChecker: ts.TypeChecker, items: Item[]) {
     this.symbolMap = this.createSymbolToItemMap(items);
   }
 
-  private resetResult() {
-    this.result = [];
+  setContextItem(item: Item) {
+    this.#contextItem = item;
   }
 
-  private searchInsideItems(items: Item[]) {
-    items.forEach(item => {
-      this.contextItem = item;
-      this.searchInsideNode(item.getNode());
-    });
-
+  getResult() {
     return this.result;
   }
 
-  private searchInsideNode(node: ts.Node) {
-    node.forEachChild(child => {
-      if (this.isConnection(child)) {
-        this.addResult();
-      }
-      this.searchInsideNode(child);
-    });
+  addReference(item: Item) {
+    this.result.push(new Reference(this.contextItem, item));
   }
 
-  private addResult() {
-    // TODO
-    this.result.push(new Reference({} as Item, {} as Item));
+  hasItemsToFound() {
+    return this.symbolMap.size > 0;
   }
 
-  private isConnection(node: ts.Node): boolean {
+  getConnectedItem(node: ts.Node): Item | undefined {
     const symbol = this.getSymbol(node);
-    return !!symbol && this.isSymbolConnection(symbol);
-  }
-
-  private isSymbolConnection(symbol: ts.Symbol): boolean {
-    const item = this.getItemForSymbol(symbol);
-    return !!item && this.isNotContextItem(item);
+    const item = symbol && this.getItemForSymbol(symbol);
+    return item && this.isNotContextItem(item) ? item : undefined;
   }
 
   private getItemForSymbol(symbol: ts.Symbol) {
@@ -68,26 +79,33 @@ export class ReferenceSearcher {
   }
 
   private isNotContextItem(item: Item): boolean {
-    return item.getNode() !== this.contextItem?.getNode();
+    return item.getNode() !== this.contextItem.getNode();
   }
 
   private getSymbol(node: ts.Node) {
     return (
       (node as {symbol?: ts.Symbol}).symbol ||
       this.typeChecker.getSymbolAtLocation(node)
+      //  TODO: check if should get from name
+      // ||
+      // ((item.getNode() as any).name &&
+      //   this.getSymbol((item.getNode() as any).name));
     );
   }
 
   private createSymbolToItemMap(items: Item[]) {
     return items.reduce((symbolMap, item) => {
-      // TODO: temporary get symbol from name
       const symbol = this.getSymbol(item.getNode());
-      //  ||
-      // ((item.getNode() as any).name &&
-      //   this.getSymbol((item.getNode() as any).name));
-
       if (symbol) symbolMap.set(symbol, item);
       return symbolMap;
     }, new Map<ts.Symbol, Item>());
+  }
+}
+
+export class ReferenceSearcherError extends Error {
+  constructor(message: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, ReferenceSearcherError.prototype);
   }
 }
