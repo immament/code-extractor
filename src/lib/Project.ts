@@ -6,6 +6,10 @@ export class Project {
     return this.searchInNode(sourceFile, kinds);
   }
 
+  searchInFiles(sourceFiles: ts.SourceFile[], kinds: number[]) {
+    return sourceFiles.flatMap(sf => this.searchInFile(sf, kinds));
+  }
+
   private searchInNode(node: ts.Node, kinds: number[]): Item[] {
     const result: Item[] = this.isSearchedKind(kinds, node)
       ? [this.createItem(node)]

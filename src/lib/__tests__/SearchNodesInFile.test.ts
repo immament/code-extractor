@@ -1,147 +1,84 @@
+import {createSourceFile} from '@tests/utils/createSourceFile';
 import ts from 'typescript';
-import {TreeBuilder} from '@tests/utils/TreeBuilder';
 import {Project} from '../Project';
 
-describe('Search for one kind', () => {
-  const searchedKind = 100;
-
-  let builder: TreeBuilder;
+describe('Search Nodes in Files', () => {
   let project: Project;
-
   beforeEach(() => {
     project = new Project();
-    builder = new TreeBuilder({kind: ts.SyntaxKind.SourceFile});
+  });
+  test('should return empty table when not find anything', () => {
+    const sourceFiles: ts.SourceFile[] = [];
+    expect(project.searchInFiles(sourceFiles, [])).toHaveLength(0);
   });
 
-  test('should not find any items ', () => {
+  test('should find class declaration when in file ', () => {
+    const searchedKinds = [ts.SyntaxKind.ClassDeclaration];
+    const sourceFiles: ts.SourceFile[] = [
+      createSourceFile(
+        'index.ts',
+        `class MyClass {
+        constructor() {}
+    }`
+      ),
+    ];
+    expect(project.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(1);
+  });
+
+  test('should find 3 class declaration`s in 2 files ', () => {
+    const searchedKinds = [ts.SyntaxKind.ClassDeclaration];
+    const sourceFiles: ts.SourceFile[] = [
+      createSourceFile(
+        'index.ts',
+        `class MyClass1 {
+          constructor() {}
+        }`
+      ),
+
+      createSourceFile(
+        'index2.ts',
+        `class MyClass2 {
+          constructor() {}
+      }
+      
+      class MyClass3 { }`
+      ),
+    ];
+    expect(project.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(3);
+  });
+
+  test('should find 3 class declaration`s in 2 files ', () => {
+    const project = new Project();
+    const sourceFiles = [
+      createSourceFile(
+        'index.ts',
+        `class MyClass {}
+      class MyInterface {}
+      function myFunction () { return 1; }
+      const myVariable1 = 11;
+      const myVariable2 = 'ok';
+      let myVariable3 = () => true;
+      `
+      ),
+      createSourceFile(
+        'index2.ts',
+        `class MyClass2 {}
+      class MyInterface2 {}
+      function myFunction2 () { return 1; }
+      const myVariable1 = 11;
+      const myVariable2 = 'ok';
+      let myVariable3 = () => true;
+      `
+      ),
+    ];
+
     expect(
-      project.searchInFile(
-        builder
-          .addChildAndGoTo()
-          .addChild()
-          .addChild()
-          .getResult() as ts.SourceFile,
-        [searchedKind]
-      )
-    ).toHaveLength(0);
-  });
-
-  test('should find 1 item with specified kind', () => {
-    expect(
-      project.searchInFile(
-        builder
-          .addChildAndGoTo()
-          .addChildAndGoTo()
-          .addChildAndGoTo()
-          .addChild()
-          .addChild({kind: searchedKind})
-          .getResult() as ts.SourceFile,
-        [searchedKind]
-      )
-    ).toHaveLength(1);
-  });
-
-  test('should find 2 items with specified kind', () => {
-    expect(
-      project.searchInFile(
-        builder
-          .addChildAndGoTo()
-          .addChild({kind: searchedKind})
-          .addChild({kind: searchedKind})
-          .getResult() as ts.SourceFile,
-        [searchedKind]
-      )
-    ).toHaveLength(2);
-  });
-
-  test('should find 2 items when one node is nested in another', () => {
-    expect(
-      project.searchInFile(
-        builder
-          .addChildAndGoTo({kind: searchedKind})
-          .addChild({kind: searchedKind})
-          .addChild()
-          .getResult() as ts.SourceFile,
-        [searchedKind]
-      )
-    ).toHaveLength(2);
-  });
-
-  test('should find 3 items when nodes are nested in separated nodes', () => {
-    expect(
-      project.searchInFile(
-        builder
-          .addChildAndGoTo({kind: searchedKind})
-          .addChild()
-          .addChild()
-          .up()
-          .addChildAndGoTo()
-          .addChild({kind: searchedKind})
-          .addChild()
-          .up()
-          .addChildAndGoTo()
-          .addChild()
-          .addChild({kind: searchedKind})
-          .getResult() as ts.SourceFile,
-        [searchedKind]
-      )
-    ).toHaveLength(3);
-  });
-});
-
-describe('Search for multiple kinds', () => {
-  const searchedKinds = [100, 101, 102, 103, 2000];
-
-  let builder: TreeBuilder;
-  let project: Project;
-
-  beforeEach(() => {
-    project = new Project();
-    builder = new TreeBuilder({kind: ts.SyntaxKind.SourceFile});
-  });
-
-  test('should not find any items ', () => {
-    const sourceFile = builder
-      .addChildAndGoTo()
-      .addChild()
-      .addChild()
-      .getResult() as ts.SourceFile;
-    expect(project.searchInFile(sourceFile, searchedKinds)).toHaveLength(0);
-  });
-
-  test('should find 5 items with 5 different kinds', () => {
-    const sourceFile = builder
-      .addChild({kind: searchedKinds[0]})
-      .addChildAndGoTo()
-      .addChildAndGoTo()
-      .addChildAndGoTo({kind: searchedKinds[1]})
-      .addChild()
-      .addChild({kind: searchedKinds[2]})
-      .addChildAndGoTo({kind: searchedKinds[3]})
-      .toRoot()
-      .addChildAndGoTo()
-      .addChildAndGoTo()
-      .addChildAndGoTo({kind: searchedKinds[4]})
-      .getResult() as ts.SourceFile;
-
-    expect(project.searchInFile(sourceFile, searchedKinds)).toHaveLength(5);
-  });
-
-  test('should find 7 items with 2 different kinds', () => {
-    const sourceFile = builder
-      .addChild({kind: searchedKinds[0]})
-      .addChildAndGoTo()
-      .addChildAndGoTo()
-      .addChildAndGoTo({kind: searchedKinds[1]})
-      .addChild()
-      .addChild({kind: searchedKinds[0]})
-      .addChildAndGoTo({kind: searchedKinds[1]})
-      .toRoot()
-      .addChildAndGoTo({kind: searchedKinds[1]})
-      .addChildAndGoTo({kind: searchedKinds[1]})
-      .addChildAndGoTo({kind: searchedKinds[0]})
-      .getResult() as ts.SourceFile;
-
-    expect(project.searchInFile(sourceFile, searchedKinds)).toHaveLength(7);
+      project.searchInFiles(sourceFiles, [
+        ts.SyntaxKind.VariableDeclaration,
+        ts.SyntaxKind.ClassDeclaration,
+        ts.SyntaxKind.FunctionDeclaration,
+        ts.SyntaxKind.InterfaceDeclaration,
+      ])
+    ).toHaveLength(12);
   });
 });
