@@ -1,4 +1,5 @@
 import ts from 'typescript';
+import {IdGenerator} from '../utils/IdGenerator';
 
 export interface CreateNodeArgs {
   childs?: NodeStub[];
@@ -12,6 +13,7 @@ export class NodeStub {
   #parent?: NodeStub | undefined;
   private _kind: number;
   private _childs: NodeStub[] = [];
+  private _id: number;
 
   get parent(): NodeStub | undefined {
     return this.#parent;
@@ -23,11 +25,17 @@ export class NodeStub {
     return this._kind;
   }
 
+  get id() {
+    return this._id;
+  }
+
   constructor({childs = [], kind = -1, symbol, parent}: CreateNodeArgs) {
     this._childs = childs;
     this._kind = kind;
     this.#symbol = symbol;
     this.#parent = parent;
+
+    this._id = IdGenerator.next();
   }
 
   getChildren(): ts.Node[] {

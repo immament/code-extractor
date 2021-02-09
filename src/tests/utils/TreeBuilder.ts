@@ -65,10 +65,14 @@ export class TreeBuilder {
   }
 
   getResult() {
+    return this.getResultStub().asNode();
+  }
+
+  getResultStub() {
     if (!this.#root) {
       throw new TreeBuilderError('Builder not init (root undefined)');
     }
-    return this.#root.asNode();
+    return this.#root;
   }
 
   reset(createNodeArgs?: CreateNodeArgs) {

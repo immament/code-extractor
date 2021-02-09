@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import {TreeBuilder} from '../../tests/utils/TreeBuilder';
+import {TreeBuilder} from '@tests/utils/TreeBuilder';
 import {Project} from '../Project';
 
 describe('Search for one kind', () => {

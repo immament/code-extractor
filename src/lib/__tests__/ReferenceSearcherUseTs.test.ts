@@ -2,7 +2,7 @@ import ts from 'typescript';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Project} from '../Project';
 import {Program} from '../Program';
-import {createInMemoryCompilerHost} from '../../tests/utils/createInMemoryCompilerHost';
+import {createInMemoryCompilerHost} from '@tests/utils/createInMemoryCompilerHost';
 
 describe('ReferenceSearcher', () => {
   let searcher: ReferenceSearcher;

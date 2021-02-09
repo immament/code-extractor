@@ -1,11 +1,15 @@
 {
   "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "rootDir": ".",
     "outDir": "build",
     "esModuleInterop": true,
     "module": "commonjs",
-    "lib": ["es2019"]
+    "lib": ["es2019"],
+    "paths": {
+      "@tests/*": ["src/tests/*"]
+    }
   },
   "include": ["src/**/*.ts"]
 }

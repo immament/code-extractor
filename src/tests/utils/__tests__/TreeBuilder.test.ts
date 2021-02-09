@@ -16,6 +16,10 @@ describe('TreeBuilder', () => {
       expect(() => builder.getResult()).toThrow(TreeBuilderError);
     });
 
+    test('should getResultStub throw Error after creation without parameters', () => {
+      expect(() => builder.getResultStub()).toThrow(TreeBuilderError);
+    });
+
     test('should property node throw Error after creation without parameters', () => {
       expect(() => builder.currentAsNode).toThrow(TreeBuilderError);
     });
@@ -37,6 +41,10 @@ describe('TreeBuilder', () => {
 
     test('should result be equals current', () => {
       expect(builder.getResult()).toBe(builder.current);
+    });
+
+    test('should resultStub be equals current', () => {
+      expect(builder.getResultStub()).toBe(builder.current);
     });
 
     test('methods with fluent behaviour', () => {
@@ -136,6 +144,7 @@ describe('TreeBuilder', () => {
     beforeEach(() => {
       builder = new TreeBuilder({});
     });
+
     test('should result be root node', () => {
       const root = builder.current;
       builder.addChildAndGoTo().addChild().addChildAndGoTo();

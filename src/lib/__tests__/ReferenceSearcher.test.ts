@@ -2,11 +2,15 @@ import ts from 'typescript';
 import {
   AddFromObjectArgs,
   TreeBuilderWithSymbols,
-} from '../../tests/utils/TreeBuilderWithSymbols';
+} from '@tests/utils/TreeBuilderWithSymbols';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 
-import {createTypeChecker} from '../../tests/stubs/TypeCheckerStub';
+import {createTypeChecker} from '@tests/stubs/TypeCheckerStub';
+import {NodeStub} from '@tests/stubs/NodeStub';
+import {referencesToNodeIds, toNodeStub} from '@tests/utils/stub-mappers';
+import {Reference} from '../Reference';
+import {expectReferences} from '@tests/utils/expects';
 
 describe('ReferenceSearcher', () => {
   let builder: TreeBuilderWithSymbols;
@@ -41,21 +45,33 @@ describe('ReferenceSearcher', () => {
 
   describe('find something', () => {
     let referencedNode: ts.Node;
+    let referencedNodStub: NodeStub;
 
     beforeEach(() => {
-      builder = new TreeBuilderWithSymbols();
-      referencedNode = builder.addChildWithSymbolAndGoTo().getResult();
-      builder.reset();
+      builder = new TreeBuilderWithSymbols({});
+      referencedNodStub = new NodeStub({
+        symbol: builder.getCommonSymbol(0),
+      });
+      referencedNode = referencedNodStub.asNode();
     });
 
-    test('should find one reference', () => {
-      const nodeWithReference = builder
-        .reset({})
-        .addChildWithSymbol()
-        .getResult();
-      const items = [new Item(nodeWithReference), new Item(referencedNode)];
+    test('should find one reference with corect from & to', () => {
+      const nodeWithReference = builder.addChildWithSymbol().getResultStub();
 
-      expect(searcher.search(items)).toHaveLength(1);
+      const items = [
+        new Item(nodeWithReference.asNode()),
+        new Item(referencedNode),
+      ];
+
+      const searchResult = searcher.search(items);
+
+      expect(searchResult).toHaveLength(1);
+      expect(referencesToNodeIds(searchResult)).toEqual([
+        {
+          fromId: nodeWithReference.id,
+          toId: referencedNodStub.id,
+        },
+      ]);
     });
 
     test('should find one reference from 3 level', () => {
@@ -63,13 +79,21 @@ describe('ReferenceSearcher', () => {
         .addChildAndGoTo()
         .addChildAndGoTo()
         .addChildWithSymbol()
-        .getResult();
+        .getResultStub();
 
       const items: Item[] = [
-        new Item(nodeWithReference),
+        new Item(nodeWithReference.asNode()),
         new Item(referencedNode),
       ];
-      expect(searcher.search(items)).toHaveLength(1);
+
+      const searchResult = searcher.search(items);
+      expect(searchResult).toHaveLength(1);
+      expect(referencesToNodeIds(searchResult)).toEqual([
+        {
+          fromId: nodeWithReference.id,
+          toId: referencedNodStub.id,
+        },
+      ]);
     });
 
     test('should find one reference from 4 level', () => {
@@ -78,13 +102,21 @@ describe('ReferenceSearcher', () => {
         .addChildAndGoTo()
         .addChildAndGoTo()
         .addChildWithSymbol()
-        .getResult();
+        .getResultStub();
 
       const items: Item[] = [
-        new Item(nodeWithReference),
+        new Item(nodeWithReference.asNode()),
         new Item(referencedNode),
       ];
-      expect(searcher.search(items)).toHaveLength(1);
+
+      const searchResult = searcher.search(items);
+      expect(searchResult).toHaveLength(1);
+      expect(referencesToNodeIds(searchResult)).toEqual([
+        {
+          fromId: nodeWithReference.id,
+          toId: referencedNodStub.id,
+        },
+      ]);
     });
 
     test('should find 2 references from one item in different level', () => {
@@ -174,7 +206,10 @@ describe('ReferenceSearcher', () => {
           {symbol: 3},
         ],
       });
-      expect(searcher.search(items)).toHaveLength(1);
+
+      const searchResult = searcher.search(items);
+      expect(searchResult).toHaveLength(1);
+      expectReferences(searchResult).toBeFromItemToItem(items, [[1, 2]]);
     });
 
     test('should find 4 references', () => {
@@ -187,13 +222,26 @@ describe('ReferenceSearcher', () => {
         ],
       });
 
-      expect(searcher.search(items)).toHaveLength(4);
+      const searchResult = searcher.search(items);
+      expect(searchResult).toHaveLength(4);
+      expectReferences(searchResult).toBeFromItemToItem(items, [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 0],
+      ]);
     });
 
     test('should find 3 references', () => {
       init(createTreeWith4ItemsAnd3ValidReferences());
 
-      expect(searcher.search(items)).toHaveLength(3);
+      const searchResult = searcher.search(items);
+      expect(searchResult).toHaveLength(3);
+      expectReferences(searchResult).toBeFromItemToItem(items, [
+        [0, 1],
+        [0, 2],
+        [0, 1],
+      ]);
     });
 
     function init(addFromObjectArgs: AddFromObjectArgs) {
