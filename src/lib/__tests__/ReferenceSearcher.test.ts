@@ -3,11 +3,7 @@ import {
   AddFromObjectArgs,
   TreeBuilderWithSymbols,
 } from '../../tests/utils/TreeBuilderWithSymbols';
-import {
-  ReferenceSearcher,
-  ReferenceSearcherContext,
-  ReferenceSearcherError,
-} from '../ReferenceSearcher';
+import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 
 import {createTypeChecker} from '../../tests/stubs/TypeCheckerStub';
@@ -195,7 +191,27 @@ describe('ReferenceSearcher', () => {
     });
 
     test('should find 3 references', () => {
-      init({
+      init(createTreeWith4ItemsAnd3ValidReferences());
+
+      expect(searcher.search(items)).toHaveLength(3);
+    });
+
+    function init(addFromObjectArgs: AddFromObjectArgs) {
+      builder = new TreeBuilderWithSymbols(undefined, symbolsCount);
+      builder.addFromObject(addFromObjectArgs);
+      items = createItemsFromBuilder(builder);
+    }
+
+    function createItemsFromBuilder(builder: TreeBuilderWithSymbols) {
+      return builder
+        .getResult()
+        .getChildren()
+        .map(node => new Item(node));
+    }
+
+    function createTreeWith4ItemsAnd3ValidReferences() {
+      return {
+        // root chidls are Items
         childs: [
           {
             symbol: 0,
@@ -226,113 +242,7 @@ describe('ReferenceSearcher', () => {
           {symbol: 1},
           {symbol: 2},
         ],
-      });
-
-      expect(searcher.search(items)).toHaveLength(3);
-    });
-
-    function init(addFromObjectArgs: AddFromObjectArgs) {
-      builder = new TreeBuilderWithSymbols(undefined, symbolsCount);
-      builder.addFromObject(addFromObjectArgs);
-      items = createItemsFromBuilder(builder);
-    }
-
-    function createItemsFromBuilder(builder: TreeBuilderWithSymbols) {
-      return builder
-        .getResult()
-        .getChildren()
-        .map(node => new Item(node));
+      };
     }
   });
 });
-
-describe('ReferenceSearcherContext', () => {
-  test('should throw exception when addResult without context items set', () => {
-    const context = new ReferenceSearcherContext(createTypeChecker(), []);
-    expect(() => context.addReference({} as Item)).toThrow(
-      ReferenceSearcherError
-    );
-  });
-});
-
-/*
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function example() {
-  const a = {
-    childs: [
-      {},
-      {
-        symbol: 1,
-        childs: [
-          {symbol: 2},
-          {
-            symbol: 2,
-            childs: [
-              {},
-              {
-                symbol: 0,
-                childs: [{symbol: 0}, {symbol: 1}],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
-
-  const c2 = `
-<node>
-<node/>
-<node symbol='1'>
-    <node symbol='2'/>
-    <node  symbol='1'>
-        <node/>
-        <node symbol='0'>
-            <node symbol='0'/>
-         `;
-
-  const z1 = `
--s1
---s2
---s0
----s4
----7
--
---
----3
----
----3
---
--
---
-`;
-
-  const table = [
-    {id: 1, parent: 0, symbol: 2},
-    {id: 2, parent: 0},
-    {id: 3, parent: 0},
-    {id: 4, parent: 1, symbol: 2},
-    {id: 5, parent: 1},
-    {id: 6, parent: 1, symbol: 3},
-    {id: 7, parent: 0},
-    {id: 8, parent: 7},
-    {id: 9, parent: 8},
-    {id: 10, parent: 3},
-  ];
-
-  const c = `
-<node>
-<node/>
-<node symbol='1'>
-    <node symbol='2'/>
-    <node symbol='1'>
-        <node />
-        <node symbol='0'>
-            <node symbol='0'/>
-        </node>
-    </node>
-</node>
-</node>`;
-}
-
-*/
