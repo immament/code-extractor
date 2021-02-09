@@ -31,7 +31,7 @@ describe('ReferenceSearcher', () => {
       expect(searcher.search(items)).toHaveLength(0);
     });
 
-    test('should exlude connection to ancestor', () => {
+    test('should exlude reference to ancestor', () => {
       builder.addChildWithSymbolAndGoTo().addChildWithSymbol();
 
       const items: Item[] = [new Item(builder.currentAsNode)];
@@ -58,7 +58,7 @@ describe('ReferenceSearcher', () => {
       expect(searcher.search(items)).toHaveLength(1);
     });
 
-    test('should find one connection from 3 level', () => {
+    test('should find one reference from 3 level', () => {
       const nodeWithReference = builder
         .addChildAndGoTo()
         .addChildAndGoTo()
@@ -72,7 +72,7 @@ describe('ReferenceSearcher', () => {
       expect(searcher.search(items)).toHaveLength(1);
     });
 
-    test('should find one connection from 4 level', () => {
+    test('should find one reference from 4 level', () => {
       const nodeWithReference = builder
         .addChildAndGoTo()
         .addChildAndGoTo()
@@ -87,7 +87,7 @@ describe('ReferenceSearcher', () => {
       expect(searcher.search(items)).toHaveLength(1);
     });
 
-    test('should find 2 connections from one item in different level', () => {
+    test('should find 2 references from one item in different level', () => {
       const nodeWithReference = builder
         .addChildAndGoTo()
         .addChildAndGoTo()
@@ -102,7 +102,7 @@ describe('ReferenceSearcher', () => {
       expect(searcher.search(items)).toHaveLength(2);
     });
 
-    test('should find 3 connections from one item in the same level', () => {
+    test('should find 3 references from one item in the same level', () => {
       const nodeWithReference = builder
         .addChildAndGoTo()
         .addChildAndGoTo()
@@ -119,7 +119,7 @@ describe('ReferenceSearcher', () => {
       expect(searcher.search(items)).toHaveLength(3);
     });
 
-    test('should find 2 connections from 2 different items', () => {
+    test('should find 2 references from 2 different items', () => {
       const nodeWithReference1 = builder
         .addChildAndGoTo()
         .addChildWithSymbol()
