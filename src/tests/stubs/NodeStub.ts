@@ -48,7 +48,7 @@ export class NodeStub {
   }
 
   getText(): string {
-    return 'text';
+    return 'text-' + this._kind;
   }
 
   // #region Stub helpers
