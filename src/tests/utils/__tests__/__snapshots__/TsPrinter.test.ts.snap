@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TsPrinter with changed options should print node with childs 1`] = `"SourceFile class MyClass { myMe- ClassDeclaration class MyClass { myMe-  Identifier MyClass-  MethodDeclaration myMethod() {}-   Identifier myMethod-   Block {}- EndOfFileToken "`;
+
+exports[`TsPrinter with changed options should print references 1`] = `"From node: Identifier text-FROM:-  ClassDeclaration text-   Identifier text-   MethodDeclaration text-TO:-  FirstStatement text-From node: Identifier text-FROM:-  ClassDeclaration text-   Identifier text-   MethodDeclaration text-TO:-  FirstStatement text-From node: Identifier text-FROM:-  ClassDeclaration text-   Identifier text-   MethodDeclaration text-TO:-  FirstStatement text"`;
+
+exports[`TsPrinter with changed options should printNode without childs result match snampshot 1`] = `"ClassDeclaration text"`;
+
+exports[`TsPrinter with changed options should printNodeWithoutChilds result match snampshot 1`] = `"ClassDeclaration text"`;
+
+exports[`TsPrinter with default options should print node with childs 1`] = `
+"SourceFile
+ ClassDeclaration
+  Identifier
+  MethodDeclaration
+   Identifier
+   Block
+ EndOfFileToken"
+`;
+
+exports[`TsPrinter with default options should print references 1`] = `
+"From node: Identifier
+FROM:
+  ClassDeclaration
+   Identifier
+   MethodDeclaration
+TO:
+  FirstStatement
+From node: Identifier
+FROM:
+  ClassDeclaration
+   Identifier
+   MethodDeclaration
+TO:
+  FirstStatement
+From node: Identifier
+FROM:
+  ClassDeclaration
+   Identifier
+   MethodDeclaration
+TO:
+  FirstStatement"
+`;
+
+exports[`TsPrinter with default options should printNode without childs result match snampshot 1`] = `"ClassDeclaration"`;
+
+exports[`TsPrinter with default options should printNodeWithoutChilds result match snampshot 1`] = `"ClassDeclaration"`;

@@ -1,6 +1,6 @@
 import {Item} from 'src/lib/Item';
 import {Reference} from 'src/lib/Reference';
-import {referencesToNodeIds, toNodeStub} from './stub-mappers';
+import {referencesToNodeIds, asNodeStub} from './stub-mappers';
 
 export function expectReferences(refernces: Reference[]) {
   return {
@@ -10,8 +10,8 @@ export function expectReferences(refernces: Reference[]) {
     ) => {
       expect(referencesToNodeIds(refernces)).toEqual(
         fromToIds.map(([from, to]) => ({
-          fromId: toNodeStub(items[from].getNode()).id,
-          toId: toNodeStub(items[to].getNode()).id,
+          fromId: asNodeStub(items[from].getNode()).id,
+          toId: asNodeStub(items[to].getNode()).id,
         }))
       );
     },

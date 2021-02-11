@@ -9,6 +9,7 @@
     "build"
   ],
   "dependencies": {
+    "chalk": "^4.1.0",
     "loglevel": "^1.7.1",
     "typescript": "^4.1.3"
   },
@@ -31,5 +32,8 @@
     "test::watch": "yarn test --watch",
     "posttest": "yarn run lint",
     "start": "node ."
+  },
+  "engines": {
+    "node": ">=10.6.0"
   }
 }

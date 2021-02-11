@@ -6,7 +6,7 @@ export class Project {
     return this.searchInNode(sourceFile, kinds);
   }
 
-  searchInFiles(sourceFiles: ts.SourceFile[], kinds: number[]) {
+  searchInFiles(sourceFiles: readonly ts.SourceFile[], kinds: number[]) {
     return sourceFiles.flatMap(sf => this.searchInFile(sf, kinds));
   }
 

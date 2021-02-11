@@ -15,9 +15,9 @@ describe('Program', () => {
 
   test('should source files count be', () => {
     const files: [string, string][] = [
-      ['index.ts', 'let v = "Index"'],
-      ['file01.ts', 'let v = "Welcome1"'],
-      ['file02.ts', 'let v = "Welcome2"'],
+      ['/index.ts', 'let v = "Index"'],
+      ['/file01.ts', 'let v = "Welcome1"'],
+      ['/file02.ts', 'let v = "Welcome2"'],
     ];
     const compilerHost = createInMemoryCompilerHost(files);
     const program = new Program({
@@ -30,7 +30,7 @@ describe('Program', () => {
   });
 
   test('should contain index.ts source files', () => {
-    const fileName = 'index.ts';
+    const fileName = '/index.ts';
     const files: [string, string][] = [[fileName, 'let v = "Index"']];
     const compilerHost = createInMemoryCompilerHost(files);
     const program = new Program({

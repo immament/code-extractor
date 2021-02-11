@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import {NodeStub} from './NodeStub';
 
-export function createTypeChecker(): ts.TypeChecker {
+export function createTsTypeChecker(): ts.TypeChecker {
   return (new TypeCheckerStub() as unknown) as ts.TypeChecker;
 }
 

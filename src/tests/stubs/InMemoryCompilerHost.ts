@@ -20,7 +20,10 @@ export class InMemoryCompilerHost implements ts.CompilerHost {
     );
   }
 
-  fileExists = (fileName: string): boolean => this.filesMap.has(fileName);
+  fileExists = (fileName: string): boolean => {
+    return this.filesMap.has(fileName);
+  };
+
   readFile = (fileName: string): string | undefined =>
     this.filesMap.get(fileName);
   getDefaultLibFileName = (options: ts.CompilerOptions): string =>

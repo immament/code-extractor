@@ -1,9 +1,11 @@
 import ts from 'typescript';
 import {Item} from './Item';
+import {ItemCache} from './ItemCache';
 import {Reference} from './Reference';
+import {TypeChecker} from './TypeChecker';
 
 export class ReferenceSearcher {
-  constructor(private typeChecker: ts.TypeChecker) {}
+  constructor(private typeChecker: TypeChecker) {}
 
   search(items: Item[]) {
     const context = this.createContext(items);
@@ -29,7 +31,7 @@ export class ReferenceSearcher {
     node.forEachChild(child => {
       const connectedItem = context.getConnectedItem(child);
       if (connectedItem) {
-        context.addReference(connectedItem);
+        context.addReference(connectedItem, child);
       }
       this.searchInsideNode(child, context);
     });
@@ -39,7 +41,7 @@ export class ReferenceSearcher {
 export class ReferenceSearcherContext {
   #contextItem?: Item;
   private result: Reference[] = [];
-  private symbolMap: Map<ts.Symbol, Item>;
+  private itemCache: ItemCache;
 
   private get contextItem() {
     if (!this.#contextItem) {
@@ -48,8 +50,8 @@ export class ReferenceSearcherContext {
     return this.#contextItem;
   }
 
-  constructor(private typeChecker: ts.TypeChecker, items: Item[]) {
-    this.symbolMap = this.createSymbolToItemMap(items);
+  constructor(typeChecker: TypeChecker, items: Item[]) {
+    this.itemCache = new ItemCache(typeChecker, items);
   }
 
   setContextItem(item: Item) {
@@ -60,45 +62,24 @@ export class ReferenceSearcherContext {
     return this.result;
   }
 
-  addReference(item: Item) {
-    this.result.push(new Reference(this.contextItem, item));
+  addReference(item: Item, fromNode?: ts.Node) {
+    const reference = new Reference(this.contextItem, item);
+    reference.fromNode = fromNode;
+    this.result.push(reference);
   }
 
   hasItemsToFound() {
-    return this.symbolMap.size > 0;
+    return this.itemCache.hasItemsToFound();
   }
 
   getConnectedItem(node: ts.Node): Item | undefined {
-    const symbol = this.getSymbol(node);
-    const item = symbol && this.getItemForSymbol(symbol);
-    return item && this.isNotContextItem(item) ? item : undefined;
-  }
-
-  private getItemForSymbol(symbol: ts.Symbol) {
-    return this.symbolMap.get(symbol);
+    const item = this.itemCache.getItemForNode(node);
+    if (item && this.isNotContextItem(item)) return item;
+    return;
   }
 
   private isNotContextItem(item: Item): boolean {
     return item.getNode() !== this.contextItem.getNode();
-  }
-
-  private getSymbol(node: ts.Node) {
-    return (
-      (node as {symbol?: ts.Symbol}).symbol ||
-      this.typeChecker.getSymbolAtLocation(node)
-      //  TODO: check if should get from name
-      // ||
-      // ((item.getNode() as any).name &&
-      //   this.getSymbol((item.getNode() as any).name));
-    );
-  }
-
-  private createSymbolToItemMap(items: Item[]) {
-    return items.reduce((symbolMap, item) => {
-      const symbol = this.getSymbol(item.getNode());
-      if (symbol) symbolMap.set(symbol, item);
-      return symbolMap;
-    }, new Map<ts.Symbol, Item>());
   }
 }
 

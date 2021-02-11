@@ -47,6 +47,10 @@ export class NodeStub {
     return;
   }
 
+  getText(): string {
+    return 'text';
+  }
+
   // #region Stub helpers
   getChildCount(): number {
     return this._childs.length;
@@ -67,4 +71,5 @@ export class NodeStub {
   getSymbol(): ts.Symbol | undefined {
     return this.#symbol;
   }
+  // #endregion
 }

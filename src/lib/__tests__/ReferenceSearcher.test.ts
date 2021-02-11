@@ -6,18 +6,19 @@ import {
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 
-import {createTypeChecker} from '@tests/stubs/TypeCheckerStub';
+import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
 import {NodeStub} from '@tests/stubs/NodeStub';
-import {referencesToNodeIds, toNodeStub} from '@tests/utils/stub-mappers';
-import {Reference} from '../Reference';
+import {asNodeStub, referencesToNodeIds} from '@tests/utils/stub-mappers';
+
 import {expectReferences} from '@tests/utils/expects';
+import {TypeChecker} from '../TypeChecker';
 
 describe('ReferenceSearcher', () => {
   let builder: TreeBuilderWithSymbols;
   let searcher: ReferenceSearcher;
 
   beforeEach(() => {
-    searcher = new ReferenceSearcher(createTypeChecker());
+    searcher = new ReferenceSearcher(new TypeChecker(createTsTypeChecker()));
   });
 
   describe('Not find anything', () => {
@@ -242,6 +243,22 @@ describe('ReferenceSearcher', () => {
         [0, 2],
         [0, 1],
       ]);
+    });
+
+    // TODO REMOVE
+    test('should ', () => {
+      init({
+        childs: [{kind: 1, symbol: 0, childs: [{kind: 2, symbol: 1}]}],
+      });
+
+      const childNode = asNodeStub(items[0].getNode()).getChild(0);
+      //console.log(childNode);
+      //console.log(builder.getResult());
+      items.push(new Item(childNode.asNode()));
+
+      const searchResult = searcher.search(items);
+      //console.log(searchResult);
+      expectReferences(searchResult).toBeFromItemToItem(items, [[0, 1]]);
     });
 
     function init(addFromObjectArgs: AddFromObjectArgs) {
