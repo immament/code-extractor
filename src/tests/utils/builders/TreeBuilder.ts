@@ -1,4 +1,4 @@
-import {CreateNodeArgs, NodeStub} from '../stubs/NodeStub';
+import {CreateNodeArgs, NodeStub} from '../../stubs/NodeStub';
 
 export class TreeBuilder {
   #currentNode?: NodeStub;

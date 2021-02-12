@@ -1,16 +1,14 @@
-import {Program} from '../Program';
-import {createInMemoryCompilerHost} from '@tests/utils/createInMemoryCompilerHost';
-import {InMemoryCompilerHost} from '@tests/stubs/InMemoryCompilerHost';
+import {createProgram} from '@tests/utils/builders/createProgram';
 
 describe('Program', () => {
   test('should create ts.Program', () => {
-    const compilerHost = new InMemoryCompilerHost();
-    const program = new Program({
-      rootNames: [],
-      options: {},
-      host: compilerHost,
-    });
+    const program = createProgram([]);
     expect(program.tsProgram).toBeDefined();
+  });
+
+  test('should getTypeChecker called twice returns the same instance', () => {
+    const program = createProgram([]);
+    expect(program.getTypeChecker()).toBe(program.getTypeChecker());
   });
 
   test('should source files count be', () => {
@@ -19,30 +17,15 @@ describe('Program', () => {
       ['/file01.ts', 'let v = "Welcome1"'],
       ['/file02.ts', 'let v = "Welcome2"'],
     ];
-    const compilerHost = createInMemoryCompilerHost(files);
-    const program = new Program({
-      rootNames: getFilesNames(files),
-      options: {},
-      host: compilerHost,
-    });
+    const program = createProgram(files);
 
     expect(program.tsProgram.getSourceFiles()).toHaveLength(3);
   });
 
   test('should contain index.ts source files', () => {
     const fileName = '/index.ts';
-    const files: [string, string][] = [[fileName, 'let v = "Index"']];
-    const compilerHost = createInMemoryCompilerHost(files);
-    const program = new Program({
-      rootNames: getFilesNames(files),
-      options: {},
-      host: compilerHost,
-    });
+    const program = createProgram([[fileName, 'let v = "Index"']]);
 
     expect(program.tsProgram.getSourceFile(fileName)?.fileName).toBe(fileName);
   });
-
-  function getFilesNames(files: [string, string][]) {
-    return files.map(([name]) => name);
-  }
 });

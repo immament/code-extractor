@@ -2,7 +2,7 @@ import ts from 'typescript';
 import {
   AddFromObjectArgs,
   TreeBuilderWithSymbols,
-} from '@tests/utils/TreeBuilderWithSymbols';
+} from '@tests/utils/builders/TreeBuilderWithSymbols';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Item} from '../Item';
 

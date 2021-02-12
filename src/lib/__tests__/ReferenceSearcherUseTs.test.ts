@@ -1,11 +1,9 @@
-import ts from 'typescript';
+import ts from '@lib/typescript';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Project} from '../Project';
 import {Program} from '../Program';
-import {createInMemoryCompilerHost} from '@tests/utils/createInMemoryCompilerHost';
-
 import {TypeChecker} from '../TypeChecker';
-import tsPrinter from '@tests/utils/TsPrinter';
+import {createProgram} from '@tests/utils/builders/createProgram';
 
 describe('ReferenceSearcher with TS', () => {
   let searcher: ReferenceSearcher;
@@ -68,7 +66,7 @@ describe('ReferenceSearcher with TS', () => {
 
       expect(items).toHaveLength(2);
       const references = searcher.search(items);
-      console.log(tsPrinter.printReferences(references));
+      //console.log(tsPrinter.printReferences(references));
       expect(references.length).toBe(0);
     });
   });
@@ -116,9 +114,7 @@ describe('ReferenceSearcher with TS', () => {
            }
            const v1 = myFunction;
            const v2 = myFunction();
-           const v3 = () => myFunction();
-
-           `,
+           const v3 = () => myFunction();`,
         ],
       ]);
       const items = searchItems([
@@ -134,61 +130,26 @@ describe('ReferenceSearcher with TS', () => {
 
     test('should find vaiable references when use import alias', () => {
       init([
-        [
-          '/index.ts',
-          `export interface MyInterface {}
-        export class MyClass {
-        export function myFunction() { }
-        export const myVariable = 1;
-      }
-        `,
-        ],
+        ['/index.ts', 'export interface MyInterface {}'],
         [
           '/file.ts',
-          `
-        //import { myVariable as alias2 } from '.'
-        //   function fun1() { return alias2; }
-        //   function fun2(arg: typeof alias2 ) { }
-        //  function fun3() { return alias2; }
-         class ClassA {
-           method1() {
-              let y = 0;
-           }
-         }
-          // const v1 = alias2;
-          // const v2 = () => alias2;
-         `,
+          `import { MyInterface as alias2 } from '.'
+        const a: alias2;`,
         ],
       ]);
       const items = searchItems([
         ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.ClassDeclaration,
         ts.SyntaxKind.VariableDeclaration,
-        ts.SyntaxKind.FunctionDeclaration,
       ]);
 
-      //expect(items).toHaveLength(11);
+      expect(items).toHaveLength(2);
       const searchResult = searcher.search(items);
-      expect(searchResult.length).toBe(2);
+      expect(searchResult.length).toBe(1);
     });
   });
 
   function init(files: [name: string, content: string][]) {
-    const compilerHost = createInMemoryCompilerHost(files);
-    program = new Program({
-      rootNames: files.map(([name]) => name),
-      options: {},
-      host: compilerHost,
-    });
-
-    // program = new Program({
-    //   rootNames: [
-    //     createPathToTestFile('interface.ts'),
-    //     createPathToTestFile('file.ts'),
-    //   ],
-    //   options: {},
-    // });
-
+    program = createProgram(files);
     searcher = new ReferenceSearcher(
       new TypeChecker(program.tsProgram.getTypeChecker())
     );

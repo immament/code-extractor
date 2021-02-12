@@ -29,7 +29,7 @@
     "prepare": "yarn run compile",
     "pretest": "yarn run compile",
     "test": "jest",
-    "test::watch": "yarn test --watch",
+    "test:watch": "yarn test --watch",
     "posttest": "yarn run lint",
     "start": "node ."
   },

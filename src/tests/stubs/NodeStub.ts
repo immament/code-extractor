@@ -51,6 +51,10 @@ export class NodeStub {
     return 'text-' + this._kind;
   }
 
+  getSourceFile() {
+    return 'index.ts';
+  }
+
   // #region Stub helpers
   getChildCount(): number {
     return this._childs.length;

@@ -4,9 +4,7 @@ import ts from 'typescript';
 export class InMemoryCompilerHost implements ts.CompilerHost {
   #sourceFilesMap = new Map<string, ts.SourceFile>();
 
-  constructor(
-    private filesMap: Map<string, string> = new Map<string, string>()
-  ) {}
+  constructor(private filesMap: Map<string, string>) {}
 
   getSourceFile(
     fileName: string,
@@ -32,9 +30,7 @@ export class InMemoryCompilerHost implements ts.CompilerHost {
   getCanonicalFileName = (fileName: string): string => fileName;
   useCaseSensitiveFileNames = (): boolean => true;
   getNewLine = (): string => EOL;
-  writeFile: ts.WriteFileCallback = () => {
-    throw new Error('Method not implemented.');
-  };
+  writeFile: ts.WriteFileCallback = () => {};
 
   private createSourceFile(fileName: string, languageVersion: ts.ScriptTarget) {
     const fileContent = this.readFile(fileName);

@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import {Project} from '../Project';
-import {createSourceFile} from '@tests/utils/createSourceFile';
+import {createSourceFile} from '@tests/utils/builders/createSourceFile';
 
 test('should find variable declaration', () => {
   const project = new Project();

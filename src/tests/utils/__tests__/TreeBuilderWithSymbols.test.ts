@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import {TreeBuilderWithSymbols} from '../TreeBuilderWithSymbols';
+import {TreeBuilderWithSymbols} from '../builders/TreeBuilderWithSymbols';
 
 describe('TreeBuilderWithSymbols', () => {
   let builder: TreeBuilderWithSymbols;

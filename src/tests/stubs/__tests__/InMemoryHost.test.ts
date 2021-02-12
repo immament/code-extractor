@@ -98,20 +98,3 @@ describe('InMemoryCompilerHost', () => {
     });
   });
 });
-
-// function tsProgram() {
-//   const fsMap = new Map<string, string>();
-//   fsMap.set('index.ts', 'const a = "Hello World"');
-
-//   const compilerOptions = {};
-
-//   const host = createCompilerHost(compilerOptions);
-
-//   const program = ts.createProgram({
-//     rootNames: [...fsMap.keys()],
-//     options: compilerOptions,
-//     host: host.compilerHost,
-//   });
-
-//   return program;
-//}

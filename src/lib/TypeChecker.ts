@@ -5,10 +5,6 @@ interface NodeWithSymbol extends ts.Node {
 }
 
 export class TypeChecker {
-  get tsTypeChecker() {
-    return this.typeChecker;
-  }
-
   constructor(private typeChecker: ts.TypeChecker) {}
 
   getSymbol(node: ts.Node) {

@@ -1,4 +1,4 @@
-import {TreeBuilder, TreeBuilderError} from '../TreeBuilder';
+import {TreeBuilder, TreeBuilderError} from '../builders/TreeBuilder';
 
 describe('TreeBuilder', () => {
   let builder: TreeBuilder;

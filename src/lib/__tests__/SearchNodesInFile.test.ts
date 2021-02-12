@@ -1,4 +1,4 @@
-import {createSourceFile} from '@tests/utils/createSourceFile';
+import {createSourceFile} from '@tests/utils/builders/createSourceFile';
 import ts from 'typescript';
 import {Project} from '../Project';
 
