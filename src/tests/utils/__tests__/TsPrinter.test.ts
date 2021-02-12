@@ -56,7 +56,11 @@ describe('TsPrinter with changed options', () => {
   let printer: TsPrinter;
 
   beforeEach(() => {
-    printer = new TsPrinter({joinLineCharacter: '-', textFragmentLength: 20});
+    printer = new TsPrinter({
+      joinLineCharacter: '-',
+      textFragmentLength: 20,
+      useColors: false,
+    });
   });
 
   test('should printNode without childs result match snampshot', () => {

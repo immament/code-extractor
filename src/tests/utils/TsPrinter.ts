@@ -17,7 +17,7 @@ interface TsPrinterOptions {
 }
 
 const defaultTsPrinterOptions: TsPrinterOptions = {
-  colors: dummyColors,
+  colors: colors,
   textFragmentLength: 0,
   joinLineCharacter: EOL,
 };
@@ -40,7 +40,7 @@ export class TsPrinter {
     return {
       ...defaultTsPrinterOptions,
       ...optionsFromArgs,
-      colors: this.initColors(args.useColors),
+      colors: this.initColors(args.useColors ?? true),
     };
   }
 
@@ -77,7 +77,7 @@ export class TsPrinter {
     return result;
   }
 
-  private initColors(useColors?: boolean) {
+  private initColors(useColors: boolean) {
     return useColors ? colors : dummyColors;
   }
 
