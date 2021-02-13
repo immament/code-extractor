@@ -1,9 +1,9 @@
 import ts from 'typescript';
-import {Project} from '../Project';
+import {NodeSearcher} from '../NodeSearcher';
 import {createSourceFile} from '@tests/utils/builders/createSourceFile';
 
 test('should find variable declaration', () => {
-  const project = new Project();
+  const project = new NodeSearcher();
   const sourceFile = createSourceFile('index.ts', 'let v = "Index"');
   expect(
     project.searchInFile(sourceFile, [ts.SyntaxKind.VariableDeclaration])
@@ -11,7 +11,7 @@ test('should find variable declaration', () => {
 });
 
 test('should find class declaration', () => {
-  const project = new Project();
+  const project = new NodeSearcher();
   const sourceFile = createSourceFile(
     'index.ts',
     `class MyClass {
@@ -24,7 +24,7 @@ test('should find class declaration', () => {
 });
 
 test('should find 5 declarations', () => {
-  const project = new Project();
+  const project = new NodeSearcher();
   const sourceFile = createSourceFile(
     'index.ts',
     `class MyClass {}

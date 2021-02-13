@@ -1,15 +1,15 @@
 import {createSourceFile} from '@tests/utils/builders/createSourceFile';
 import ts from 'typescript';
-import {Project} from '../Project';
+import {NodeSearcher} from '../NodeSearcher';
 
 describe('Search Nodes in Files', () => {
-  let project: Project;
+  let nodeSearcher: NodeSearcher;
   beforeEach(() => {
-    project = new Project();
+    nodeSearcher = new NodeSearcher();
   });
   test('should return empty table when not find anything', () => {
     const sourceFiles: ts.SourceFile[] = [];
-    expect(project.searchInFiles(sourceFiles, [])).toHaveLength(0);
+    expect(nodeSearcher.searchInFiles(sourceFiles, [])).toHaveLength(0);
   });
 
   test('should find class declaration when in file ', () => {
@@ -22,7 +22,9 @@ describe('Search Nodes in Files', () => {
     }`
       ),
     ];
-    expect(project.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(1);
+    expect(nodeSearcher.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(
+      1
+    );
   });
 
   test('should find 3 class declaration`s in 2 files ', () => {
@@ -44,11 +46,13 @@ describe('Search Nodes in Files', () => {
       class MyClass3 { }`
       ),
     ];
-    expect(project.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(3);
+    expect(nodeSearcher.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(
+      3
+    );
   });
 
   test('should find 3 class declaration`s in 2 files ', () => {
-    const project = new Project();
+    const project = new NodeSearcher();
     const sourceFiles = [
       createSourceFile(
         'index.ts',

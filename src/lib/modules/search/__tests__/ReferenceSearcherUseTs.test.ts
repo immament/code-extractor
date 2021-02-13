@@ -1,13 +1,13 @@
 import ts from 'typescript';
 import {ReferenceSearcher} from '../ReferenceSearcher';
-import {Project} from '../Project';
+import {NodeSearcher} from '../NodeSearcher';
 import {Program} from '../../compiler/domain/Program';
-import {TypeChecker} from '../../compiler/domain/TypeChecker';
+
 import {createProgram} from '@tests/utils/builders/createProgram';
 
 describe('ReferenceSearcher with TS', () => {
   let searcher: ReferenceSearcher;
-  let project: Project;
+  let project: NodeSearcher;
   let program: Program;
 
   describe('Search in one file', () => {
@@ -150,15 +150,16 @@ describe('ReferenceSearcher with TS', () => {
 
   function init(files: [name: string, content: string][]) {
     program = createProgram(files);
-    searcher = new ReferenceSearcher(
-      new TypeChecker(program.tsProgram.getTypeChecker())
-    );
-    project = new Project();
+    searcher = new ReferenceSearcher(program.getTypeChecker());
+    project = new NodeSearcher(program.getContext());
   }
 
   function searchItems(kinds: ts.SyntaxKind[]) {
-    const sourceFiles = program.tsProgram.getSourceFiles();
+    const sourceFiles = program.getSourceFiles();
     // .filter(sf => !sf.isDeclarationFile);
-    return project.searchInFiles(sourceFiles, kinds);
+    return project.searchInFiles(
+      sourceFiles.map(sf => sf.internal),
+      kinds
+    );
   }
 });

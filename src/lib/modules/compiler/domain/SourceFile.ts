@@ -1,54 +1,36 @@
 import ts from 'typescript';
-import {Program} from './Program';
-import {TypeChecker} from './TypeChecker';
+import {Declaration} from './Declaration';
+import {Node} from './Node';
+import {ProgramContext} from './ProgramContext';
+import {SymbolIml} from './SymbolIml';
 
-export class Context {
-  private readonly typeChecker: TypeChecker;
+export class SourceFile extends Node {
+  protected tsNode: ts.SourceFile;
 
-  constructor(program: Program) {
-    this.typeChecker = program.getTypeChecker();
-  }
-
-  getTypeChecker() {
-    return this.typeChecker;
-  }
-}
-
-export class SourceFile {
-  #internal: ts.SourceFile;
-
-  constructor(private context: Context, tsSourceFile: ts.SourceFile) {
-    this.#internal = tsSourceFile;
+  constructor(context: ProgramContext, tsSourceFile: ts.SourceFile) {
+    super(context, tsSourceFile);
+    this.tsNode = tsSourceFile;
   }
 
   get internal() {
-    return this.#internal;
+    return this.tsNode;
   }
 
-  getSymbol() {
-    return this.context.getTypeChecker().getTsSymbol(this.#internal);
+  getFileName(): string {
+    return this.tsNode.fileName;
   }
 
-  getExports() {
-    const sourceFileSymbol = this.getSymbol();
+  getExports(): SymbolIml[] {
+    const symbol = this.getSymbol();
+    if (!symbol) return [];
 
-    if (!sourceFileSymbol) return;
-
-    const symbols = this.context
-      .getTypeChecker()
-      .getExportsOfModule(sourceFileSymbol);
-    return symbols;
+    const symbols = this.context.getTypeChecker().getExportsOfModule(symbol);
+    return symbols.map(s => new SymbolIml(this.context, s));
   }
 
-  getExportsDeclarations(): ts.Declaration[] {
+  getExportsDeclarations(): Declaration[] {
     const exports = this.getExports();
     if (!exports) return [];
-    return exports
-      .flatMap(symbol => symbol.getDeclarations())
-      .filter<ts.Declaration>(asDeclaration);
+    return exports.flatMap(symbol => symbol.getDeclarations());
   }
-}
-
-function asDeclaration(node: ts.Node | undefined): node is ts.Declaration {
-  return !!node;
 }

@@ -10,8 +10,8 @@ export function expectReferences(refernces: Reference[]) {
     ) => {
       expect(referencesToNodeIds(refernces)).toEqual(
         fromToIds.map(([from, to]) => ({
-          fromId: asNodeStub(items[from].getNode()).id,
-          toId: asNodeStub(items[to].getNode()).id,
+          fromId: asNodeStub(items[from].getTsNode()).id,
+          toId: asNodeStub(items[to].getTsNode()).id,
         }))
       );
     },

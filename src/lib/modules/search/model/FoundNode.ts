@@ -1,13 +1,18 @@
+import {Node} from '@lib/modules/compiler/domain/Node';
 import ts from 'typescript';
 
 export class FoundNode {
   private kind: number;
 
-  constructor(private node: ts.Node) {
+  constructor(private node: ts.Node, private _node?: Node) {
     this.kind = node.kind;
   }
 
-  getNode() {
+  getTsNode() {
     return this.node;
+  }
+
+  getNode() {
+    return this._node!;
   }
 }

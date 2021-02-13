@@ -1,15 +1,23 @@
 import ts from 'typescript';
+import {Node} from './Node';
+import {ProgramContext} from './ProgramContext';
+import {SymbolIml} from './SymbolIml';
 
 interface NodeWithSymbol extends ts.Node {
   symbol?: ts.Symbol;
 }
 
 export class TypeChecker {
+  private symbolCache = new Map<Node, SymbolIml>();
+
   public get tsTypeChecker(): ts.TypeChecker {
     return this._tsTypeChecker;
   }
 
-  constructor(private _tsTypeChecker: ts.TypeChecker) {}
+  constructor(
+    private context: ProgramContext,
+    private _tsTypeChecker: ts.TypeChecker
+  ) {}
 
   getTsSymbol(node: ts.Node) {
     const symbol =
@@ -23,8 +31,22 @@ export class TypeChecker {
     return symbol && this.skipAliasses(symbol);
   }
 
-  getExportsOfModule(symbol: ts.Symbol) {
-    return this.tsTypeChecker.getExportsOfModule(symbol);
+  getSymbol(node: Node): SymbolIml | undefined {
+    return this.symbolCache.get(node) ?? this.loadSymbol(node);
+  }
+
+  private loadSymbol(node: Node): SymbolIml | undefined {
+    const tsSymbol = this.getTsSymbol(node.internal);
+    if (tsSymbol) {
+      const symbol = new SymbolIml(this.context, tsSymbol);
+      this.symbolCache.set(node, symbol);
+      return symbol;
+    }
+    return;
+  }
+
+  getExportsOfModule(symbol: SymbolIml) {
+    return this.tsTypeChecker.getExportsOfModule(symbol.internal);
   }
 
   private getSymbolAssignToNode(node: NodeWithSymbol) {

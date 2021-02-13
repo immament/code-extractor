@@ -1,41 +1,42 @@
 import ts from 'typescript';
-import {Context, SourceFile} from './SourceFile';
+import {SourceFile} from './SourceFile';
+import {ProgramContext} from './ProgramContext';
 import {TypeChecker} from './TypeChecker';
 
 export class Program {
   readonly #tsProgram: ts.Program;
-  readonly #context: Context;
-
-  get tsProgram(): ts.Program {
-    return this.#tsProgram;
-  }
-
-  #typeChecker?: TypeChecker;
+  readonly #context: ProgramContext;
+  readonly #typeChecker: TypeChecker;
 
   constructor(options: ts.CreateProgramOptions) {
-    this.#tsProgram = this.createProgram(options);
-    this.#context = new Context(this);
+    this.#tsProgram = ts.createProgram(options);
+    this.#context = new ProgramContext(this);
+    this.#typeChecker = new TypeChecker(
+      this.#context,
+      this.#tsProgram.getTypeChecker()
+    );
   }
 
-  getContext() {
+  getContext(): ProgramContext {
     return this.#context;
   }
 
-  getTypeChecker() {
-    return (this.#typeChecker ??= new TypeChecker(
-      this.#tsProgram.getTypeChecker()
-    ));
+  getTypeChecker(): TypeChecker {
+    return this.#typeChecker;
   }
 
-  getSourceFile(fileName: string) {
+  // TODO: use cache
+  getSourceFile(fileName: string): SourceFile | undefined {
     const tsSourceFile = this.#tsProgram.getSourceFile(fileName);
     if (tsSourceFile) {
       return new SourceFile(this.#context, tsSourceFile);
     }
     return;
   }
-
-  private createProgram(options: ts.CreateProgramOptions) {
-    return ts.createProgram(options);
+  // TODO: use cache
+  getSourceFiles(): SourceFile[] {
+    return this.#tsProgram
+      .getSourceFiles()
+      .map(sf => new SourceFile(this.#context, sf));
   }
 }

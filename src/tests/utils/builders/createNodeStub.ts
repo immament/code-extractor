@@ -1,12 +1,12 @@
 import {CreateNodeArgs, NodeStub} from '@tests/stubs/NodeStub';
 import ts from 'typescript';
 
-export function createNodeStub(args: CreateNodeArgs) {
+export function createTsNodeStub(args: CreateNodeArgs) {
   args = {kind: ts.SyntaxKind.VariableStatement, ...args};
   return new NodeStub(args);
 }
 
-export function createNodeStubWithChilds() {
+export function createTsNodeStubWithChilds() {
   return new NodeStub({
     kind: ts.SyntaxKind.ClassDeclaration,
     childs: [

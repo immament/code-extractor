@@ -1,8 +1,8 @@
 import ts from 'typescript';
 import {FoundNode} from './model/FoundNode';
-import {FoundNodeCache} from './ItemCache';
-import {Reference} from './model/Reference';
 import {TypeChecker} from '../compiler/domain/TypeChecker';
+import {ReferenceSearcherContext} from './ReferenceSearcherContext';
+import {Node} from '../compiler/domain/Node';
 
 export class ReferenceSearcher {
   constructor(private typeChecker: TypeChecker) {}
@@ -23,66 +23,31 @@ export class ReferenceSearcher {
     context: ReferenceSearcherContext
   ) {
     items.forEach(item => {
-      context.setContextItem(item);
-      this.searchInsideNode(item.getNode(), context);
+      context.setContextFoundNode(item);
+      this.searchInsideTsNode(item.getTsNode(), context);
     });
 
     return context.getResult();
   }
 
-  private searchInsideNode(node: ts.Node, context: ReferenceSearcherContext) {
+  private searchInsideTsNode(node: ts.Node, context: ReferenceSearcherContext) {
     node.forEachChild(child => {
-      const connectedItem = context.getConnectedItem(child);
+      const connectedItem = context.getConnectedItemToTsNode(child);
       if (connectedItem) {
         context.addReference(connectedItem, child);
       }
-      this.searchInsideNode(child, context);
+      this.searchInsideTsNode(child, context);
     });
   }
-}
 
-export class ReferenceSearcherContext {
-  #contextItem?: FoundNode;
-  private result: Reference[] = [];
-  private itemCache: FoundNodeCache;
-
-  private get contextItem() {
-    if (!this.#contextItem) {
-      throw new ReferenceSearcherError('Context item not set');
-    }
-    return this.#contextItem;
-  }
-
-  constructor(typeChecker: TypeChecker, items: FoundNode[]) {
-    this.itemCache = new FoundNodeCache(typeChecker, items);
-  }
-
-  setContextItem(item: FoundNode) {
-    this.#contextItem = item;
-  }
-
-  getResult() {
-    return this.result;
-  }
-
-  addReference(item: FoundNode, fromNode?: ts.Node) {
-    const reference = new Reference(this.contextItem, item);
-    reference.fromNode = fromNode;
-    this.result.push(reference);
-  }
-
-  hasItemsToFound() {
-    return this.itemCache.hasItemsToFound();
-  }
-
-  getConnectedItem(node: ts.Node): FoundNode | undefined {
-    const item = this.itemCache.getItemForNode(node);
-    if (item && this.isNotContextItem(item)) return item;
-    return;
-  }
-
-  private isNotContextItem(item: FoundNode): boolean {
-    return item.getNode() !== this.contextItem.getNode();
+  private searchInsideNode(node: Node, context: ReferenceSearcherContext) {
+    node.forEachChild(child => {
+      const connectedItem = context.getConnectedItem(child);
+      if (connectedItem) {
+        context.addReference(connectedItem, child.internal);
+      }
+      this.searchInsideNode(child, context);
+    });
   }
 }
 

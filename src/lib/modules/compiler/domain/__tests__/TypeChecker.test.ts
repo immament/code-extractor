@@ -9,9 +9,9 @@ describe('TypeChecker', () => {
   function init(files: [string, string][]) {
     const program = createProgram(files);
     typeChecker = program.getTypeChecker();
-    const sourceFile = program.tsProgram.getSourceFile('/file2.ts');
+    const sourceFile = program.getSourceFile('/file2.ts');
     expect(sourceFile).toBeDefined();
-    testNode = search(sourceFile!, ts.isCallExpression)!;
+    testNode = search(sourceFile!.internal, ts.isCallExpression)!;
   }
 
   beforeEach(() => {});

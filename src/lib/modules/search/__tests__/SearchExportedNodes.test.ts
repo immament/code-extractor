@@ -1,25 +1,24 @@
-import {Project} from '../Project';
+import {NodeSearcher} from '../NodeSearcher';
 import {createProgram} from '@tests/utils/builders/createProgram';
 import {Program} from '@lib/modules/compiler/domain/Program';
 import ts from 'typescript';
 
 describe('Search exported nodes in source file', () => {
-  let project: Project;
+  let project: NodeSearcher;
   let program: Program;
   beforeEach(() => {
-    project = new Project();
+    project = new NodeSearcher();
   });
 
   test('should find ClassDeclaration', () => {
     init([['/index.ts', 'export class MyClass {}']]);
 
     const result = project.searchExportedDeclarations(
-      program,
-      program.tsProgram.getSourceFile('/index.ts')!,
+      program.getSourceFile('/index.ts')!,
       [ts.SyntaxKind.ClassDeclaration]
     );
     expect(result).toHaveLength(1);
-    expect(result[0].getNode().kind).toBe(ts.SyntaxKind.ClassDeclaration);
+    expect(result[0].getTsNode().kind).toBe(ts.SyntaxKind.ClassDeclaration);
   });
 
   test('should find 3 items', () => {
@@ -37,8 +36,7 @@ describe('Search exported nodes in source file', () => {
     ]);
 
     const result = project.searchExportedDeclarations(
-      program,
-      program.tsProgram.getSourceFile('/index.ts')!,
+      program.getSourceFile('/index.ts')!,
       [
         ts.SyntaxKind.InterfaceDeclaration,
         ts.SyntaxKind.ClassDeclaration,
@@ -69,9 +67,8 @@ describe('Search exported nodes in source file', () => {
       ],
     ]);
 
-    const result = project.searchInFilesExp(
-      program,
-      program.tsProgram.getSourceFiles(),
+    const result = project.searchExportedDeclarationsInFiles(
+      program.getSourceFiles(),
       [
         ts.SyntaxKind.InterfaceDeclaration,
         ts.SyntaxKind.ClassDeclaration,
