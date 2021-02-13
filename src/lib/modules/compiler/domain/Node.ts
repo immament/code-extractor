@@ -2,6 +2,7 @@ import ts from 'typescript';
 import {ProgramContext} from './ProgramContext';
 import {SymbolIml} from './SymbolIml';
 
+// TODO: should have parent
 export class Node {
   readonly kind: ts.SyntaxKind;
   #symbol?: SymbolIml;
@@ -23,9 +24,14 @@ export class Node {
     return (this.#symbol ??= this.context.getTypeChecker().getSymbol(this));
   }
 
-  forEachChild<T>(cbNode: (node: Node) => T | undefined): T | undefined {
-    this.getChilds().map(node => cbNode(node));
-    return;
+  forEachChild(cbNode: (node: Node) => Node | undefined) {
+    let result: Node | undefined;
+
+    this.getChilds().some(node => {
+      return (result = cbNode(node));
+    });
+
+    return result;
   }
 
   private getChilds(): Node[] {
@@ -34,9 +40,10 @@ export class Node {
 
   private loadChilds() {
     const childs: Node[] = [];
-    this.internal.forEachChild(child =>
-      childs.push(new Node(this.context, child))
-    );
+    this.internal.forEachChild(child => {
+      // WARNING! return value break loop
+      childs.push(new Node(this.context, child));
+    });
     return childs;
   }
 }

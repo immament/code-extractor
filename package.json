@@ -6,7 +6,7 @@
   "author": "immament",
   "license": "MIT",
   "files": [
-    "build"
+    "build/lib"
   ],
   "dependencies": {
     "chalk": "^4.1.0",

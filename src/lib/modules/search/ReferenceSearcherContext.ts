@@ -1,10 +1,10 @@
 import ts from 'typescript';
-import {FoundNode} from './model/FoundNode';
-import {FoundNodeCache} from './FoundNodeCache';
-import {Reference} from './model/Reference';
-import {TypeChecker} from '../compiler/domain/TypeChecker';
-import {ReferenceSearcherError} from './ReferenceSearcher';
 import {Node} from '../compiler/domain/Node';
+import {TypeChecker} from '../compiler/domain/TypeChecker';
+import {FoundNodeCache} from './FoundNodeCache';
+import {FoundNode} from './model/FoundNode';
+import {Reference} from './model/Reference';
+import {ReferenceSearcherError} from './ReferenceSearcher';
 
 export class ReferenceSearcherContext {
   #contextFoundNode?: FoundNode;
@@ -19,7 +19,7 @@ export class ReferenceSearcherContext {
   }
 
   constructor(typeChecker: TypeChecker, items: FoundNode[]) {
-    this.itemCache = new FoundNodeCache(typeChecker, items);
+    this.itemCache = new FoundNodeCache(items);
   }
 
   setContextFoundNode(item: FoundNode) {
@@ -40,11 +40,6 @@ export class ReferenceSearcherContext {
     return this.itemCache.hasItemsToFound();
   }
 
-  getConnectedItemToTsNode(node: ts.Node): FoundNode | undefined {
-    const item = this.itemCache.getItemForTsNode(node);
-    if (item && !this.isContextItem(item)) return item;
-    return;
-  }
   getConnectedItem(node: Node): FoundNode | undefined {
     const item = this.itemCache.getItemForNode(node);
     if (item && !this.isContextItem(item)) return item;

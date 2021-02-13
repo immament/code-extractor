@@ -1,6 +1,6 @@
 import {
-  createInMemoryCompilerHost,
   InMemoryFile,
+  createInMemoryCompilerHost,
 } from '@tests/utils/builders/createInMemoryCompilerHost';
 
 describe('createInMemoryCompilerHost', () => {

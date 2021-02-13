@@ -1,7 +1,7 @@
 import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import {EOL} from 'os';
 import {Reference} from '@lib/modules/search/model/Reference';
-import {colors, Colors, dummyColors} from './colors';
+import {Colors, colors, dummyColors} from './colors';
 import {pick} from '../type-utils';
 import {NodePrinter} from './NodePrinter';
 

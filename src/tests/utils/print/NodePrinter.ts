@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import {Colors} from './colors';
-import {TsPrinterOptions, TsPrinter} from './TsPrinter';
+import {TsPrinter, TsPrinterOptions} from './TsPrinter';
 
 export type PrintNodeCallback = (
   node: ts.Node,

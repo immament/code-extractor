@@ -54,21 +54,23 @@ describe('ReferenceSearcher with TS', () => {
       expect(searcher.search(items).length).toBe(1);
     });
 
-    test.skip('copy - should ... Item inside Item', () => {
-      init([
-        ['/index.ts', 'class MyClass { method() {  const variable = 1; } }'],
-      ]);
+    test.todo('copy - should ... Item inside Item');
+    // , () => {
+    //   // TODO: później
+    //   init([
+    //     ['/index.ts', 'class MyClass { method() {  const variable = 1; } }'],
+    //   ]);
 
-      const items = searchItems([
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
-      ]);
+    //   const items = searchItems([
+    //     ts.SyntaxKind.ClassDeclaration,
+    //     ts.SyntaxKind.VariableDeclaration,
+    //   ]);
 
-      expect(items).toHaveLength(2);
-      const references = searcher.search(items);
-      //console.log(tsPrinter.printReferences(references));
-      expect(references.length).toBe(0);
-    });
+    //   expect(items).toHaveLength(2);
+    //   const references = searcher.search(items);
+    //   //console.log(tsPrinter.printReferences(references));
+    //   expect(references.length).toBe(0);
+    // });
   });
 
   describe('Search in multiple files', () => {
@@ -157,7 +159,7 @@ describe('ReferenceSearcher with TS', () => {
   function searchItems(kinds: ts.SyntaxKind[]) {
     const sourceFiles = program.getSourceFiles();
     // .filter(sf => !sf.isDeclarationFile);
-    return project.searchInFiles(
+    return project.searchInTsFiles(
       sourceFiles.map(sf => sf.internal),
       kinds
     );

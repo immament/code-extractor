@@ -9,12 +9,12 @@ import {FoundNode} from './model/FoundNode';
 export class NodeSearcher {
   constructor(private context: ProgramContext) {}
 
-  searchInFile(sourceFile: ts.SourceFile, kinds: number[]): FoundNode[] {
+  searchInTsFile(sourceFile: ts.SourceFile, kinds: number[]): FoundNode[] {
     return this.searchInNode(sourceFile, kinds);
   }
 
-  searchInFiles(sourceFiles: readonly ts.SourceFile[], kinds: number[]) {
-    return sourceFiles.flatMap(sf => this.searchInFile(sf, kinds));
+  searchInTsFiles(sourceFiles: readonly ts.SourceFile[], kinds: number[]) {
+    return sourceFiles.flatMap(sf => this.searchInTsFile(sf, kinds));
   }
 
   searchExportedDeclarationsInFiles(

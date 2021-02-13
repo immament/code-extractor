@@ -6,9 +6,6 @@ import ts from 'typescript';
 describe('Search exported nodes in source file', () => {
   let project: NodeSearcher;
   let program: Program;
-  beforeEach(() => {
-    project = new NodeSearcher();
-  });
 
   test('should find ClassDeclaration', () => {
     init([['/index.ts', 'export class MyClass {}']]);
@@ -84,5 +81,6 @@ describe('Search exported nodes in source file', () => {
 
   function init(files: [name: string, content: string][]) {
     program = createProgram(files);
+    project = new NodeSearcher(program.getContext());
   }
 });

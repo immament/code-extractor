@@ -1,8 +1,7 @@
-import ts from 'typescript';
-import {FoundNode} from './model/FoundNode';
-import {TypeChecker} from '../compiler/domain/TypeChecker';
-import {ReferenceSearcherContext} from './ReferenceSearcherContext';
 import {Node} from '../compiler/domain/Node';
+import {TypeChecker} from '../compiler/domain/TypeChecker';
+import {FoundNode} from './model/FoundNode';
+import {ReferenceSearcherContext} from './ReferenceSearcherContext';
 
 export class ReferenceSearcher {
   constructor(private typeChecker: TypeChecker) {}
@@ -24,20 +23,10 @@ export class ReferenceSearcher {
   ) {
     items.forEach(item => {
       context.setContextFoundNode(item);
-      this.searchInsideTsNode(item.getTsNode(), context);
+      this.searchInsideNode(item.getNode(), context);
     });
 
     return context.getResult();
-  }
-
-  private searchInsideTsNode(node: ts.Node, context: ReferenceSearcherContext) {
-    node.forEachChild(child => {
-      const connectedItem = context.getConnectedItemToTsNode(child);
-      if (connectedItem) {
-        context.addReference(connectedItem, child);
-      }
-      this.searchInsideTsNode(child, context);
-    });
   }
 
   private searchInsideNode(node: Node, context: ReferenceSearcherContext) {
@@ -47,6 +36,7 @@ export class ReferenceSearcher {
         context.addReference(connectedItem, child.internal);
       }
       this.searchInsideNode(child, context);
+      return undefined;
     });
   }
 }

@@ -8,7 +8,7 @@ import {FoundNode} from '../model/FoundNode';
 
 import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
 import {NodeStub} from '@tests/stubs/NodeStub';
-import {asNodeStub, referencesToNodeIds} from '@tests/utils/stub-mappers';
+import {referencesToNodeIds} from '@tests/utils/stub-mappers';
 
 import {expectReferences} from '@tests/utils/expects';
 import {TypeChecker} from '../../compiler/domain/TypeChecker';

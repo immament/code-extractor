@@ -25,7 +25,7 @@ export class SourceFile extends Node {
     if (!symbol) return [];
 
     const symbols = this.context.getTypeChecker().getExportsOfModule(symbol);
-    return symbols.map(s => new SymbolIml(this.context, s));
+    return symbols;
   }
 
   getExportsDeclarations(): Declaration[] {
