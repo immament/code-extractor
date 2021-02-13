@@ -92,7 +92,7 @@ export class TsPrinter {
     return (
       (r.fromNode &&
         this.colors.header('From node: ') +
-          this.nodePrinter.printNodeWithoutChilds(r.fromNode)) ??
+          this.nodePrinter.printNodeWithoutChilds(r.fromNode.internal)) ??
       ''
     );
   }

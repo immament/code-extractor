@@ -1,6 +1,5 @@
 import {Node} from '@lib/modules/compiler/domain/Node';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
-import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import {Reference} from '@lib/modules/search/model/Reference';
 import ts from 'typescript';
 import {createFoundNode} from './createItem';
@@ -12,10 +11,11 @@ export function createReference(context: ProgramContext) {
   }).asNode() as ts.SourceFile;
 
   const nodeForFromItem = createTsNodeStubWithChilds(sourceFile);
+  const nodeFrom = new Node(context, nodeForFromItem.asNode());
   const reference = new Reference(
-    new FoundNode(new Node(context, nodeForFromItem.asNode())),
+    createFoundNode(context, nodeFrom),
     createFoundNode(context)
   );
-  reference.fromNode = nodeForFromItem.getChild(0).asNode();
+  reference.fromNode = nodeFrom.forEachChild(n => n);
   return reference;
 }

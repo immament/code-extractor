@@ -33,7 +33,7 @@ export class ReferenceSearcher {
     node.forEachChild(child => {
       const connectedItem = context.getConnectedItem(child);
       if (connectedItem) {
-        context.addReference(connectedItem, child.internal);
+        context.addReference(connectedItem, child);
       }
       this.searchInsideNode(child, context);
       return undefined;

@@ -7,12 +7,12 @@ import {createTsNodeStub} from './createNodeStub';
 
 export function createFoundNode(
   context?: ProgramContext,
+  node?: Node,
   sourceFile?: ts.SourceFile
 ) {
-  return new FoundNode(
-    new Node(
-      context ?? new ProgramContext({} as Program),
-      createTsNodeStub({sourceFile}).asNode()
-    )
+  node ??= new Node(
+    context ?? new ProgramContext({} as Program),
+    createTsNodeStub({sourceFile}).asNode()
   );
+  return new FoundNode(node);
 }

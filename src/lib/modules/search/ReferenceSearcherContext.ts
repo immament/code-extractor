@@ -1,4 +1,3 @@
-import ts from 'typescript';
 import {Node} from '../compiler/domain/Node';
 import {TypeChecker} from '../compiler/domain/TypeChecker';
 import {FoundNodeCache} from './FoundNodeCache';
@@ -30,7 +29,7 @@ export class ReferenceSearcherContext {
     return this.result;
   }
 
-  addReference(item: FoundNode, fromNode?: ts.Node) {
+  addReference(item: FoundNode, fromNode?: Node) {
     const reference = new Reference(this.contextFoundNode, item);
     reference.fromNode = fromNode;
     this.result.push(reference);
