@@ -1,20 +1,17 @@
-import ts from 'typescript';
 import {Node} from '../compiler/domain/Node';
 import {ProgramContext} from '../compiler/domain/ProgramContext';
 import {SourceFile} from '../compiler/domain/SourceFile';
-
 import {FoundNode} from './model/FoundNode';
 
-// TODO: replace ts.SourceFile to SourceFile in file
 export class NodeSearcher {
   constructor(private context: ProgramContext) {}
 
-  searchInTsFile(sourceFile: ts.SourceFile, kinds: number[]): FoundNode[] {
-    return this.searchInNode(sourceFile, kinds);
+  searchInFiles(sourceFiles: readonly SourceFile[], kinds: number[]) {
+    return sourceFiles.flatMap(sf => this.searchInFile(sf, kinds));
   }
 
-  searchInTsFiles(sourceFiles: readonly ts.SourceFile[], kinds: number[]) {
-    return sourceFiles.flatMap(sf => this.searchInTsFile(sf, kinds));
+  searchInFile(sourceFile: SourceFile, kinds: number[]): FoundNode[] {
+    return this.searchInNode(sourceFile, kinds);
   }
 
   searchExportedDeclarationsInFiles(
@@ -33,31 +30,28 @@ export class NodeSearcher {
     const items = sourceFile
       .getExportsDeclarations()
       .filter(d => this.isSearchedNode(kinds, d))
-      .map(d => this.createItem(d.internal));
+      .map(d => this.createItem(d));
 
     return items;
   }
 
-  private searchInNode(node: ts.Node, kinds: number[]): FoundNode[] {
-    const result: FoundNode[] = this.isSearchedTsNode(kinds, node)
+  private searchInNode(node: Node, kinds: number[]): FoundNode[] {
+    const result: FoundNode[] = this.isSearchedNode(kinds, node)
       ? [this.createItem(node)]
       : [];
 
     node.forEachChild(child => {
       result.push(...this.searchInNode(child, kinds));
+      return undefined;
     });
     return result;
   }
 
-  private createItem(node: ts.Node): FoundNode {
-    return new FoundNode(node, new Node(this.context, node));
+  private createItem(node: Node): FoundNode {
+    return new FoundNode(node);
   }
 
   private isSearchedNode(kinds: number[], node: Node) {
-    return kinds.includes(node.kind);
-  }
-
-  private isSearchedTsNode(kinds: number[], node: ts.Node) {
     return kinds.includes(node.kind);
   }
 }

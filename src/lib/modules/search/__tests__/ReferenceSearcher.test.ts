@@ -1,29 +1,32 @@
-import ts from 'typescript';
+import {Node} from '@lib/modules/compiler/domain/Node';
+import {Program} from '@lib/modules/compiler/domain/Program';
+import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
+import {NodeStub} from '@tests/stubs/NodeStub';
+import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
+import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
 import {
   AddFromObjectArgs,
   TreeBuilderWithSymbols,
 } from '@tests/utils/builders/TreeBuilderWithSymbols';
-import {ReferenceSearcher} from '../ReferenceSearcher';
-import {FoundNode} from '../model/FoundNode';
-
-import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
-import {NodeStub} from '@tests/stubs/NodeStub';
-import {referencesToNodeIds} from '@tests/utils/stub-mappers';
-
 import {expectReferences} from '@tests/utils/expects';
+import {referencesToNodeIds} from '@tests/utils/stub-mappers';
+import ts from 'typescript';
 import {TypeChecker} from '../../compiler/domain/TypeChecker';
-import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
-import {Program} from '@lib/modules/compiler/domain/Program';
-
-import {Node} from '@lib/modules/compiler/domain/Node';
+import {FoundNode} from '../model/FoundNode';
+import {ReferenceSearcher} from '../ReferenceSearcher';
 
 describe('ReferenceSearcher', () => {
   let builder: TreeBuilderWithSymbols;
   let searcher: ReferenceSearcher;
   let context: ProgramContext;
   let typeChecker: TypeChecker;
+  let defaultSourceFile: ts.SourceFile;
 
   beforeEach(() => {
+    defaultSourceFile = createTsNodeStub({
+      kind: ts.SyntaxKind.SourceFile,
+    }).asNode() as ts.SourceFile;
+
     const program = {
       getTypeChecker() {
         return typeChecker;
@@ -39,8 +42,11 @@ describe('ReferenceSearcher', () => {
 
   describe('Not find anything', () => {
     beforeEach(() => {
-      builder = new TreeBuilderWithSymbols();
+      builder = new TreeBuilderWithSymbols({
+        defaultSourceFile,
+      });
     });
+
     test('should not find anything', () => {
       const items: FoundNode[] = [];
       expect(searcher.search(items)).toHaveLength(0);
@@ -48,6 +54,7 @@ describe('ReferenceSearcher', () => {
 
     test('should not find itself', () => {
       const node = builder.addChildAndGoTo().getResult();
+
       const items = createFoundNodes([node]);
       expect(searcher.search(items)).toHaveLength(0);
     });
@@ -65,16 +72,19 @@ describe('ReferenceSearcher', () => {
     let referencedNodStub: NodeStub;
 
     beforeEach(() => {
-      builder = new TreeBuilderWithSymbols({});
-      referencedNodStub = new NodeStub({
+      builder = new TreeBuilderWithSymbols({
+        createNodeArgs: {},
+        defaultSourceFile,
+      });
+      referencedNodStub = createTsNodeStub({
         symbol: builder.getCommonSymbol(0),
+        sourceFile: defaultSourceFile,
       });
       referencedNode = referencedNodStub.asNode();
     });
 
-    test('should find one reference with corect from & to', () => {
+    test('should find one reference with correct from & to', () => {
       const nodeWithReference = builder.addChildWithSymbol().getResultStub();
-
       const items = createFoundNodes([
         nodeWithReference.asNode(),
         referencedNode,
@@ -255,7 +265,10 @@ describe('ReferenceSearcher', () => {
     });
 
     function init(addFromObjectArgs: AddFromObjectArgs) {
-      builder = new TreeBuilderWithSymbols(undefined, symbolsCount);
+      builder = new TreeBuilderWithSymbols({
+        symbolCounts: symbolsCount,
+        defaultSourceFile,
+      });
       builder.addFromObject(addFromObjectArgs);
       items = createItemsFromBuilder(builder);
     }
@@ -305,7 +318,7 @@ describe('ReferenceSearcher', () => {
   });
 
   function createFoundNode(node: ts.Node) {
-    return new FoundNode(node, new Node(context, node));
+    return new FoundNode(new Node(context, node));
   }
 
   function createFoundNodes(nodes: ts.Node[]) {

@@ -1,3 +1,4 @@
+import ts from 'typescript';
 import {CreateNodeArgs, NodeStub} from '../../stubs/NodeStub';
 
 export class TreeBuilder {
@@ -12,7 +13,10 @@ export class TreeBuilder {
     return this.#root;
   }
 
-  constructor(createNodeArgs?: CreateNodeArgs) {
+  constructor(
+    createNodeArgs?: CreateNodeArgs,
+    private defaultSourceFile?: ts.SourceFile
+  ) {
     if (createNodeArgs) {
       this.#root = this.#currentNode = this.newNode(createNodeArgs);
     }
@@ -92,8 +96,12 @@ export class TreeBuilder {
     return this;
   }
 
-  protected newNode(createNodeArgs: CreateNodeArgs): NodeStub {
-    return new NodeStub({...createNodeArgs, parent: this.#currentNode});
+  protected newNode({sourceFile, ...createNodeArgs}: CreateNodeArgs): NodeStub {
+    return new NodeStub({
+      sourceFile: sourceFile ?? this.defaultSourceFile,
+      ...createNodeArgs,
+      parent: this.#currentNode,
+    });
   }
 }
 

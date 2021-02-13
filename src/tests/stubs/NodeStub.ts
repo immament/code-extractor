@@ -6,6 +6,7 @@ export interface CreateNodeArgs {
   kind?: number;
   symbol?: ts.Symbol;
   parent?: NodeStub;
+  sourceFile?: ts.SourceFile;
 }
 
 export class NodeStub {
@@ -14,6 +15,7 @@ export class NodeStub {
   private _kind: number;
   private _childs: NodeStub[] = [];
   private _id: number;
+  private sourceFile?: ts.SourceFile;
 
   get parent(): NodeStub | undefined {
     return this.#parent;
@@ -29,11 +31,14 @@ export class NodeStub {
     return this._id;
   }
 
-  constructor({childs = [], kind = -1, symbol, parent}: CreateNodeArgs) {
+  constructor(args: CreateNodeArgs) {
+    const {childs = [], kind = -1, symbol, parent, sourceFile} = args;
+
     this._childs = childs;
     this._kind = kind;
     this.#symbol = symbol;
     this.#parent = parent;
+    this.sourceFile = sourceFile;
 
     this._id = IdGenerator.next();
   }
@@ -51,8 +56,13 @@ export class NodeStub {
     return 'text-' + this._kind;
   }
 
-  getSourceFile() {
-    return 'index.ts';
+  getSourceFile(): ts.SourceFile {
+    if (!this.sourceFile) {
+      //console.log('- NO source file', this);
+      throw new Error('NodeStub have not got source file. Wrong test data?');
+    }
+    //console.log('+ source file', this);
+    return this.sourceFile;
   }
 
   // #region Stub helpers

@@ -1,9 +1,10 @@
+import {Program} from '@lib/modules/compiler/domain/Program';
+import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
 import {NodeStub} from '@tests/stubs/NodeStub';
-
 import ts from 'typescript';
-import {createItem} from '../builders/createItem';
+import {createFoundNode} from '../builders/createItem';
+import {createTsNodeStub} from '../builders/createNodeStub';
 import {createSourceFile} from '../builders/createSourceFile';
-
 import {createReference} from '../builders/stubCreators';
 import {PrintNodeCallback} from '../print/NodePrinter';
 import {TsPrinter} from '../print/TsPrinter';
@@ -47,15 +48,15 @@ describe('TsPrinter with default options', () => {
 
   test('should print references', () => {
     const references = [
-      createReference(),
-      createReference(),
-      createReference(),
+      createReferenceWithContext(),
+      createReferenceWithContext(),
+      createReferenceWithContext(),
     ];
     expect(printer.printReferences(references)).toMatchSnapshot();
   });
 
   test('should print references without fromNode', () => {
-    const reference = createReference();
+    const reference = createReferenceWithContext();
     reference.fromNode = undefined;
     expect(printer.printReferences([reference])).toMatchSnapshot();
   });
@@ -84,7 +85,7 @@ describe('TsPrinter with changed options', () => {
     const result = printer.nodePrinter.printNodeWithoutChilds(
       new NodeStub({
         kind: ts.SyntaxKind.ClassDeclaration,
-        childs: [new NodeStub({kind: ts.SyntaxKind.Identifier})],
+        childs: [createTsNodeStub({kind: ts.SyntaxKind.Identifier})],
       }).asNode()
     );
 
@@ -104,15 +105,15 @@ describe('TsPrinter with changed options', () => {
 
   test('should print references', () => {
     const references = [
-      createReference(),
-      createReference(),
-      createReference(),
+      createReferenceWithContext(),
+      createReferenceWithContext(),
+      createReferenceWithContext(),
     ];
     expect(printer.printReferences(references)).toMatchSnapshot();
   });
 
   test('should print item', () => {
-    expect(printer.printItemAsArray(createItem())).toMatchSnapshot();
+    expect(printer.printItemAsArray(createFoundNode())).toMatchSnapshot();
   });
 });
 
@@ -161,3 +162,7 @@ describe('Print node with callback', () => {
     expect(result).toMatchInlineSnapshot('"ClassDeclaration"');
   });
 });
+
+function createReferenceWithContext() {
+  return createReference(new ProgramContext({} as Program));
+}

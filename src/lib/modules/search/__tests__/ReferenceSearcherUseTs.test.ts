@@ -1,9 +1,8 @@
-import ts from 'typescript';
-import {ReferenceSearcher} from '../ReferenceSearcher';
-import {NodeSearcher} from '../NodeSearcher';
-import {Program} from '../../compiler/domain/Program';
-
 import {createProgram} from '@tests/utils/builders/createProgram';
+import ts from 'typescript';
+import {Program} from '../../compiler/domain/Program';
+import {NodeSearcher} from '../NodeSearcher';
+import {ReferenceSearcher} from '../ReferenceSearcher';
 
 describe('ReferenceSearcher with TS', () => {
   let searcher: ReferenceSearcher;
@@ -12,19 +11,14 @@ describe('ReferenceSearcher with TS', () => {
 
   describe('Search in one file', () => {
     test('should find Interface reference in one source file', () => {
-      const files: [string, string][] = [
-        [
-          '/index.ts',
-          `interface MyInterface {}
-           class MyClass {
-            myMethod() { return {} as MyInterface; }
-        }
-        const v = 1;
-        `,
-        ],
-      ];
-
-      init(files);
+      init([
+        '/index.ts',
+        `interface MyInterface {}
+         class MyClass {
+          myMethod() { return {} as MyInterface; }
+      }
+      const v = 1;`,
+      ]);
 
       const items = searchItems([
         ts.SyntaxKind.InterfaceDeclaration,
@@ -38,11 +32,9 @@ describe('ReferenceSearcher with TS', () => {
 
     test('should find Interface reference when use as variable type', () => {
       init([
-        [
-          '/index.ts',
-          `interface MyInterface {}
+        '/index.ts',
+        `interface MyInterface {}
            const variable: MyInterface;`,
-        ],
       ]);
 
       const items = searchItems([
@@ -75,14 +67,14 @@ describe('ReferenceSearcher with TS', () => {
 
   describe('Search in multiple files', () => {
     test('should find interface reference in use as variable type in diferent files', () => {
-      init([
+      init(
         ['/interface.ts', 'export interface MyInterface {}'],
         [
           '/file.ts',
           `import { MyInterface } from './interface'
           const variable: MyInterface;`,
-        ],
-      ]);
+        ]
+      );
       const items = searchItems([
         ts.SyntaxKind.InterfaceDeclaration,
         ts.SyntaxKind.VariableDeclaration,
@@ -93,7 +85,7 @@ describe('ReferenceSearcher with TS', () => {
     });
 
     test('should find function references', () => {
-      init([
+      init(
         [
           '/index.ts',
           `export interface MyInterface {}
@@ -117,8 +109,8 @@ describe('ReferenceSearcher with TS', () => {
            const v1 = myFunction;
            const v2 = myFunction();
            const v3 = () => myFunction();`,
-        ],
-      ]);
+        ]
+      );
       const items = searchItems([
         ts.SyntaxKind.InterfaceDeclaration,
         ts.SyntaxKind.ClassDeclaration,
@@ -131,14 +123,14 @@ describe('ReferenceSearcher with TS', () => {
     });
 
     test('should find vaiable references when use import alias', () => {
-      init([
+      init(
         ['/index.ts', 'export interface MyInterface {}'],
         [
           '/file.ts',
           `import { MyInterface as alias2 } from '.'
         const a: alias2;`,
-        ],
-      ]);
+        ]
+      );
       const items = searchItems([
         ts.SyntaxKind.InterfaceDeclaration,
         ts.SyntaxKind.VariableDeclaration,
@@ -150,7 +142,7 @@ describe('ReferenceSearcher with TS', () => {
     });
   });
 
-  function init(files: [name: string, content: string][]) {
+  function init(...files: [name: string, content: string][]) {
     program = createProgram(files);
     searcher = new ReferenceSearcher(program.getTypeChecker());
     project = new NodeSearcher(program.getContext());
@@ -159,8 +151,8 @@ describe('ReferenceSearcher with TS', () => {
   function searchItems(kinds: ts.SyntaxKind[]) {
     const sourceFiles = program.getSourceFiles();
     // .filter(sf => !sf.isDeclarationFile);
-    return project.searchInTsFiles(
-      sourceFiles.map(sf => sf.internal),
+    return project.searchInFiles(
+      sourceFiles.map(sf => sf),
       kinds
     );
   }

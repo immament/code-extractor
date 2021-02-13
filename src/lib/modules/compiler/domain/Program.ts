@@ -1,14 +1,16 @@
 import ts from 'typescript';
-import {SourceFile} from './SourceFile';
 import {ProgramContext} from './ProgramContext';
+import {SourceFile} from './SourceFile';
 import {TypeChecker} from './TypeChecker';
+
+export type CreateProgramOptions = ts.CreateProgramOptions;
 
 export class Program {
   readonly #tsProgram: ts.Program;
   readonly #context: ProgramContext;
   readonly #typeChecker: TypeChecker;
 
-  constructor(options: ts.CreateProgramOptions) {
+  constructor(options: CreateProgramOptions) {
     this.#tsProgram = ts.createProgram(options);
     this.#context = new ProgramContext(this);
     this.#typeChecker = new TypeChecker(

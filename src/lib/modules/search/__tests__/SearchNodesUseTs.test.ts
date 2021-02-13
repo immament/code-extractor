@@ -1,25 +1,26 @@
+import {Program} from '@lib/modules/compiler/domain/Program';
+import {SourceFile} from '@lib/modules/compiler/domain/SourceFile';
+import {createProgram} from '@tests/utils/builders/createProgram';
 import ts from 'typescript';
 import {NodeSearcher} from '../NodeSearcher';
-import {createProgram} from '@tests/utils/builders/createProgram';
-import {Program} from '@lib/modules/compiler/domain/Program';
 
 describe('SearchNodeUseTs', () => {
   let program: Program;
   let project: NodeSearcher;
-  let sourceFile: ts.SourceFile;
+  let sourceFile: SourceFile;
 
   test('should find variable declaration', () => {
     init(['/index.ts', 'let v = "Index"']);
 
     expect(
-      project.searchInTsFile(sourceFile, [ts.SyntaxKind.VariableDeclaration])
+      project.searchInFile(sourceFile, [ts.SyntaxKind.VariableDeclaration])
     ).toHaveLength(1);
   });
 
   test('should find class declaration', () => {
     init(['/index.ts', 'class MyClass {constructor() {}}']);
     expect(
-      project.searchInTsFile(sourceFile, [ts.SyntaxKind.ClassDeclaration])
+      project.searchInFile(sourceFile, [ts.SyntaxKind.ClassDeclaration])
     ).toHaveLength(1);
   });
 
@@ -36,7 +37,7 @@ describe('SearchNodeUseTs', () => {
     ]);
 
     expect(
-      project.searchInTsFile(sourceFile, [
+      project.searchInFile(sourceFile, [
         ts.SyntaxKind.VariableDeclaration,
         ts.SyntaxKind.ClassDeclaration,
         ts.SyntaxKind.FunctionDeclaration,
@@ -48,6 +49,6 @@ describe('SearchNodeUseTs', () => {
   function init(...files: [string, string][]) {
     program = createProgram(files);
     project = new NodeSearcher(program.getContext());
-    sourceFile = program.getSourceFiles()[0].internal;
+    sourceFile = program.getSourceFiles()[0];
   }
 });

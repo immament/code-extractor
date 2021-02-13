@@ -16,8 +16,16 @@ export class TreeBuilderWithSymbols extends TreeBuilder {
 
   readonly #commonSymbols: ts.Symbol[];
 
-  constructor(createNodeArgs?: CreateNodeArgs, symbolCounts = 5) {
-    super(createNodeArgs);
+  constructor({
+    createNodeArgs,
+    symbolCounts = 5,
+    defaultSourceFile,
+  }: {
+    createNodeArgs?: CreateNodeArgs;
+    symbolCounts?: number;
+    defaultSourceFile?: ts.SourceFile;
+  } = {}) {
+    super(createNodeArgs, defaultSourceFile);
     this.#commonSymbols = this.createSymbols(symbolCounts);
   }
 

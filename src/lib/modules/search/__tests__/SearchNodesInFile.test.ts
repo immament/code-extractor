@@ -1,14 +1,15 @@
+import {SourceFile} from '@lib/modules/compiler/domain/SourceFile';
 import {createProgram} from '@tests/utils/builders/createProgram';
 import ts from 'typescript';
 import {NodeSearcher} from '../NodeSearcher';
 
 describe('Search Nodes in Files', () => {
   let nodeSearcher: NodeSearcher;
-  let sourceFiles: ts.SourceFile[];
+  let sourceFiles: SourceFile[];
 
   test('should return empty table when not find anything', () => {
     init();
-    expect(nodeSearcher.searchInTsFiles(sourceFiles, [])).toHaveLength(0);
+    expect(nodeSearcher.searchInFiles(sourceFiles, [])).toHaveLength(0);
   });
 
   test('should find class declaration when in file ', () => {
@@ -19,9 +20,9 @@ describe('Search Nodes in Files', () => {
         constructor() {}
     }`,
     ]);
-    expect(
-      nodeSearcher.searchInTsFiles(sourceFiles, searchedKinds)
-    ).toHaveLength(1);
+    expect(nodeSearcher.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(
+      1
+    );
   });
 
   test('should find 3 class declaration`s in 2 files ', () => {
@@ -34,9 +35,9 @@ describe('Search Nodes in Files', () => {
         class MyClass3 { }`,
       ]
     );
-    expect(
-      nodeSearcher.searchInTsFiles(sourceFiles, searchedKinds)
-    ).toHaveLength(3);
+    expect(nodeSearcher.searchInFiles(sourceFiles, searchedKinds)).toHaveLength(
+      3
+    );
   });
 
   test('should find 3 class declaration`s in 2 files ', () => {
@@ -64,7 +65,7 @@ describe('Search Nodes in Files', () => {
     );
 
     expect(
-      nodeSearcher.searchInTsFiles(sourceFiles, [
+      nodeSearcher.searchInFiles(sourceFiles, [
         ts.SyntaxKind.VariableDeclaration,
         ts.SyntaxKind.ClassDeclaration,
         ts.SyntaxKind.FunctionDeclaration,
@@ -76,6 +77,6 @@ describe('Search Nodes in Files', () => {
   function init(...files: [string, string][]) {
     const program = createProgram(files);
     nodeSearcher = new NodeSearcher(program.getContext());
-    sourceFiles = program.getSourceFiles().map(sf => sf.internal);
+    sourceFiles = program.getSourceFiles().map(sf => sf);
   }
 });

@@ -1,3 +1,4 @@
+import {Node} from '@lib/modules/compiler/domain/Node';
 import ts from 'typescript';
 import {Colors} from './colors';
 import {TsPrinter, TsPrinterOptions} from './TsPrinter';
@@ -27,8 +28,8 @@ export class NodePrinter {
     );
   }
 
-  printNodeSourceFileName(node: ts.Node) {
-    return this.colors.code(node.getSourceFile().fileName);
+  printNodeSourceFileName(node: Node) {
+    return this.colors.code(node.getSourceFile()?.getFileName());
   }
 
   printNode(node: ts.Node, {level = 0, cb}: Partial<PrintNodeOptions> = {}) {

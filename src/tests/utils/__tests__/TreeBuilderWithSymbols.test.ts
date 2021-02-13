@@ -37,7 +37,7 @@ describe('TreeBuilderWithSymbols', () => {
 
   describe('Test add child', () => {
     beforeEach(() => {
-      builder = new TreeBuilderWithSymbols({});
+      builder = new TreeBuilderWithSymbols({createNodeArgs: {}});
     });
     test('should add 2 childs with the same symbol', () => {
       builder.addChildWithSymbol();
@@ -63,7 +63,7 @@ describe('TreeBuilderWithSymbols', () => {
   });
 
   test('methods with fluent behaviour', () => {
-    builder = new TreeBuilderWithSymbols({});
+    builder = new TreeBuilderWithSymbols({createNodeArgs: {}});
     expect(builder.addChildAndGoTo()).toBe(builder);
     expect(builder.addChild()).toBe(builder);
     expect(builder.toChild()).toBe(builder);
@@ -103,7 +103,7 @@ describe('TreeBuilderWithSymbols', () => {
 
     describe('addChildWithCommonSymbol', () => {
       beforeEach(() => {
-        builder = new TreeBuilderWithSymbols({});
+        builder = new TreeBuilderWithSymbols({createNodeArgs: {}});
       });
       test('should using without argument add symbol with index 0', () => {
         builder.addChildWithSymbol().addChildWithSymbol(0);

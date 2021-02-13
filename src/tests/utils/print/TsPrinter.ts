@@ -1,8 +1,8 @@
 import {FoundNode} from '@lib/modules/search/model/FoundNode';
-import {EOL} from 'os';
 import {Reference} from '@lib/modules/search/model/Reference';
-import {Colors, colors, dummyColors} from './colors';
+import {EOL} from 'os';
 import {pick} from '../type-utils';
+import {Colors, colors, dummyColors} from './colors';
 import {NodePrinter} from './NodePrinter';
 
 interface TsPrinterArgs {
@@ -45,7 +45,7 @@ export class TsPrinter {
   printItemAsArray = (item: FoundNode) => {
     return [
       this.colors.header('Item - fileName:'),
-      this._nodePrinter.printNodeSourceFileName(item.getTsNode()),
+      this._nodePrinter.printNodeSourceFileName(item.getNode()),
       EOL,
       this._nodePrinter.printNodeWithoutChilds(item.getTsNode()),
       EOL,
