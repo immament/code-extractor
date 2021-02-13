@@ -1,6 +1,6 @@
-import {Item} from 'src/lib/Item';
+import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import {createNodeStub} from './createNodeStub';
 
 export function createItem() {
-  return new Item(createNodeStub({}).asNode());
+  return new FoundNode(createNodeStub({}).asNode());
 }

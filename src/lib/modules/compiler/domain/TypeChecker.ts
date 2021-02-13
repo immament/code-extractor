@@ -5,12 +5,16 @@ interface NodeWithSymbol extends ts.Node {
 }
 
 export class TypeChecker {
-  constructor(private typeChecker: ts.TypeChecker) {}
+  public get tsTypeChecker(): ts.TypeChecker {
+    return this._tsTypeChecker;
+  }
 
-  getSymbol(node: ts.Node) {
+  constructor(private _tsTypeChecker: ts.TypeChecker) {}
+
+  getTsSymbol(node: ts.Node) {
     const symbol =
       this.getSymbolAssignToNode(node) ||
-      this.typeChecker.getSymbolAtLocation(node);
+      this.tsTypeChecker.getSymbolAtLocation(node);
 
     //  TODO: check if should get from name
     // ||
@@ -19,14 +23,18 @@ export class TypeChecker {
     return symbol && this.skipAliasses(symbol);
   }
 
+  getExportsOfModule(symbol: ts.Symbol) {
+    return this.tsTypeChecker.getExportsOfModule(symbol);
+  }
+
   private getSymbolAssignToNode(node: NodeWithSymbol) {
     return node.symbol;
   }
 
   private skipAliasses(symbol: ts.Symbol) {
     while (this.isAlias(symbol)) {
-      const aliasedSymbol = this.typeChecker.getAliasedSymbol(symbol);
-      if (this.typeChecker.isUnknownSymbol(aliasedSymbol)) {
+      const aliasedSymbol = this.tsTypeChecker.getAliasedSymbol(symbol);
+      if (this.tsTypeChecker.isUnknownSymbol(aliasedSymbol)) {
         break;
       }
       symbol = aliasedSymbol;

@@ -1,6 +1,6 @@
 import ts from 'typescript';
 
-export class Item {
+export class FoundNode {
   private kind: number;
 
   constructor(private node: ts.Node) {

@@ -1,11 +1,11 @@
-import {Item} from 'src/lib/Item';
-import {Reference} from 'src/lib/Reference';
+import {FoundNode} from '@lib/modules/search/model/FoundNode';
+import {Reference} from '@lib/modules/search/model/Reference';
 import {referencesToNodeIds, asNodeStub} from './stub-mappers';
 
 export function expectReferences(refernces: Reference[]) {
   return {
     toBeFromItemToItem: (
-      items: Item[],
+      items: FoundNode[],
       fromToIds: [fromIndex: number, toIndex: number][]
     ) => {
       expect(referencesToNodeIds(refernces)).toEqual(

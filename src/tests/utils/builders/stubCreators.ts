@@ -1,12 +1,12 @@
-import {Item} from '@lib/Item';
-import {Reference} from '@lib/Reference';
+import {FoundNode} from '@lib/modules/search/model/FoundNode';
+import {Reference} from '@lib/modules/search/model/Reference';
 import {createItem} from './createItem';
 import {createNodeStubWithChilds} from './createNodeStub';
 
 export function createReference() {
   const nodeForFromItem = createNodeStubWithChilds();
   const reference = new Reference(
-    new Item(nodeForFromItem.asNode()),
+    new FoundNode(nodeForFromItem.asNode()),
     createItem()
   );
   reference.fromNode = nodeForFromItem.getChild(0).asNode();

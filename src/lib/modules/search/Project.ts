@@ -1,9 +1,10 @@
-import ts, {isExportDeclaration} from 'typescript';
-import {Item} from './Item';
-import {Program} from './Program';
+import ts from 'typescript';
+import {Program} from '../compiler/domain/Program';
+
+import {FoundNode} from './model/FoundNode';
 
 export class Project {
-  searchInFile(sourceFile: ts.SourceFile, kinds: number[]): Item[] {
+  searchInFile(sourceFile: ts.SourceFile, kinds: number[]): FoundNode[] {
     return this.searchInNode(sourceFile, kinds);
   }
 
@@ -15,7 +16,7 @@ export class Project {
     program: Program,
     sourceFiles: readonly ts.SourceFile[],
     kinds: number[]
-  ): Item[] {
+  ): FoundNode[] {
     return sourceFiles.flatMap(sf =>
       this.searchExportedDeclarations(program, sf, kinds)
     );
@@ -25,7 +26,7 @@ export class Project {
     program: Program,
     sourceFile: ts.SourceFile,
     kinds: number[]
-  ): Item[] {
+  ): FoundNode[] {
     const typeChecker = program.tsProgram.getTypeChecker();
     const moduleSymbol = typeChecker.getSymbolAtLocation(sourceFile)!;
 
@@ -41,8 +42,8 @@ export class Project {
     return items;
   }
 
-  private searchInNode(node: ts.Node, kinds: number[]): Item[] {
-    const result: Item[] = this.isSearchedNode(kinds, node)
+  private searchInNode(node: ts.Node, kinds: number[]): FoundNode[] {
+    const result: FoundNode[] = this.isSearchedNode(kinds, node)
       ? [this.createItem(node)]
       : [];
 
@@ -52,8 +53,8 @@ export class Project {
     return result;
   }
 
-  private createItem(node: ts.Node): Item {
-    return new Item(node);
+  private createItem(node: ts.Node): FoundNode {
+    return new FoundNode(node);
   }
 
   private isSearchedNode(kinds: number[], node: ts.Node) {

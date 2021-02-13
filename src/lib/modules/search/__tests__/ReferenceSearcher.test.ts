@@ -4,14 +4,14 @@ import {
   TreeBuilderWithSymbols,
 } from '@tests/utils/builders/TreeBuilderWithSymbols';
 import {ReferenceSearcher} from '../ReferenceSearcher';
-import {Item} from '../Item';
+import {FoundNode} from '../model/FoundNode';
 
 import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
 import {NodeStub} from '@tests/stubs/NodeStub';
 import {asNodeStub, referencesToNodeIds} from '@tests/utils/stub-mappers';
 
 import {expectReferences} from '@tests/utils/expects';
-import {TypeChecker} from '../TypeChecker';
+import {TypeChecker} from '../../compiler/domain/TypeChecker';
 
 describe('ReferenceSearcher', () => {
   let builder: TreeBuilderWithSymbols;
@@ -26,20 +26,20 @@ describe('ReferenceSearcher', () => {
       builder = new TreeBuilderWithSymbols();
     });
     test('should not find anything', () => {
-      const items: Item[] = [];
+      const items: FoundNode[] = [];
       expect(searcher.search(items)).toHaveLength(0);
     });
 
     test('should not find itself', () => {
       const node = builder.addChildAndGoTo().getResult();
-      const items: Item[] = [new Item(node)];
+      const items: FoundNode[] = [new FoundNode(node)];
       expect(searcher.search(items)).toHaveLength(0);
     });
 
     test('should exlude reference to ancestor', () => {
       builder.addChildWithSymbolAndGoTo().addChildWithSymbol();
 
-      const items: Item[] = [new Item(builder.currentAsNode)];
+      const items: FoundNode[] = [new FoundNode(builder.currentAsNode)];
       expect(searcher.search(items)).toHaveLength(0);
     });
   });
@@ -60,8 +60,8 @@ describe('ReferenceSearcher', () => {
       const nodeWithReference = builder.addChildWithSymbol().getResultStub();
 
       const items = [
-        new Item(nodeWithReference.asNode()),
-        new Item(referencedNode),
+        new FoundNode(nodeWithReference.asNode()),
+        new FoundNode(referencedNode),
       ];
 
       const searchResult = searcher.search(items);
@@ -82,9 +82,9 @@ describe('ReferenceSearcher', () => {
         .addChildWithSymbol()
         .getResultStub();
 
-      const items: Item[] = [
-        new Item(nodeWithReference.asNode()),
-        new Item(referencedNode),
+      const items: FoundNode[] = [
+        new FoundNode(nodeWithReference.asNode()),
+        new FoundNode(referencedNode),
       ];
 
       const searchResult = searcher.search(items);
@@ -105,9 +105,9 @@ describe('ReferenceSearcher', () => {
         .addChildWithSymbol()
         .getResultStub();
 
-      const items: Item[] = [
-        new Item(nodeWithReference.asNode()),
-        new Item(referencedNode),
+      const items: FoundNode[] = [
+        new FoundNode(nodeWithReference.asNode()),
+        new FoundNode(referencedNode),
       ];
 
       const searchResult = searcher.search(items);
@@ -128,9 +128,9 @@ describe('ReferenceSearcher', () => {
         .addChildWithSymbol()
         .getResult();
 
-      const items: Item[] = [
-        new Item(nodeWithReference),
-        new Item(referencedNode),
+      const items: FoundNode[] = [
+        new FoundNode(nodeWithReference),
+        new FoundNode(referencedNode),
       ];
       expect(searcher.search(items)).toHaveLength(2);
     });
@@ -144,9 +144,9 @@ describe('ReferenceSearcher', () => {
         .addChildWithSymbol()
         .getResult();
 
-      const items: Item[] = [
-        new Item(nodeWithReference),
-        new Item(referencedNode),
+      const items: FoundNode[] = [
+        new FoundNode(nodeWithReference),
+        new FoundNode(referencedNode),
       ];
 
       expect(searcher.search(items)).toHaveLength(3);
@@ -164,10 +164,10 @@ describe('ReferenceSearcher', () => {
         .addChildWithSymbol()
         .getResult();
 
-      const items: Item[] = [
-        new Item(nodeWithReference1),
-        new Item(referencedNode),
-        new Item(nodeWithReference2),
+      const items: FoundNode[] = [
+        new FoundNode(nodeWithReference1),
+        new FoundNode(referencedNode),
+        new FoundNode(nodeWithReference2),
       ];
 
       expect(searcher.search(items)).toHaveLength(2);
@@ -176,7 +176,7 @@ describe('ReferenceSearcher', () => {
 
   describe('Search references to mulitpile nodes', () => {
     const symbolsCount = 4;
-    let items: Item[];
+    let items: FoundNode[];
 
     test('should items count be equal 4', () => {
       init({
@@ -254,7 +254,7 @@ describe('ReferenceSearcher', () => {
       const childNode = asNodeStub(items[0].getNode()).getChild(0);
       //console.log(childNode);
       //console.log(builder.getResult());
-      items.push(new Item(childNode.asNode()));
+      items.push(new FoundNode(childNode.asNode()));
 
       const searchResult = searcher.search(items);
       //console.log(searchResult);
@@ -271,7 +271,7 @@ describe('ReferenceSearcher', () => {
       return builder
         .getResult()
         .getChildren()
-        .map(node => new Item(node));
+        .map(node => new FoundNode(node));
     }
 
     function createTreeWith4ItemsAnd3ValidReferences() {

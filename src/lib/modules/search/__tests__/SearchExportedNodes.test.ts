@@ -1,7 +1,7 @@
-import {Program} from '@lib/Program';
-import ts from '@lib/typescript';
 import {Project} from '../Project';
 import {createProgram} from '@tests/utils/builders/createProgram';
+import {Program} from '@lib/modules/compiler/domain/Program';
+import ts from 'typescript';
 
 describe('Search exported nodes in source file', () => {
   let project: Project;

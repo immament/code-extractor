@@ -2,9 +2,9 @@ import {
   ReferenceSearcherContext,
   ReferenceSearcherError,
 } from '../ReferenceSearcher';
-import {Item} from '../Item';
+import {FoundNode} from '../model/FoundNode';
 import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
-import {TypeChecker} from '../TypeChecker';
+import {TypeChecker} from '../../compiler/domain/TypeChecker';
 
 describe('ReferenceSearcherContext', () => {
   test('should throw exception when addResult without context items set', () => {
@@ -12,7 +12,7 @@ describe('ReferenceSearcherContext', () => {
       new TypeChecker(createTsTypeChecker()),
       []
     );
-    expect(() => context.addReference({} as Item)).toThrow(
+    expect(() => context.addReference({} as FoundNode)).toThrow(
       ReferenceSearcherError
     );
   });

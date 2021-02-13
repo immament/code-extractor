@@ -1,7 +1,5 @@
-import {TypeChecker} from '@lib/TypeChecker';
+import {TypeChecker} from '@lib/modules/compiler/domain/TypeChecker';
 import {createProgram} from '@tests/utils/builders/createProgram';
-import {PrintNodeCallback} from '@tests/utils/print/NodePrinter';
-import tsPrinter from '@tests/utils/print/TsPrinter';
 
 import ts from 'typescript';
 
@@ -27,7 +25,7 @@ describe('TypeChecker', () => {
       ],
     ]);
 
-    const symbol = typeChecker.getSymbol(testNode.expression);
+    const symbol = typeChecker.getTsSymbol(testNode.expression);
     expect(symbol).toBeDefined();
     expect(symbol!.valueDeclaration.getSourceFile().fileName).toBe('/file1.ts');
   });
@@ -41,7 +39,7 @@ describe('TypeChecker', () => {
       ],
     ]);
 
-    const symbol = typeChecker.getSymbol(testNode.expression);
+    const symbol = typeChecker.getTsSymbol(testNode.expression);
     expect(symbol).toBeDefined();
 
     expect(symbol!.valueDeclaration).toBeUndefined();

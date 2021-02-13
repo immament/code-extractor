@@ -1,24 +1,27 @@
 import ts from 'typescript';
-import {Item} from './Item';
-import {ItemCache} from './ItemCache';
-import {Reference} from './Reference';
-import {TypeChecker} from './TypeChecker';
+import {FoundNode} from './model/FoundNode';
+import {FoundNodeCache} from './ItemCache';
+import {Reference} from './model/Reference';
+import {TypeChecker} from '../compiler/domain/TypeChecker';
 
 export class ReferenceSearcher {
   constructor(private typeChecker: TypeChecker) {}
 
-  search(items: Item[]) {
+  search(items: FoundNode[]) {
     const context = this.createContext(items);
     return context.hasItemsToFound()
       ? this.searchInsideItems(items, context)
       : [];
   }
 
-  private createContext(items: Item[]) {
+  private createContext(items: FoundNode[]) {
     return new ReferenceSearcherContext(this.typeChecker, items);
   }
 
-  private searchInsideItems(items: Item[], context: ReferenceSearcherContext) {
+  private searchInsideItems(
+    items: FoundNode[],
+    context: ReferenceSearcherContext
+  ) {
     items.forEach(item => {
       context.setContextItem(item);
       this.searchInsideNode(item.getNode(), context);
@@ -39,9 +42,9 @@ export class ReferenceSearcher {
 }
 
 export class ReferenceSearcherContext {
-  #contextItem?: Item;
+  #contextItem?: FoundNode;
   private result: Reference[] = [];
-  private itemCache: ItemCache;
+  private itemCache: FoundNodeCache;
 
   private get contextItem() {
     if (!this.#contextItem) {
@@ -50,11 +53,11 @@ export class ReferenceSearcherContext {
     return this.#contextItem;
   }
 
-  constructor(typeChecker: TypeChecker, items: Item[]) {
-    this.itemCache = new ItemCache(typeChecker, items);
+  constructor(typeChecker: TypeChecker, items: FoundNode[]) {
+    this.itemCache = new FoundNodeCache(typeChecker, items);
   }
 
-  setContextItem(item: Item) {
+  setContextItem(item: FoundNode) {
     this.#contextItem = item;
   }
 
@@ -62,7 +65,7 @@ export class ReferenceSearcherContext {
     return this.result;
   }
 
-  addReference(item: Item, fromNode?: ts.Node) {
+  addReference(item: FoundNode, fromNode?: ts.Node) {
     const reference = new Reference(this.contextItem, item);
     reference.fromNode = fromNode;
     this.result.push(reference);
@@ -72,13 +75,13 @@ export class ReferenceSearcherContext {
     return this.itemCache.hasItemsToFound();
   }
 
-  getConnectedItem(node: ts.Node): Item | undefined {
+  getConnectedItem(node: ts.Node): FoundNode | undefined {
     const item = this.itemCache.getItemForNode(node);
     if (item && this.isNotContextItem(item)) return item;
     return;
   }
 
-  private isNotContextItem(item: Item): boolean {
+  private isNotContextItem(item: FoundNode): boolean {
     return item.getNode() !== this.contextItem.getNode();
   }
 }

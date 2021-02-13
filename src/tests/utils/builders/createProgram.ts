@@ -1,4 +1,4 @@
-import {Program} from '@lib/Program';
+import {Program} from '@lib/modules/compiler/domain/Program';
 import {createInMemoryCompilerHost} from './createInMemoryCompilerHost';
 
 export function createProgram(files: [name: string, content: string][]) {

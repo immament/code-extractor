@@ -1,6 +1,6 @@
-import {Item} from '@lib/Item';
+import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import {EOL} from 'os';
-import {Reference} from 'src/lib/Reference';
+import {Reference} from '@lib/modules/search/model/Reference';
 import {colors, Colors, dummyColors} from './colors';
 import {pick} from '../type-utils';
 import {NodePrinter} from './NodePrinter';
@@ -42,7 +42,7 @@ export class TsPrinter {
     return this.join(references.map(r => this.printReference(r)));
   }
 
-  printItemAsArray = (item: Item) => {
+  printItemAsArray = (item: FoundNode) => {
     return [
       this.colors.header('Item - fileName:'),
       this._nodePrinter.printNodeSourceFileName(item.getNode()),

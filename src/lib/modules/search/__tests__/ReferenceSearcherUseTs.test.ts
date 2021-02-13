@@ -1,8 +1,8 @@
-import ts from '@lib/typescript';
+import ts from 'typescript';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 import {Project} from '../Project';
-import {Program} from '../Program';
-import {TypeChecker} from '../TypeChecker';
+import {Program} from '../../compiler/domain/Program';
+import {TypeChecker} from '../../compiler/domain/TypeChecker';
 import {createProgram} from '@tests/utils/builders/createProgram';
 
 describe('ReferenceSearcher with TS', () => {
