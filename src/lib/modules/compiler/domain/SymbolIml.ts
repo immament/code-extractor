@@ -17,7 +17,7 @@ export class SymbolIml {
     );
   }
 
-  getExportsOfModule() {
+  getExportsOfModule(): SymbolIml[] {
     return this.context.getTypeChecker().getExportsOfModule(this);
   }
 }

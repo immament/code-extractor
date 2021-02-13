@@ -1,4 +1,5 @@
 import ts from 'typescript';
+import {Cache} from '../../../common/Cache';
 import {Node} from './Node';
 import {ProgramContext} from './ProgramContext';
 import {SymbolIml} from './SymbolIml';
@@ -8,36 +9,40 @@ interface NodeWithSymbol extends ts.Node {
 }
 
 export class TypeChecker {
-  private nodeToSymbolCache = new Map<Node, SymbolIml>();
-  private tsSymbolToSymbolCache = new Map<ts.Symbol, SymbolIml>();
-
-  public get tsTypeChecker(): ts.TypeChecker {
-    return this._tsTypeChecker;
-  }
+  private readonly tsSymbolToSymbolCache = new Cache<ts.Symbol, SymbolIml>();
+  private readonly nodeToSymbolCache = new Cache<Node, SymbolIml | undefined>();
 
   constructor(
-    private context: ProgramContext,
-    private _tsTypeChecker: ts.TypeChecker
+    private readonly context: ProgramContext,
+    private readonly tsTypeChecker: ts.TypeChecker
   ) {}
 
   getSymbol(node: Node): SymbolIml | undefined {
-    return this.nodeToSymbolCache.get(node) ?? this.loadSymbol(node);
+    return this.nodeToSymbolCache.getOrCreate(node, this.getSymbolLoader());
   }
 
-  getExportsOfModule(symbol: SymbolIml) {
+  getExportsOfModule(symbol: SymbolIml): SymbolIml[] {
     return this.tsTypeChecker
       .getExportsOfModule(symbol.internal)
-      .map(s => this.getOrCreate(s));
+      .map(s =>
+        this.tsSymbolToSymbolCache.getOrCreate(s, this.getSymbolImlCreator())
+      );
   }
 
-  private loadSymbol(node: Node): SymbolIml | undefined {
-    const tsSymbol = this.getTsSymbol(node.internal);
-    if (tsSymbol) {
-      const symbol = this.getOrCreate(tsSymbol);
-      if (symbol) this.nodeToSymbolCache.set(node, symbol);
-      return symbol;
-    }
-    return;
+  private getSymbolLoader(): (node: Node) => SymbolIml | undefined {
+    return node => {
+      const tsSymbol = this.getTsSymbol(node.internal);
+      if (tsSymbol) {
+        return this.tsSymbolToSymbolCache.getOrCreate(
+          tsSymbol,
+          this.getSymbolImlCreator()
+        );
+      }
+      return;
+    };
+  }
+  private getSymbolImlCreator(): (tsSymbol: ts.Symbol) => SymbolIml {
+    return tsSymbol => new SymbolIml(this.context, tsSymbol);
   }
 
   private getTsSymbol(node: ts.Node): ts.Symbol | undefined {
@@ -51,19 +56,6 @@ export class TypeChecker {
   private getTsSymbolForNodeName(node: ts.Node) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (node as any).name && this.getTsSymbol((node as any).name);
-  }
-
-  private getFromNodeToSymbolCache(node: Node) {
-    this.nodeToSymbolCache.get(node);
-  }
-
-  private getOrCreate(tsSymbol: ts.Symbol): SymbolIml {
-    let symbol = this.tsSymbolToSymbolCache.get(tsSymbol);
-    if (symbol) return symbol;
-
-    symbol = new SymbolIml(this.context, tsSymbol);
-    this.tsSymbolToSymbolCache.set(tsSymbol, symbol);
-    return symbol;
   }
 
   private getSymbolAssignToNode(node: NodeWithSymbol) {
