@@ -33,4 +33,8 @@ export class SourceFile extends Node {
     if (!exports) return [];
     return exports.flatMap(symbol => symbol.getDeclarations());
   }
+
+  getSourceFile(): SourceFile {
+    return this;
+  }
 }

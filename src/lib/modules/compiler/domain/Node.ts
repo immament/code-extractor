@@ -8,29 +8,16 @@ export class Node {
   readonly kind: ts.SyntaxKind;
   #symbol?: SymbolIml;
   #childs: Node[] | undefined;
-  #sourceFile: SourceFile;
 
   constructor(
     protected readonly context: ProgramContext,
     protected readonly tsNode: ts.Node
   ) {
     this.kind = tsNode.kind;
-    this.#sourceFile = this.initSourceFile();
-  }
-
-  initSourceFile() {
-    // console.log('initSourceFile', this.kind, this.getKindText());
-    return this.kind !== ts.SyntaxKind.SourceFile
-      ? this.context.getNodeOrCreate<SourceFile>(this.tsNode.getSourceFile())
-      : ((this as unknown) as SourceFile);
   }
 
   get internal(): ts.Node {
     return this.tsNode;
-  }
-
-  getKindText(): string {
-    return ts.SyntaxKind[this.kind];
   }
 
   getSymbol(): SymbolIml | undefined {
@@ -38,12 +25,18 @@ export class Node {
   }
 
   getSourceFile(): SourceFile {
-    return this.#sourceFile;
+    return this.context.getNodeOrCreate<SourceFile>(
+      this.tsNode.getSourceFile()
+    );
   }
 
-  /** if callback returns result loop break and return callback result */
-  forEachChild(cbNode: (node: Node) => Node | undefined) {
-    let result: Node | undefined;
+  getKindText(): string {
+    return ts.SyntaxKind[this.kind];
+  }
+
+  /** if callback returns result then loop break and returns callback result */
+  forEachChild<T>(cbNode: (node: Node) => T | undefined): T | undefined {
+    let result: T | undefined;
     this.getChilds().some(node => {
       return (result = cbNode(node));
     });
@@ -51,14 +44,14 @@ export class Node {
   }
 
   private getChilds(): Node[] {
-    return (this.#childs ??= this.loadChilds());
+    return (this.#childs ??= this.getChildsFromTs());
   }
 
-  private loadChilds() {
+  private getChildsFromTs() {
     const childs: Node[] = [];
     this.internal.forEachChild(child => {
-      // WARNING! return value break loop
-      childs.push(new Node(this.context, child));
+      // WARNING! returns value break ts.Node.forEachChild loop
+      childs.push(this.context.getNodeOrCreate(child));
     });
     return childs;
   }
