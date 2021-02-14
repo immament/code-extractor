@@ -31,8 +31,7 @@ export class Program {
     const tsSourceFile = this.#tsProgram.getSourceFile(fileName);
 
     return (
-      tsSourceFile &&
-      (this.#context.getNodeOrCreate(tsSourceFile) as SourceFile)
+      tsSourceFile && this.#context.getNodeOrCreate<SourceFile>(tsSourceFile)
     );
   }
 

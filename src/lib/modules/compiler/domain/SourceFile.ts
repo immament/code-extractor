@@ -12,7 +12,7 @@ export class SourceFile extends Node {
     this.tsNode = tsSourceFile;
   }
 
-  get internal() {
+  get internal(): ts.SourceFile {
     return this.tsNode;
   }
 
