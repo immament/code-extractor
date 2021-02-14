@@ -25,11 +25,11 @@ export class Node {
       : ((this as unknown) as SourceFile);
   }
 
-  get internal() {
+  get internal(): ts.Node {
     return this.tsNode;
   }
 
-  getKindText() {
+  getKindText(): string {
     return ts.SyntaxKind[this.kind];
   }
 
@@ -41,13 +41,12 @@ export class Node {
     return this.#sourceFile;
   }
 
+  /** if callback returns result loop break and return callback result */
   forEachChild(cbNode: (node: Node) => Node | undefined) {
     let result: Node | undefined;
-
     this.getChilds().some(node => {
       return (result = cbNode(node));
     });
-
     return result;
   }
 

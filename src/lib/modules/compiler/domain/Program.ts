@@ -27,18 +27,18 @@ export class Program {
     return this.#typeChecker;
   }
 
-  // TODO: use cache
   getSourceFile(fileName: string): SourceFile | undefined {
     const tsSourceFile = this.#tsProgram.getSourceFile(fileName);
-    if (tsSourceFile) {
-      return new SourceFile(this.#context, tsSourceFile);
-    }
-    return;
+
+    return (
+      tsSourceFile &&
+      (this.#context.getNodeOrCreate(tsSourceFile) as SourceFile)
+    );
   }
-  // TODO: use cache
+
   getSourceFiles(): SourceFile[] {
     return this.#tsProgram
       .getSourceFiles()
-      .map(sf => new SourceFile(this.#context, sf));
+      .map(sf => this.#context.getNodeOrCreate(sf));
   }
 }
