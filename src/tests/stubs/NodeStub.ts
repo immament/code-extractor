@@ -26,7 +26,6 @@ export class NodeStub {
   get kind() {
     return this._kind;
   }
-
   get id() {
     return this._id;
   }
@@ -38,7 +37,7 @@ export class NodeStub {
     this._kind = kind;
     this.#symbol = symbol;
     this.#parent = parent;
-    this.sourceFile = sourceFile;
+    this.sourceFile = sourceFile ?? this.ifNodeIsSourceFileReturnsThis(kind);
 
     this._id = IdGenerator.next();
   }
@@ -84,6 +83,12 @@ export class NodeStub {
 
   getSymbol(): ts.Symbol | undefined {
     return this.#symbol;
+  }
+
+  private ifNodeIsSourceFileReturnsThis(kind: ts.SyntaxKind) {
+    return kind === ts.SyntaxKind.SourceFile
+      ? (this.asNode() as ts.SourceFile)
+      : undefined;
   }
   // #endregion
 }

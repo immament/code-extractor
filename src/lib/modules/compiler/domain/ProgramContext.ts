@@ -17,6 +17,7 @@ export class ProgramContext {
     return (this.#nodeCache.get(tsNode) as T) ?? (this.createNode(tsNode) as T);
   }
 
+  // TODO: create node factory
   private createNode(tsNode: ts.Node): Node {
     let node: Node;
     if (tsNode.kind === ts.SyntaxKind.SourceFile) {

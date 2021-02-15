@@ -1,16 +1,24 @@
 import {CreateNodeArgs, NodeStub} from '@tests/stubs/NodeStub';
 import ts from 'typescript';
 
+const deafultNodeKind = ts.SyntaxKind.VariableStatement;
+
 export function createTsNodeStub({kind, sourceFile, ...args}: CreateNodeArgs) {
   if (kind !== ts.SyntaxKind.SourceFile) {
-    sourceFile ??= createTsNodeStub({
-      kind: ts.SyntaxKind.SourceFile,
-    }).asNode() as ts.SourceFile;
+    sourceFile ??= createTsSourceFileStub().asNode() as ts.SourceFile;
   }
+
   return new NodeStub({
-    kind: kind ?? ts.SyntaxKind.VariableStatement,
+    kind: kind ?? deafultNodeKind,
     sourceFile,
     ...args,
+  });
+}
+
+function createTsSourceFileStub(args: CreateNodeArgs = {}) {
+  return createTsNodeStub({
+    ...args,
+    kind: ts.SyntaxKind.SourceFile,
   });
 }
 
