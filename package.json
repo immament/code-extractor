@@ -8,6 +8,21 @@
   "files": [
     "build/lib"
   ],
+  "scripts": {
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "test": "jest",
+    "test:watch": "yarn test --watch",
+    "posttest": "yarn run lint",
+    "start": "node .",
+    "postinstall": "husky install",
+    "prepublishOnly": "pinst --disable",
+    "postpublish": "pinst --enable"
+  },
   "dependencies": {
     "chalk": "^4.1.0",
     "loglevel": "^1.7.1",
@@ -20,19 +35,8 @@
     "husky": "^5.0.9",
     "jest": "^26.6.3",
     "jest-mock-extended": "^1.0.10",
+    "pinst": "^2.1.4",
     "ts-jest": "^26.5.0"
-  },
-  "scripts": {
-    "lint": "gts lint",
-    "clean": "gts clean",
-    "compile": "tsc",
-    "fix": "gts fix",
-    "prepare": "yarn run compile",
-    "pretest": "yarn run compile",
-    "test": "jest",
-    "test:watch": "yarn test --watch",
-    "posttest": "yarn run lint",
-    "start": "node ."
   },
   "engines": {
     "node": ">=10.6.0"
