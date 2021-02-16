@@ -1,31 +1,28 @@
+import {Cache} from '@lib/common/Cache';
 import ts from 'typescript';
+import {NodeFactory} from '../NodeFactory';
 import {Node} from './Node';
 import {Program} from './Program';
-import {SourceFile} from './SourceFile';
 import {TypeChecker} from './TypeChecker';
 
 export class ProgramContext {
-  readonly #nodeCache = new WeakMap<ts.Node, Node>();
+  readonly #nodeCache = new Cache<ts.Node, Node>();
 
-  constructor(private program: Program) {}
+  private nodeFactory: NodeFactory;
+
+  constructor(private program: Program) {
+    this.nodeFactory = new NodeFactory(this);
+  }
 
   getTypeChecker(): TypeChecker {
     return this.program.getTypeChecker();
   }
 
   getNodeOrCreate<T extends Node>(tsNode: ts.Node): T {
-    return (this.#nodeCache.get(tsNode) as T) ?? (this.createNode(tsNode) as T);
+    return this.#nodeCache.getOrCreate(tsNode, this.getNodeFactory()) as T;
   }
 
-  // TODO: create node factory
-  private createNode(tsNode: ts.Node): Node {
-    let node: Node;
-    if (tsNode.kind === ts.SyntaxKind.SourceFile) {
-      node = new SourceFile(this, tsNode as ts.SourceFile);
-    } else {
-      node = new Node(this, tsNode);
-    }
-    this.#nodeCache.set(tsNode, node);
-    return node;
+  private getNodeFactory() {
+    return (tsNode: ts.Node) => this.nodeFactory.create(tsNode);
   }
 }

@@ -5,7 +5,7 @@ import ts from 'typescript';
 import {createFoundNode} from '../builders/createItem';
 import {createTsNodeStub} from '../builders/createNodeStub';
 import {createSourceFile} from '../builders/createSourceFile';
-import {createReference} from '../builders/stubCreators';
+import {createReferenceStub} from '../builders/stubCreators';
 import {PrintNodeCallback} from '../print/NodePrinter';
 import {TsPrinter} from '../print/TsPrinter';
 
@@ -164,5 +164,5 @@ describe('Print node with callback', () => {
 });
 
 function createReferenceWithContext() {
-  return createReference(new ProgramContext({} as Program));
+  return createReferenceStub(new ProgramContext({} as Program));
 }
