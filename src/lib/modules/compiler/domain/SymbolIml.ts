@@ -16,8 +16,4 @@ export class SymbolIml {
         ?.map(d => new Declaration(this.context, d)) ?? []
     );
   }
-
-  getExportsOfModule(): SymbolIml[] {
-    return this.context.getTypeChecker().getExportsOfModule(this);
-  }
 }

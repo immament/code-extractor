@@ -1,4 +1,7 @@
 import {createProgram} from '@tests/utils/builders/createProgram';
+import ts from 'typescript';
+import {ProgramContext} from '../ProgramContext';
+import {SourceFile} from '../SourceFile';
 
 describe('SourceFile', () => {
   test('should getSymbol when source file have exports', () => {
@@ -27,5 +30,14 @@ describe('SourceFile', () => {
     const sourceFile = program.getSourceFile('/index.ts')!;
 
     expect(sourceFile.getExportsDeclarations()).toHaveLength(1);
+  });
+
+  test('should getSourceFile return itself', () => {
+    const sourceFile = new SourceFile(
+      {} as ProgramContext,
+      {} as ts.SourceFile
+    );
+
+    expect(sourceFile.getSourceFile()).toBe(sourceFile);
   });
 });

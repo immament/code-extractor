@@ -15,18 +15,10 @@ export class ClassDiagram {
 
 export class ClassDiagramElement {
   constructor(private type: ClassDiagramElementTypes) {}
-
-  getType() {
-    return this.type;
-  }
 }
 
 export class ClassDiagramLink {
   constructor(private type: ClassDiagramLinkTypes) {}
-
-  getType() {
-    return this.type;
-  }
 }
 
 export type ClassDiagramElementTypes =

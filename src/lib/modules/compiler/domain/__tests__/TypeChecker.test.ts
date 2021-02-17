@@ -9,43 +9,38 @@ describe('TypeChecker', () => {
 
   test('should getSymbol for imported function', () => {
     init(
-      ['/file1.ts', 'export function fun1() {}'],
-      [
-        '/file2.ts',
-        `import { fun1 } from './file1'
+      `import { fun1 } from './file2'
         fun1();`,
-      ]
+      ['/file2.ts', 'export function fun1() {}']
     );
 
     const symbol = typeChecker.getSymbol(testNode);
+
     expect(symbol).toBeDefined();
     expect(symbol!.internal.valueDeclaration.getSourceFile().fileName).toBe(
-      '/file1.ts'
+      '/file2.ts'
     );
   });
 
   test('should getSymbol returns imported specifier symbol when exportet symbol not avaiable', () => {
-    init([
-      '/file2.ts',
-      `import { fun1 } from './file1'
-        fun1();`,
-    ]);
+    init(`import { fun1 } from './file2'
+        fun1();`);
 
     const symbol = typeChecker.getSymbol(testNode);
-    expect(symbol).toBeDefined();
 
+    expect(symbol).toBeDefined();
     expect(symbol!.internal.valueDeclaration).toBeUndefined();
     expect(symbol!.internal.declarations[0].kind).toBe(
       ts.SyntaxKind.ImportSpecifier
     );
   });
 
-  function init(...files: [string, string][]) {
-    const program = createProgram(files);
+  function init(testFileContent: string, ...files: [string, string][]) {
+    const program = createProgram([['/file.ts', testFileContent], ...files]);
     typeChecker = program.getTypeChecker();
-    const sourceFile = program.getSourceFile('/file2.ts');
-    expect(sourceFile).toBeDefined();
-    testNode = search(
+    const sourceFile = program.getSourceFile('/file.ts');
+
+    testNode = searchNode(
       sourceFile!,
       node =>
         node.kind === ts.SyntaxKind.Identifier &&
@@ -53,14 +48,14 @@ describe('TypeChecker', () => {
     )!;
 
     expect(testNode).toBeDefined();
+
+    function searchNode(
+      node: Node,
+      isSearchType: (node: Node) => boolean
+    ): Node | undefined {
+      return isSearchType(node)
+        ? node
+        : node.forEachChild(child => searchNode(child, isSearchType));
+    }
   }
 });
-
-function search(
-  node: Node,
-  isSearchType: (node: Node) => boolean
-): Node | undefined {
-  // console.log(tsPrinter.nodePrinter.printNode(node.internal));
-  if (isSearchType(node)) return node;
-  return node.forEachChild(child => search(child, isSearchType));
-}

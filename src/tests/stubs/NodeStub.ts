@@ -56,11 +56,10 @@ export class NodeStub {
   }
 
   getSourceFile(): ts.SourceFile {
+    /* istanbul ignore next */
     if (!this.sourceFile) {
-      //console.log('- NO source file', this);
       throw new Error('NodeStub have not got source file. Wrong test data?');
     }
-    //console.log('+ source file', this);
     return this.sourceFile;
   }
 

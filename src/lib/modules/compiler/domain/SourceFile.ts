@@ -22,16 +22,14 @@ export class SourceFile extends Node {
 
   getExports(): SymbolIml[] {
     const symbol = this.getSymbol();
-    if (!symbol) return [];
+    /* istanbul ignore next*/
+    if (!symbol) throw Error('SourceFile should always have a symbol');
 
-    const symbols = this.context.getTypeChecker().getExportsOfModule(symbol);
-    return symbols;
+    return this.context.getTypeChecker().getExportsOfModule(symbol);
   }
 
   getExportsDeclarations(): Declaration[] {
-    const exports = this.getExports();
-    if (!exports) return [];
-    return exports.flatMap(symbol => symbol.getDeclarations());
+    return this.getExports().flatMap(symbol => symbol.getDeclarations());
   }
 
   getSourceFile(): SourceFile {
