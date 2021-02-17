@@ -10,7 +10,8 @@
     "paths": {
       "@tests/*": ["src/tests/*"],
       "@lib/*": ["src/lib/*"]
-    }
+    },
+    "noEmitOnError": false
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "build"]

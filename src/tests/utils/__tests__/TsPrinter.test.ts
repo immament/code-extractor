@@ -2,7 +2,7 @@ import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
 import {NodeStub} from '@tests/stubs/NodeStub';
 import ts from 'typescript';
-import {createFoundNode} from '../builders/createItem';
+import {createFoundNode} from '../builders/createFoundNode';
 import {createTsNodeStub} from '../builders/createNodeStub';
 import {createSourceFile} from '../builders/createSourceFile';
 import {createReferenceStub} from '../builders/stubCreators';

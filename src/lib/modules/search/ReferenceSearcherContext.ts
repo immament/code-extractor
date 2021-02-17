@@ -30,7 +30,8 @@ export class ReferenceSearcherContext {
   }
 
   addReference(item: FoundNode, fromNode?: Node) {
-    const reference = new Reference(this.contextFoundNode, item);
+    // TODO: reference type
+    const reference = new Reference(this.contextFoundNode, item, 'Use');
     reference.fromNode = fromNode;
     this.result.push(reference);
   }

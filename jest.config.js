@@ -1,8 +1,3 @@
-/*
- * For a detailed explanation regarding each configuration property, visit:
- * https://jestjs.io/docs/en/configuration.html
- */
-
 const {pathsToModuleNameMapper} = require('ts-jest/utils');
 const {compilerOptions} = require('./tsconfig.json');
 
@@ -11,10 +6,7 @@ module.exports = {
   coverageProvider: 'babel',
   //coverageReporters: ['clover'],
   testEnvironment: 'node',
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.test.[jt]s?(x)',
-    // '**/?(*.)+(spec|test).[tj]s?(x)',
-  ],
+  testMatch: ['<rootDir>/src/**/__tests__/**/*.test.ts?(x)'],
   preset: 'ts-jest',
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths, {
@@ -22,4 +14,5 @@ module.exports = {
     }),
     '^src/(.*)$': '<rootDir>/src/$1',
   },
+  modulePathIgnorePatterns: ['<rootDir>/build', '<rootDir>/coverage'],
 };

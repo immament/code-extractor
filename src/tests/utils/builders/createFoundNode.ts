@@ -5,14 +5,22 @@ import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import ts from 'typescript';
 import {createTsNodeStub} from './createNodeStub';
 
-export function createFoundNode(
-  context?: ProgramContext,
-  node?: Node,
-  sourceFile?: ts.SourceFile
-) {
-  node ??= new Node(
+export function createFoundNodeWithNode(node: Node) {
+  return new FoundNode(node);
+}
+
+export function createFoundNode({
+  context,
+  kind,
+  sourceFile,
+}: {
+  context?: ProgramContext;
+  sourceFile?: ts.SourceFile;
+  kind?: ts.SyntaxKind;
+} = {}) {
+  const node = new Node(
     context ?? new ProgramContext({} as Program),
-    createTsNodeStub({sourceFile}).asNode()
+    createTsNodeStub({sourceFile, kind}).asNode()
   );
   return new FoundNode(node);
 }

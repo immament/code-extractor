@@ -3,7 +3,7 @@ import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
 import {Reference} from '@lib/modules/search/model/Reference';
 import ts from 'typescript';
-import {createFoundNode} from './createItem';
+import {createFoundNode, createFoundNodeWithNode} from './createFoundNode';
 import {createTsNodeStub, createTsNodeStubWithChilds} from './createNodeStub';
 
 export function createReferenceStub(context: ProgramContext) {
@@ -14,8 +14,9 @@ export function createReferenceStub(context: ProgramContext) {
   const nodeForFromItem = createTsNodeStubWithChilds(sourceFile);
   const nodeFrom = new Node(context, nodeForFromItem.asNode());
   const reference = new Reference(
-    createFoundNode(context, nodeFrom),
-    createFoundNode(context)
+    createFoundNodeWithNode(nodeFrom),
+    createFoundNode({context}),
+    'Use'
   );
   reference.fromNode = nodeFrom.forEachChild(n => n);
   return reference;
