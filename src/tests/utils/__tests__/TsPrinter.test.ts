@@ -1,6 +1,7 @@
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
 import {NodeStub} from '@tests/stubs/NodeStub';
+import chalk from 'chalk';
 import ts from 'typescript';
 import {createFoundNode} from '../builders/createFoundNode';
 import {createTsNodeStub} from '../builders/createNodeStub';
@@ -11,6 +12,14 @@ import {TsPrinter} from '../print/TsPrinter';
 
 describe('TsPrinter with default options', () => {
   let printer: TsPrinter;
+  const chalkOrgLevel = chalk.level;
+  beforeAll(() => {
+    chalk.level = 2;
+  });
+
+  afterAll(() => {
+    chalk.level = chalkOrgLevel;
+  });
 
   beforeEach(() => {
     printer = new TsPrinter();

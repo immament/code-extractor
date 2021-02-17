@@ -253,7 +253,7 @@ describe('ReferenceSearcher', () => {
     });
 
     test('should find 3 references', () => {
-      init(createTreeWith4ItemsAnd3ValidReferences());
+      init(createTreeWith3FoundNodesAnd3ValidReferences());
 
       const searchResult = searcher.search(items);
       expect(searchResult).toHaveLength(3);
@@ -280,40 +280,37 @@ describe('ReferenceSearcher', () => {
         .map(node => createFoundNode(node));
     }
 
-    function createTreeWith4ItemsAnd3ValidReferences() {
+    function createTreeWith3FoundNodesAnd3ValidReferences() {
+      // root chidls are FoundNodes
       return {
-        // root chidls are Items
         childs: [
+          {symbol: 0, childs: createChildsWithReferences()},
+          {symbol: 1},
+          {symbol: 2},
+        ],
+      };
+
+      function createChildsWithReferences() {
+        return [
+          {},
           {
-            symbol: 0,
+            symbol: 1,
             childs: [
+              {symbol: 2},
               {
+                symbol: 1,
                 childs: [
                   {},
                   {
-                    symbol: 1, // should find
-                    childs: [
-                      {symbol: 2}, // should find
-                      {
-                        symbol: 1, // should find
-                        childs: [
-                          {},
-                          {
-                            symbol: 0, // should not find - reference to itself
-                            childs: [{symbol: 0}], // should not find - reference to itself
-                          },
-                        ],
-                      },
-                    ],
+                    symbol: 0, // should not find - reference to itself
+                    childs: [{symbol: 0}], // should not find - reference to itself
                   },
                 ],
               },
             ],
           },
-          {symbol: 1},
-          {symbol: 2},
-        ],
-      };
+        ];
+      }
     }
   });
 

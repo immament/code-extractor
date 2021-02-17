@@ -1,16 +1,8 @@
 {
   "peacock.color": "#4e2ed6",
-  "colorTabs.config": [
-    {
-      "regex": ".*/compiler/.*",
-      "color": "#55FF55",
-      "label": " COMPILER "
-    }
-  ],
   "workbench.colorCustomizations": {
     "statusBar.background": "#4e2ed6",
     "statusBar.noFolderBackground": "#212121",
-    "statusBar.debuggingBackground": "#212121",
     "activityBar.activeBackground": "#7259de",
     "activityBar.activeBorder": "#e58e7a",
     "activityBar.background": "#7259de",
@@ -23,7 +15,6 @@
     "titleBar.activeBackground": "#4e2ed6",
     "titleBar.activeForeground": "#e7e7e7",
     "titleBar.inactiveBackground": "#4e2ed699",
-    "titleBar.inactiveForeground": "#e7e7e799",
-    "tab.activeBorder": "#55FF55"
+    "titleBar.inactiveForeground": "#e7e7e799"
   }
 }

@@ -1,6 +1,5 @@
 import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import {Reference} from '@lib/modules/search/model/Reference';
-import {EOL} from 'os';
 import {pick} from '../type-utils';
 import {Colors, colors, dummyColors} from './colors';
 import {NodePrinter} from './NodePrinter';
@@ -20,7 +19,7 @@ export interface TsPrinterOptions {
 const defaultTsPrinterOptions: TsPrinterOptions = {
   colors: colors,
   textFragmentLength: 0,
-  joinLineCharacter: EOL,
+  joinLineCharacter: '\n',
 };
 
 export class TsPrinter {
@@ -46,9 +45,9 @@ export class TsPrinter {
     return [
       this.colors.header('Item - fileName:'),
       this._nodePrinter.printNodeSourceFileName(item.getNode()),
-      EOL,
+      this.options.joinLineCharacter,
       this._nodePrinter.printNodeWithoutChilds(item.getTsNode()),
-      EOL,
+      this.options.joinLineCharacter,
     ];
   };
 

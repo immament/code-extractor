@@ -9,11 +9,9 @@ exports[`TsPrinter with changed options should print item 1`] = `
 Array [
   "Item - fileName:",
   "",
-  "
-",
+  "-",
   "FirstStatement text-232",
-  "
-",
+  "-",
 ]
 `;
 

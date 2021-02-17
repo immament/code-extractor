@@ -15,7 +15,7 @@
     "fix": "gts fix",
     "prepare": "yarn run compile",
     "pretest": "yarn run compile",
-    "test": "jest",
+    "test": "jest --coverage --colors",
     "test:watch": "yarn test --watch",
     "posttest": "yarn run lint",
     "start": "node .",
