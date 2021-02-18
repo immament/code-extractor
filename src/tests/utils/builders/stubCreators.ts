@@ -1,6 +1,7 @@
 import {Node} from '@lib/modules/compiler/domain/Node';
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {Reference} from '@lib/modules/search/model/Reference';
 import ts from 'typescript';
 import {createFoundNode, createFoundNodeWithNode} from './createFoundNode';
@@ -8,7 +9,7 @@ import {createTsNodeStub, createTsNodeStubWithChilds} from './createNodeStub';
 
 export function createReferenceStub(context: ProgramContext) {
   const sourceFile = createTsNodeStub({
-    kind: ts.SyntaxKind.SourceFile,
+    kind: NodeKind.SourceFile,
   }).asNode() as ts.SourceFile;
 
   const nodeForFromItem = createTsNodeStubWithChilds(sourceFile);

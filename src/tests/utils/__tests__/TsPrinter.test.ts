@@ -1,8 +1,8 @@
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {NodeStub} from '@tests/stubs/NodeStub';
 import chalk from 'chalk';
-import ts from 'typescript';
 import {createFoundNode} from '../builders/createFoundNode';
 import {createTsNodeStub} from '../builders/createNodeStub';
 import {createSourceFile} from '../builders/createSourceFile';
@@ -26,18 +26,18 @@ describe('TsPrinter with default options', () => {
   });
 
   test('should printNode without childs result match snampshot', () => {
-    const result = printer.nodePrinter.printNode(
-      new NodeStub({kind: ts.SyntaxKind.ClassDeclaration}).asNode()
+    const result = printer.nodePrinter.print(
+      new NodeStub({kind: NodeKind.ClassDeclaration}).asNode()
     );
 
     expect(result).toMatchSnapshot();
   });
 
   test('should printNodeWithoutChilds result match snampshot', () => {
-    const result = printer.nodePrinter.printNodeWithoutChilds(
+    const result = printer.nodePrinter.printWithoutChilds(
       new NodeStub({
-        kind: ts.SyntaxKind.ClassDeclaration,
-        childs: [new NodeStub({kind: ts.SyntaxKind.Identifier})],
+        kind: NodeKind.ClassDeclaration,
+        childs: [new NodeStub({kind: NodeKind.Identifier})],
       }).asNode()
     );
 
@@ -50,7 +50,7 @@ describe('TsPrinter with default options', () => {
       'class MyClass { myMethod() {}}'
     );
 
-    const result = printer.nodePrinter.printNode(sourceFile);
+    const result = printer.nodePrinter.print(sourceFile);
 
     expect(result).toMatchSnapshot();
   });
@@ -83,18 +83,18 @@ describe('TsPrinter with changed options', () => {
   });
 
   test('should printNode without childs', () => {
-    const result = printer.nodePrinter.printNode(
-      new NodeStub({kind: ts.SyntaxKind.ClassDeclaration}).asNode()
+    const result = printer.nodePrinter.print(
+      new NodeStub({kind: NodeKind.ClassDeclaration}).asNode()
     );
 
     expect(result).toMatchSnapshot();
   });
 
   test('should printNodeWithoutChilds', () => {
-    const result = printer.nodePrinter.printNodeWithoutChilds(
+    const result = printer.nodePrinter.printWithoutChilds(
       new NodeStub({
-        kind: ts.SyntaxKind.ClassDeclaration,
-        childs: [createTsNodeStub({kind: ts.SyntaxKind.Identifier})],
+        kind: NodeKind.ClassDeclaration,
+        childs: [createTsNodeStub({kind: NodeKind.Identifier})],
       }).asNode()
     );
 
@@ -107,7 +107,7 @@ describe('TsPrinter with changed options', () => {
       'class MyClass { myMethod() {}}'
     );
 
-    const result = printer.nodePrinter.printNode(sourceFile);
+    const result = printer.nodePrinter.print(sourceFile);
 
     expect(result).toMatchSnapshot();
   });
@@ -140,11 +140,11 @@ describe('Print node with callback', () => {
       p.colors.header(n.kind.toString());
 
     const node = new NodeStub({
-      kind: ts.SyntaxKind.ClassDeclaration,
-      childs: [new NodeStub({kind: ts.SyntaxKind.Identifier})],
+      kind: NodeKind.ClassDeclaration,
+      childs: [new NodeStub({kind: NodeKind.Identifier})],
     }).asNode();
 
-    const result = printer.nodePrinter.printNode(node, {cb: callback});
+    const result = printer.nodePrinter.print(node, {cb: callback});
 
     expect(result).toMatchSnapshot();
   });
@@ -153,8 +153,8 @@ describe('Print node with callback', () => {
     const callback: PrintNodeCallback = (n, p) =>
       p.colors.header(n.kind.toString());
 
-    const result = printer.nodePrinter.printNode(
-      new NodeStub({kind: ts.SyntaxKind.ClassDeclaration}).asNode(),
+    const result = printer.nodePrinter.print(
+      new NodeStub({kind: NodeKind.ClassDeclaration}).asNode(),
       {cb: callback}
     );
 
@@ -163,8 +163,8 @@ describe('Print node with callback', () => {
 
   test('should printNode ignore undefined return by callback', () => {
     const callback: PrintNodeCallback = () => undefined;
-    const result = printer.nodePrinter.printNode(
-      new NodeStub({kind: ts.SyntaxKind.ClassDeclaration}).asNode(),
+    const result = printer.nodePrinter.print(
+      new NodeStub({kind: NodeKind.ClassDeclaration}).asNode(),
       {cb: callback}
     );
 

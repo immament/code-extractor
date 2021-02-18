@@ -1,4 +1,5 @@
 import {Node} from '@lib/modules/compiler/domain/Node';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import ts from 'typescript';
 import {Colors} from './colors';
 import {TsPrinter, TsPrinterOptions} from './TsPrinter';
@@ -17,28 +18,34 @@ export class NodePrinter {
     this.colors = options.colors;
   }
 
-  printNodeWithoutChilds(
+  printWithoutChilds(
     node: ts.Node,
     {level = 0}: Partial<PrintNodeOptions> = {}
   ) {
     return (
-      this.printer.indent(level) +
-      ts.SyntaxKind[node.kind] +
-      this.textFragment(node)
+      this.printer.indent(level) + NodeKind[node.kind] + this.textFragment(node)
     );
   }
 
-  printNodeSourceFileName(node: Node) {
+  printSourceFileName(node: Node) {
     return this.colors.code(node.getSourceFile()?.getFileName());
   }
 
-  printNode(node: ts.Node, {level = 0, cb}: Partial<PrintNodeOptions> = {}) {
+  print(node: ts.Node, {level = 0, cb}: Partial<PrintNodeOptions> = {}) {
     return this.printer.join(this.printNodeAsArray(node, {level, cb}));
+  }
+
+  prepare(node?: ts.Node) {
+    return prepareToPrint(node);
+  }
+
+  prepareArray(nodes?: ts.Node[]) {
+    return nodes?.map(n => prepareToPrint(n));
   }
 
   private printNodeAsArray(node: ts.Node, {level, cb}: PrintNodeOptions) {
     return [
-      this.printNodeWithoutChilds(node, {level}) + this.printCallback(node, cb),
+      this.printWithoutChilds(node, {level}) + this.printCallback(node, cb),
       ...this.printNodeChildsToArray(node, {level, cb}),
     ];
   }
@@ -60,8 +67,89 @@ export class NodePrinter {
   private printNodeChildsToArray(node: ts.Node, {level, cb}: PrintNodeOptions) {
     const result: string[] = [];
     node.forEachChild(child => {
-      result.push(this.printNode(child, {level: level + 1, cb: cb}));
+      result.push(this.print(child, {level: level + 1, cb: cb}));
     });
     return result;
   }
+}
+
+// TODO: refeactor vvvvvv
+
+function syntaxKindText(element: {kind: NodeKind}): string {
+  return NodeKind[element.kind];
+}
+
+function createNodeObj(node: object): {[key: string]: unknown} {
+  const anyNode = node as {kind: NodeKind};
+  return anyNode.kind
+    ? {kindText: `${syntaxKindText(anyNode) || ''} (${anyNode.kind})`}
+    : {};
+}
+
+export function printObject(
+  object: object | undefined,
+  ignoreKeysArg?: string[]
+) {
+  console.log(prepareToPrint(object, ignoreKeysArg));
+}
+
+export function prepareToPrintArray(
+  objects?: object[],
+  ignoreKeysArg?: string[]
+) {
+  return objects?.map(o => prepareToPrint(o, ignoreKeysArg));
+}
+
+export function prepareToPrint(
+  node: object | undefined,
+  ignoreKeysArg?: string[]
+): unknown {
+  if (!node) {
+    return;
+  }
+
+  const ignoreKeys = ignoreKeysArg
+    ? ignoreKeysArg
+    : [
+        'parent',
+        'pos',
+        'end',
+        'flags',
+        'modifierFlagsCache',
+        'transformFlags',
+        'flowNode',
+        'kind',
+        'checker',
+        //'heritageClauses',
+      ];
+
+  const refs: object[] = [];
+
+  function prepare(node: object, level = 0): unknown {
+    if (refs.includes(node)) {
+      const anyNode = node as {id: string; kind: number};
+      return `circular [${anyNode.id || ''}/${anyNode.kind || ''}]`;
+    }
+    refs.push(node);
+
+    const reduced = Object.entries(node)
+      .filter(([key]) => !ignoreKeys.includes(key))
+      .reduce((acc, [key, value]) => {
+        if (Array.isArray(value)) {
+          value = value.map(v => prepare(v, level + 1));
+        } else if (typeof value === 'object') {
+          value = prepare(value, level + 1);
+        } else if (key === 'token') {
+          value = NodeKind[value];
+        }
+
+        if (value) {
+          acc[key] = value;
+        }
+        return acc;
+      }, createNodeObj(node));
+    return reduced;
+  }
+
+  return prepare(node);
 }

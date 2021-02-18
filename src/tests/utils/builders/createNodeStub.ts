@@ -1,10 +1,11 @@
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {CreateNodeArgs, NodeStub} from '@tests/stubs/NodeStub';
 import ts from 'typescript';
 
-const deafultNodeKind = ts.SyntaxKind.VariableStatement;
+const deafultNodeKind = NodeKind.VariableStatement;
 
 export function createTsNodeStub({kind, sourceFile, ...args}: CreateNodeArgs) {
-  if (kind !== ts.SyntaxKind.SourceFile) {
+  if (kind !== NodeKind.SourceFile) {
     sourceFile ??= createTsSourceFileStub().asNode() as ts.SourceFile;
   }
 
@@ -18,16 +19,16 @@ export function createTsNodeStub({kind, sourceFile, ...args}: CreateNodeArgs) {
 function createTsSourceFileStub(args: CreateNodeArgs = {}) {
   return createTsNodeStub({
     ...args,
-    kind: ts.SyntaxKind.SourceFile,
+    kind: NodeKind.SourceFile,
   });
 }
 
 export function createTsNodeStubWithChilds(sourceFile?: ts.SourceFile) {
   return new NodeStub({
-    kind: ts.SyntaxKind.ClassDeclaration,
+    kind: NodeKind.ClassDeclaration,
     childs: [
-      new NodeStub({kind: ts.SyntaxKind.Identifier, sourceFile}),
-      new NodeStub({kind: ts.SyntaxKind.MethodDeclaration, sourceFile}),
+      new NodeStub({kind: NodeKind.Identifier, sourceFile}),
+      new NodeStub({kind: NodeKind.MethodDeclaration, sourceFile}),
     ],
     sourceFile,
   });

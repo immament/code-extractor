@@ -1,7 +1,7 @@
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {SourceFile} from '@lib/modules/compiler/domain/SourceFile';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {createProgram} from '@tests/utils/builders/createProgram';
-import ts from 'typescript';
 import {NodeSearcher} from '../NodeSearcher';
 
 describe('SearchNodesInFilesUseTs.test', () => {
@@ -12,7 +12,7 @@ describe('SearchNodesInFilesUseTs.test', () => {
   test('should find variable declaration', () => {
     init(['/index.ts', 'let v = "Index"']);
     expect(
-      project.searchInFile(sourceFile, [ts.SyntaxKind.VariableDeclaration])
+      project.searchInFile(sourceFile, [NodeKind.VariableDeclaration])
     ).toHaveLength(1);
   });
 
@@ -24,7 +24,7 @@ describe('SearchNodesInFilesUseTs.test', () => {
 }`,
     ]);
     expect(
-      project.searchInFile(sourceFile, [ts.SyntaxKind.ClassDeclaration])
+      project.searchInFile(sourceFile, [NodeKind.ClassDeclaration])
     ).toHaveLength(1);
   });
 
@@ -42,10 +42,10 @@ describe('SearchNodesInFilesUseTs.test', () => {
 
     expect(
       project.searchInFile(sourceFile, [
-        ts.SyntaxKind.VariableDeclaration,
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.FunctionDeclaration,
-        ts.SyntaxKind.InterfaceDeclaration,
+        NodeKind.VariableDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.FunctionDeclaration,
+        NodeKind.InterfaceDeclaration,
       ])
     ).toHaveLength(6);
   });

@@ -1,3 +1,4 @@
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import ts from 'typescript';
 
 export function isNodeExported(node: ts.Node): boolean {
@@ -13,5 +14,5 @@ function hasExportFlag(node: ts.Node) {
 }
 
 function isSourceFile(node: ts.Node) {
-  return !!node.parent && node.parent.kind === ts.SyntaxKind.SourceFile;
+  return !!node.parent && node.parent.kind === NodeKind.SourceFile;
 }

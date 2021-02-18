@@ -1,7 +1,8 @@
 import {TypeChecker} from '@lib/modules/compiler/domain/TypeChecker';
 import {createProgram} from '@tests/utils/builders/createProgram';
-import ts from 'typescript';
+import {searchNode} from '@tests/utils/node-utils';
 import {Node} from '../Node';
+import {NodeKind} from '../SyntaxKind';
 
 describe('TypeChecker', () => {
   let typeChecker: TypeChecker;
@@ -31,7 +32,7 @@ describe('TypeChecker', () => {
     expect(symbol).toBeDefined();
     expect(symbol!.internal.valueDeclaration).toBeUndefined();
     expect(symbol!.internal.declarations[0].kind).toBe(
-      ts.SyntaxKind.ImportSpecifier
+      NodeKind.ImportSpecifier
     );
   });
 
@@ -43,19 +44,10 @@ describe('TypeChecker', () => {
     testNode = searchNode(
       sourceFile!,
       node =>
-        node.kind === ts.SyntaxKind.Identifier &&
-        node.internal.parent.kind === ts.SyntaxKind.CallExpression
+        node.kind === NodeKind.Identifier &&
+        node.internal.parent.kind === NodeKind.CallExpression
     )!;
 
     expect(testNode).toBeDefined();
-
-    function searchNode(
-      node: Node,
-      isSearchType: (node: Node) => boolean
-    ): Node | undefined {
-      return isSearchType(node)
-        ? node
-        : node.forEachChild(child => searchNode(child, isSearchType));
-    }
   }
 });

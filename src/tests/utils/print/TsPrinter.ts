@@ -44,9 +44,9 @@ export class TsPrinter {
   printItemAsArray = (item: FoundNode) => {
     return [
       this.colors.header('Item - fileName:'),
-      this._nodePrinter.printNodeSourceFileName(item.getNode()),
+      this._nodePrinter.printSourceFileName(item.getNode()),
       this.options.joinLineCharacter,
-      this._nodePrinter.printNodeWithoutChilds(item.getTsNode()),
+      this._nodePrinter.printWithoutChilds(item.getTsNode()),
       this.options.joinLineCharacter,
     ];
   };
@@ -81,9 +81,9 @@ export class TsPrinter {
     return this.join([
       this.printReferenceFromNode(ref),
       this.colors.header('FROM:'),
-      this.nodePrinter.printNode(ref.from.getTsNode(), {level: indentLevel}),
+      this.nodePrinter.print(ref.from.getTsNode(), {level: indentLevel}),
       this.colors.header('TO:'),
-      this.nodePrinter.printNode(ref.to.getTsNode(), {level: indentLevel}),
+      this.nodePrinter.print(ref.to.getTsNode(), {level: indentLevel}),
     ]);
   }
 
@@ -91,7 +91,7 @@ export class TsPrinter {
     return (
       (r.fromNode &&
         this.colors.header('From node: ') +
-          this.nodePrinter.printNodeWithoutChilds(r.fromNode.internal)) ??
+          this.nodePrinter.printWithoutChilds(r.fromNode.internal)) ??
       ''
     );
   }

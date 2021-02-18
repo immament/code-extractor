@@ -16,7 +16,7 @@
     "prepare": "yarn run compile",
     "pretest": "yarn run compile",
     "test": "jest --coverage",
-    "test:watch": "yarn test --watch",
+    "test:watch": "yarn jest --watch",
     "posttest": "yarn run lint",
     "start": "node .",
     "postinstall": "husky install",

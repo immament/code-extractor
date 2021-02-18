@@ -1,12 +1,12 @@
 import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
 import {createProgram} from '@tests/utils/builders/createProgram';
-import ts from 'typescript';
 import {ProgramContext} from '../ProgramContext';
+import {NodeKind} from '../SyntaxKind';
 
 describe('ProgramContext.getNodeOrCreate', () => {
   test('should create node with specified kind', () => {
     const context = new ProgramContext(createProgram([]));
-    const expectedKind = ts.SyntaxKind.CallExpression;
+    const expectedKind = NodeKind.CallExpression;
     const tsNode = createTsNodeStub({kind: expectedKind}).asNode();
 
     const node = context.getNodeOrCreate(tsNode);

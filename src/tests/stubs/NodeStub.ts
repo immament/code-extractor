@@ -1,3 +1,4 @@
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import ts from 'typescript';
 import {IdGenerator} from '../utils/IdGenerator';
 
@@ -84,8 +85,8 @@ export class NodeStub {
     return this.#symbol;
   }
 
-  private ifNodeIsSourceFileReturnsThis(kind: ts.SyntaxKind) {
-    return kind === ts.SyntaxKind.SourceFile
+  private ifNodeIsSourceFileReturnsThis(kind: NodeKind) {
+    return kind === NodeKind.SourceFile
       ? (this.asNode() as ts.SourceFile)
       : undefined;
   }

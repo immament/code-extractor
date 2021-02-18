@@ -1,6 +1,6 @@
 import {SourceFile} from '@lib/modules/compiler/domain/SourceFile';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {createProgram} from '@tests/utils/builders/createProgram';
-import ts from 'typescript';
 import {NodeSearcher} from '../NodeSearcher';
 
 describe('Search Nodes in Files', () => {
@@ -13,7 +13,7 @@ describe('Search Nodes in Files', () => {
   });
 
   test('should find class declaration when in file ', () => {
-    const searchedKinds = [ts.SyntaxKind.ClassDeclaration];
+    const searchedKinds = [NodeKind.ClassDeclaration];
     init([
       '/index.ts',
       `class MyClass {
@@ -26,7 +26,7 @@ describe('Search Nodes in Files', () => {
   });
 
   test('should find 3 class declaration`s in 2 files ', () => {
-    const searchedKinds = [ts.SyntaxKind.ClassDeclaration];
+    const searchedKinds = [NodeKind.ClassDeclaration];
     init(
       ['/index.ts', 'class MyClass1 { constructor() {}}'],
       [
@@ -66,10 +66,10 @@ describe('Search Nodes in Files', () => {
 
     expect(
       nodeSearcher.searchInFiles(sourceFiles, [
-        ts.SyntaxKind.VariableDeclaration,
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.FunctionDeclaration,
-        ts.SyntaxKind.InterfaceDeclaration,
+        NodeKind.VariableDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.FunctionDeclaration,
+        NodeKind.InterfaceDeclaration,
       ])
     ).toHaveLength(12);
   });

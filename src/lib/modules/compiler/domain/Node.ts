@@ -2,10 +2,12 @@ import ts from 'typescript';
 import {ProgramContext} from './ProgramContext';
 import {SourceFile} from './SourceFile';
 import {SymbolIml} from './SymbolIml';
+import {NodeKind} from './SyntaxKind';
+import {Type} from './Type';
 
 // TODO: should have parent
 export class Node {
-  readonly kind: ts.SyntaxKind;
+  readonly kind: NodeKind;
   #symbol?: SymbolIml;
   #childs: Node[] | undefined;
 
@@ -31,7 +33,11 @@ export class Node {
   }
 
   getKindText(): string {
-    return ts.SyntaxKind[this.kind];
+    return NodeKind[this.kind];
+  }
+
+  getType() {
+    return new Type(this.context, this.getTsType());
   }
 
   /** if callback returns result then loop break and returns callback result */
@@ -54,5 +60,11 @@ export class Node {
       childs.push(this.context.getNodeOrCreate(child));
     });
     return childs;
+  }
+
+  private getTsType() {
+    return this.context
+      .getTypeChecker()
+      .internal.getTypeAtLocation(this.internal);
   }
 }

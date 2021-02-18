@@ -24,9 +24,19 @@ export class TypeChecker {
   getExportsOfModule(symbol: SymbolIml): SymbolIml[] {
     return this.tsTypeChecker
       .getExportsOfModule(symbol.internal)
-      .map(s =>
-        this.tsSymbolToSymbolCache.getOrCreate(s, this.getSymbolImlCreator())
-      );
+      .map(s => this.getOrCreateSymbol(s));
+  }
+
+  getOrCreateSymbol(tsSymbol: ts.Symbol) {
+    return this.tsSymbolToSymbolCache.getOrCreate(
+      tsSymbol,
+      this.getSymbolImlCreator()
+    );
+  }
+
+  // only dev
+  get internal() {
+    return this.tsTypeChecker;
   }
 
   private getSymbolLoader(): (node: Node) => SymbolIml | undefined {

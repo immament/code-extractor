@@ -1,5 +1,5 @@
-import ts from 'typescript';
 import {Program} from '../compiler/domain/Program';
+import {NodeKind} from '../compiler/domain/SyntaxKind';
 import {
   ClassDiagram,
   ClassDiagramElement,
@@ -13,17 +13,17 @@ import {ReferenceSearcher} from './ReferenceSearcher';
 
 export class ClassDiagramExtractor {
   private kindsToElementKindMap: Partial<
-    Record<ts.SyntaxKind, ClassDiagramElementTypes>
+    Record<NodeKind, ClassDiagramElementTypes>
   > = {
-    [ts.SyntaxKind.ClassDeclaration]: 'Class',
-    [ts.SyntaxKind.InterfaceDeclaration]: 'Interface',
+    [NodeKind.ClassDeclaration]: 'Class',
+    [NodeKind.InterfaceDeclaration]: 'Interface',
   };
 
   private classDiagramSyntaxtKinds = [
-    ts.SyntaxKind.ClassDeclaration,
-    ts.SyntaxKind.InterfaceDeclaration,
-    ts.SyntaxKind.FunctionDeclaration,
-    ts.SyntaxKind.VariableDeclaration,
+    NodeKind.ClassDeclaration,
+    NodeKind.InterfaceDeclaration,
+    NodeKind.FunctionDeclaration,
+    NodeKind.VariableDeclaration,
   ];
 
   private readonly nodeSearcher: NodeSearcher;
@@ -68,7 +68,7 @@ export class ClassDiagramExtractor {
     return new ClassDiagramLink(reference.type || 'Use');
   }
 
-  private mapType(kind: ts.SyntaxKind) {
+  private mapType(kind: NodeKind) {
     return this.kindsToElementKindMap[kind];
   }
 }

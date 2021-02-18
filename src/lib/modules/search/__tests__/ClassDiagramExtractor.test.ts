@@ -1,4 +1,5 @@
 import {Program} from '@lib/modules/compiler/domain/Program';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {createFoundNode} from '@tests/utils/builders/createFoundNode';
 import ts from 'typescript';
 import {ClassDiagramExtractor} from '../ClassDiagramExtractor';
@@ -28,7 +29,7 @@ describe('ClassDiagramExtractor', () => {
       const foundNodes = [
         createFoundNode({
           context: program.getContext(),
-          kind: ts.SyntaxKind.ClassDeclaration,
+          kind: NodeKind.ClassDeclaration,
         }),
       ];
       mockSearchResults(foundNodes, []);
@@ -39,17 +40,17 @@ describe('ClassDiagramExtractor', () => {
 
     test('should extract() search class diagram elements', () => {
       const expectedSearchedElements = [
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
-        ts.SyntaxKind.FunctionDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.InterfaceDeclaration,
+        NodeKind.VariableDeclaration,
+        NodeKind.FunctionDeclaration,
       ];
       mockSearchResults([], []);
 
       const extractResult = extractor.extract();
 
       const searchedKindsArg = mockSearchExportedDeclarationsInFiles.mock
-        .calls[0][1] as ts.SyntaxKind[];
+        .calls[0][1] as NodeKind[];
 
       expect(extractResult.getElements()).toHaveLength(0);
       expect(
@@ -88,10 +89,10 @@ describe('ClassDiagramExtractor', () => {
       };
       const foundNodes = [
         createFoundNode({
-          kind: ts.SyntaxKind.ClassDeclaration,
+          kind: NodeKind.ClassDeclaration,
         }),
         createFoundNode({
-          kind: ts.SyntaxKind.InterfaceDeclaration,
+          kind: NodeKind.InterfaceDeclaration,
         }),
       ];
 
@@ -112,8 +113,8 @@ describe('ClassDiagramExtractor', () => {
         links: [new ClassDiagramLink('Implements')],
       };
       const foundNodes = createFoundNodes([
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.InterfaceDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.InterfaceDeclaration,
       ]);
 
       const foundReferences = [
@@ -126,7 +127,7 @@ describe('ClassDiagramExtractor', () => {
     });
   });
 
-  function createFoundNodes(kinds: ts.SyntaxKind[]) {
+  function createFoundNodes(kinds: NodeKind[]) {
     return kinds.map(kind => createFoundNode({kind}));
   }
 

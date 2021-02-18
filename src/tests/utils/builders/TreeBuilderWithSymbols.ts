@@ -1,9 +1,10 @@
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import ts from 'typescript';
 import {CreateNodeArgs} from '../../stubs/NodeStub';
 import {TreeBuilder} from './TreeBuilder';
 
 export interface AddFromObjectArgs {
-  kind?: ts.SyntaxKind;
+  kind?: NodeKind;
   symbol?: number;
   childs?: AddFromObjectArgs[];
 }

@@ -21,7 +21,7 @@ describe('Program', () => {
     expect(program.getSourceFiles()).toHaveLength(3);
   });
 
-  test('should contain index.ts source files', () => {
+  test('should contain index.ts source file', () => {
     const fileName = '/index.ts';
     const program = createProgram([[fileName, 'let v = "Index"']]);
 

@@ -1,12 +1,12 @@
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {createProgram} from '@tests/utils/builders/createProgram';
-import ts from 'typescript';
 import {Program} from '../../compiler/domain/Program';
 import {NodeSearcher} from '../NodeSearcher';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 
 describe('ReferenceSearcher with TS', () => {
   let searcher: ReferenceSearcher;
-  let project: NodeSearcher;
+  let nodeSearcher: NodeSearcher;
   let program: Program;
 
   describe('Search in one file', () => {
@@ -20,10 +20,10 @@ describe('ReferenceSearcher with TS', () => {
       const v = 1;`,
       ]);
 
-      const items = searchItems([
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
+      const items = searchNodes([
+        NodeKind.InterfaceDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.VariableDeclaration,
       ]);
 
       expect(items).toHaveLength(3);
@@ -37,30 +37,30 @@ describe('ReferenceSearcher with TS', () => {
            const variable: MyInterface;`,
       ]);
 
-      const items = searchItems([
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
+      const items = searchNodes([
+        NodeKind.InterfaceDeclaration,
+        NodeKind.VariableDeclaration,
       ]);
 
       expect(items).toHaveLength(2);
       expect(searcher.search(items).length).toBe(1);
     });
 
-    test.todo('copy - should ... Item inside Item');
+    test.todo(
+      'Item inside Item - later because currently search only exported nodes'
+    );
     // , () => {
-    //   // TODO: później
     //   init([
     //     ['/index.ts', 'class MyClass { method() {  const variable = 1; } }'],
     //   ]);
 
     //   const items = searchItems([
-    //     ts.SyntaxKind.ClassDeclaration,
-    //     ts.SyntaxKind.VariableDeclaration,
+    //     NodeKind.ClassDeclaration,
+    //     NodeKind.VariableDeclaration,
     //   ]);
 
     //   expect(items).toHaveLength(2);
     //   const references = searcher.search(items);
-    //   //console.log(tsPrinter.printReferences(references));
     //   expect(references.length).toBe(0);
     // });
   });
@@ -75,9 +75,9 @@ describe('ReferenceSearcher with TS', () => {
           const variable: MyInterface;`,
         ]
       );
-      const items = searchItems([
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
+      const items = searchNodes([
+        NodeKind.InterfaceDeclaration,
+        NodeKind.VariableDeclaration,
       ]);
 
       expect(items).toHaveLength(2);
@@ -111,11 +111,11 @@ describe('ReferenceSearcher with TS', () => {
            const v3 = () => myFunction();`,
         ]
       );
-      const items = searchItems([
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
-        ts.SyntaxKind.FunctionDeclaration,
+      const items = searchNodes([
+        NodeKind.InterfaceDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.VariableDeclaration,
+        NodeKind.FunctionDeclaration,
       ]);
 
       //expect(items).toHaveLength(4);
@@ -131,9 +131,9 @@ describe('ReferenceSearcher with TS', () => {
         const a: alias2;`,
         ]
       );
-      const items = searchItems([
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
+      const items = searchNodes([
+        NodeKind.InterfaceDeclaration,
+        NodeKind.VariableDeclaration,
       ]);
 
       expect(items).toHaveLength(2);
@@ -142,16 +142,61 @@ describe('ReferenceSearcher with TS', () => {
     });
   });
 
+  describe.skip('Reference types -- to do after ClassDeclarationNode', () => {
+    test.only('should find class extends', () => {
+      init([
+        '/index.ts',
+        `export class Class1 {}
+         export class Class2 extends Class1 {}`,
+      ]);
+      const items = searchNodes([NodeKind.ClassDeclaration]);
+
+      const searchResult = searcher.search(items);
+
+      const node = searchResult[0]?.from.getNode();
+      //const tsNode = searchResult[0]?.from.getTsNode();
+
+      if (node) {
+        //ts.isClassDeclaration(tsNode)
+        // const clause = tsNode.heritageClauses?.find(
+        //   hc => hc.token === NodeKind.ExtendsKeyword
+        // );
+        // clause &&
+        //   console.log(clause.types.map(t => tsPrinter.nodePrinter.prepare(t)));
+        // console.log(
+        //   node
+        //     .getTsType()
+        //     .getBaseTypes()
+        //     ?.map(t => prepareToPrint(t))
+        // );
+        // console.log(prepareToPrint(searchResult[0]?.to.getNode().getTsType()));
+        // console.log(
+        //   prepareToPrint(searchResult[0]?.from.getNode().getTsType())
+        // );
+      }
+
+      // node &&
+      //   console.log(
+      //     util.inspect(tsPrinter.nodePrinter.prepare(node), {
+      //       colors: true,
+      //       depth: 5,
+      //       compact: true,
+      //     })
+      //   );
+      expect(searchResult.length).toBe(1);
+    });
+  });
+
   function init(...files: [name: string, content: string][]) {
     program = createProgram(files);
     searcher = new ReferenceSearcher(program.getTypeChecker());
-    project = new NodeSearcher(program.getContext());
+    nodeSearcher = new NodeSearcher(program.getContext());
   }
 
-  function searchItems(kinds: ts.SyntaxKind[]) {
+  function searchNodes(kinds: NodeKind[]) {
     const sourceFiles = program.getSourceFiles();
     // .filter(sf => !sf.isDeclarationFile);
-    return project.searchInFiles(
+    return nodeSearcher.searchInFiles(
       sourceFiles.map(sf => sf),
       kinds
     );

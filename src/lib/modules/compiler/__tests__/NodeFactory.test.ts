@@ -1,8 +1,8 @@
 import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
 import {createProgramContextStub} from '@tests/utils/builders/stubCreators';
-import ts from 'typescript';
 import {ProgramContext} from '../domain/ProgramContext';
 import {SourceFile} from '../domain/SourceFile';
+import {NodeKind} from '../domain/SyntaxKind';
 import {NodeFactory} from '../NodeFactory';
 
 describe('NodeFactory', () => {
@@ -20,7 +20,7 @@ describe('NodeFactory', () => {
   });
 
   test('should create Node with specified kind', () => {
-    const expectedKind = ts.SyntaxKind.CallExpression;
+    const expectedKind = NodeKind.CallExpression;
 
     const factory = new NodeFactory(programContext);
     const tsNode = createTsNodeStub({kind: expectedKind}).asNode();
@@ -29,7 +29,7 @@ describe('NodeFactory', () => {
   });
 
   test('should create SourceFile', () => {
-    const expectedKind = ts.SyntaxKind.SourceFile;
+    const expectedKind = NodeKind.SourceFile;
     const factory = new NodeFactory(programContext);
     const tsNode = createTsNodeStub({kind: expectedKind}).asNode();
     const node = factory.create(tsNode);

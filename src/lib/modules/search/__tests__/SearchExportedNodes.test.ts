@@ -1,7 +1,7 @@
-import {NodeSearcher} from '../NodeSearcher';
-import {createProgram} from '@tests/utils/builders/createProgram';
 import {Program} from '@lib/modules/compiler/domain/Program';
-import ts from 'typescript';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
+import {createProgram} from '@tests/utils/builders/createProgram';
+import {NodeSearcher} from '../NodeSearcher';
 
 describe('Search exported nodes in source file', () => {
   let project: NodeSearcher;
@@ -12,10 +12,10 @@ describe('Search exported nodes in source file', () => {
 
     const result = project.searchExportedDeclarations(
       program.getSourceFile('/index.ts')!,
-      [ts.SyntaxKind.ClassDeclaration]
+      [NodeKind.ClassDeclaration]
     );
     expect(result).toHaveLength(1);
-    expect(result[0].getTsNode().kind).toBe(ts.SyntaxKind.ClassDeclaration);
+    expect(result[0].getTsNode().kind).toBe(NodeKind.ClassDeclaration);
   });
 
   test('should find 3 items', () => {
@@ -35,10 +35,10 @@ describe('Search exported nodes in source file', () => {
     const result = project.searchExportedDeclarations(
       program.getSourceFile('/index.ts')!,
       [
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
-        ts.SyntaxKind.FunctionDeclaration,
+        NodeKind.InterfaceDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.VariableDeclaration,
+        NodeKind.FunctionDeclaration,
       ]
     );
     expect(result).toHaveLength(3);
@@ -67,10 +67,10 @@ describe('Search exported nodes in source file', () => {
     const result = project.searchExportedDeclarationsInFiles(
       program.getSourceFiles(),
       [
-        ts.SyntaxKind.InterfaceDeclaration,
-        ts.SyntaxKind.ClassDeclaration,
-        ts.SyntaxKind.VariableDeclaration,
-        ts.SyntaxKind.FunctionDeclaration,
+        NodeKind.InterfaceDeclaration,
+        NodeKind.ClassDeclaration,
+        NodeKind.VariableDeclaration,
+        NodeKind.FunctionDeclaration,
       ]
     );
 

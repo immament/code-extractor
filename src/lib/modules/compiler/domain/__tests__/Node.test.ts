@@ -1,14 +1,14 @@
 import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
 import {createProgramContextStub} from '@tests/utils/builders/stubCreators';
-import ts from 'typescript';
 import {Node} from '../Node';
 import {Program} from '../Program';
 import {ProgramContext} from '../ProgramContext';
+import {NodeKind} from '../SyntaxKind';
 
 test('should return Syntax Kind text', () => {
   const node = new Node(
     {} as ProgramContext,
-    createTsNodeStub({kind: ts.SyntaxKind.ClassDeclaration}).asNode()
+    createTsNodeStub({kind: NodeKind.ClassDeclaration}).asNode()
   );
 
   expect(node.getKindText()).toBe('ClassDeclaration');
@@ -27,7 +27,7 @@ test('should getSymbol return cached value', () => {
   );
   const node = new Node(
     programContext,
-    createTsNodeStub({kind: ts.SyntaxKind.ClassDeclaration}).asNode()
+    createTsNodeStub({kind: NodeKind.ClassDeclaration}).asNode()
   );
   const receivedSymbol = node.getSymbol();
   expect(receivedSymbol).toBeDefined();

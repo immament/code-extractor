@@ -13,7 +13,7 @@ export class SymbolIml {
     return (
       this.tsSymbol
         .getDeclarations()
-        ?.map(d => new Declaration(this.context, d)) ?? []
+        ?.map(d => this.context.getNodeOrCreate(d)) ?? []
     );
   }
 }

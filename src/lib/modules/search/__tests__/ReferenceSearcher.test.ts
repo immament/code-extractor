@@ -1,6 +1,7 @@
 import {Node} from '@lib/modules/compiler/domain/Node';
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
+import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {NodeStub} from '@tests/stubs/NodeStub';
 import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
 import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
@@ -24,7 +25,7 @@ describe('ReferenceSearcher', () => {
 
   beforeEach(() => {
     defaultSourceFile = createTsNodeStub({
-      kind: ts.SyntaxKind.SourceFile,
+      kind: NodeKind.SourceFile,
     }).asNode() as ts.SourceFile;
 
     const program = {
