@@ -15,10 +15,6 @@ export class HeritageClauseable extends Node {
     super(context, tsNode);
   }
 
-  getExtended(): Node | undefined {
-    return this.getExtendType()?.getSymbol()?.getDeclarations()[0];
-  }
-
   protected getHeritageClauses() {
     return (
       this.tsNode.heritageClauses?.map(

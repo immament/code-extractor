@@ -19,10 +19,22 @@ export class ClassDeclaration extends HeritageClauseable {
       .filter(d => !!d) as Declaration[];
   }
 
+  getBaseClass(): Node | undefined {
+    return this.getExtendType()?.getSymbol()?.getDeclarations()[0];
+  }
+
+  getMembers() {
+    return this.tsNode.members.map(m => this.context.getNodeOrCreate(m));
+  }
+
   protected getImpelementTypes(): Type[] {
     return (
       this.getHeritageClause(NodeKind.ImplementsKeyword)?.getHeritageTypes() ??
       []
     );
   }
+}
+
+export function isClassDeclaration(node: Node): node is ClassDeclaration {
+  return node.kind === NodeKind.ClassDeclaration;
 }

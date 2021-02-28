@@ -11,4 +11,12 @@ export class Reference {
     public to: FoundNode,
     public type: ReferenceType
   ) {}
+
+  equalTo(reference: Reference) {
+    return (
+      reference.from === this.from &&
+      reference.to === this.to &&
+      reference.type === this.type
+    );
+  }
 }

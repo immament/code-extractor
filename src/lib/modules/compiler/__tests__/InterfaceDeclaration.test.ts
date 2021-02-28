@@ -8,6 +8,6 @@ describe('InterfaceDeclaration', () => {
       interface Interface2 extends Interface1 {}`
     ) as InterfaceDeclaration[];
 
-    expect(interface2.getExtended()).toBe(interface1);
+    expect(interface2.getExtends()).toBe(interface1);
   });
 });

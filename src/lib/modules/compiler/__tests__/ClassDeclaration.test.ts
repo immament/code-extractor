@@ -9,7 +9,7 @@ describe('ClassDeclaration', () => {
       class Class2 extends Class1 {}`
     ) as ClassDeclaration[];
 
-    expect(class2.getExtended()).toBe(class1);
+    expect(class2.getBaseClass()).toBe(class1);
   });
 
   test('should returns implemented Interface ', () => {

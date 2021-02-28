@@ -1,52 +1,65 @@
 import {Node} from '../compiler/domain/Node';
-import {TypeChecker} from '../compiler/domain/TypeChecker';
 import {FoundNodeCache} from './FoundNodeCache';
 import {FoundNode} from './model/FoundNode';
-import {Reference} from './model/Reference';
+import {Reference, ReferenceType} from './model/Reference';
 import {ReferenceSearcherError} from './ReferenceSearcher';
 
 export class ReferenceSearcherContext {
-  #contextFoundNode?: FoundNode;
+  #currentFoundNode?: FoundNode;
   private result: Reference[] = [];
   private itemCache: FoundNodeCache;
 
   private get contextFoundNode() {
-    if (!this.#contextFoundNode) {
+    if (!this.#currentFoundNode) {
       throw new ReferenceSearcherError('Context Found Node not set');
     }
-    return this.#contextFoundNode;
+    return this.#currentFoundNode;
   }
 
-  constructor(typeChecker: TypeChecker, items: FoundNode[]) {
+  constructor(items: FoundNode[]) {
     this.itemCache = new FoundNodeCache(items);
   }
 
-  setContextFoundNode(item: FoundNode) {
-    this.#contextFoundNode = item;
+  setCurrentFoundNode(item: FoundNode) {
+    this.#currentFoundNode = item;
   }
 
   getResult() {
     return this.result;
   }
 
-  addReference(item: FoundNode, fromNode?: Node) {
-    // TODO: reference type
-    const reference = new Reference(this.contextFoundNode, item, 'Use');
+  addReference(item: FoundNode, fromNode?: Node, type: ReferenceType = 'Use') {
+    const reference = new Reference(this.contextFoundNode, item, type);
     reference.fromNode = fromNode;
+    this.addResultIfnNotContains(reference);
+  }
+
+  addResultIfnNotContains(reference: Reference) {
+    // TODO:
     this.result.push(reference);
+    // if (this.result.every(r => !reference.equalTo(r))) {
+    //   this.result.push(reference);
+    // }
   }
 
   hasItemsToFound() {
     return this.itemCache.hasItemsToFound();
   }
 
-  getConnectedItem(node: Node): FoundNode | undefined {
+  addIfIsConncetedItem(node: Node, type: ReferenceType) {
+    const connectedItem = this.searchConnectedItem(node);
+    if (connectedItem) {
+      this.addReference(connectedItem, node, type);
+    }
+  }
+
+  searchConnectedItem(node: Node): FoundNode | undefined {
     const item = this.itemCache.getItemForNode(node);
-    if (item && !this.isContextItem(item)) return item;
+    if (item && !this.isCurrentFoundNode(item)) return item;
     return;
   }
 
-  private isContextItem(item: FoundNode): boolean {
+  private isCurrentFoundNode(item: FoundNode): boolean {
     return item.getNode() === this.contextFoundNode.getNode();
   }
 }

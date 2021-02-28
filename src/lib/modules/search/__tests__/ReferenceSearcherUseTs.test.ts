@@ -1,73 +1,42 @@
 import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {createProgram} from '@tests/utils/builders/createProgram';
 import {Program} from '../../compiler/domain/Program';
+import {FoundNode} from '../model/FoundNode';
+import {Reference, ReferenceType} from '../model/Reference';
 import {NodeSearcher} from '../NodeSearcher';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 
 describe('ReferenceSearcher with TS', () => {
-  let searcher: ReferenceSearcher;
+  let referenceSearcher: ReferenceSearcher;
   let nodeSearcher: NodeSearcher;
   let program: Program;
 
   describe('Search in one file', () => {
     test('should find Interface reference in one source file', () => {
-      init([
-        '/index.ts',
+      const foundNodes = initWithOneFile(
         `interface MyInterface {}
-         class MyClass {
-          myMethod() { return {} as MyInterface; }
-      }
-      const v = 1;`,
-      ]);
+         class MyClass { myMethod() { return {} as MyInterface; }}
+         const v = 1;`
+      );
 
-      const items = searchNodes([
-        NodeKind.InterfaceDeclaration,
-        NodeKind.ClassDeclaration,
-        NodeKind.VariableDeclaration,
-      ]);
-
-      expect(items).toHaveLength(3);
-      expect(searcher.search(items).length).toBe(1);
+      expect(foundNodes).toHaveLength(3);
+      expect(referenceSearcher.search(foundNodes).length).toBe(1);
     });
 
     test('should find Interface reference when use as variable type', () => {
-      init([
-        '/index.ts',
+      const foundNodes = initWithOneFile(
         `interface MyInterface {}
-           const variable: MyInterface;`,
-      ]);
+         const variable: MyInterface;`
+      );
 
-      const items = searchNodes([
-        NodeKind.InterfaceDeclaration,
-        NodeKind.VariableDeclaration,
-      ]);
-
-      expect(items).toHaveLength(2);
-      expect(searcher.search(items).length).toBe(1);
+      expect(foundNodes).toHaveLength(2);
+      expect(referenceSearcher.search(foundNodes).length).toBe(1);
     });
-
-    test.todo(
-      'Item inside Item - later because currently search only exported nodes'
-    );
-    // , () => {
-    //   init([
-    //     ['/index.ts', 'class MyClass { method() {  const variable = 1; } }'],
-    //   ]);
-
-    //   const items = searchItems([
-    //     NodeKind.ClassDeclaration,
-    //     NodeKind.VariableDeclaration,
-    //   ]);
-
-    //   expect(items).toHaveLength(2);
-    //   const references = searcher.search(items);
-    //   expect(references.length).toBe(0);
-    // });
   });
 
   describe('Search in multiple files', () => {
     test('should find interface reference in use as variable type in diferent files', () => {
-      init(
+      const foundNodes = init(
         ['/interface.ts', 'export interface MyInterface {}'],
         [
           '/file.ts',
@@ -75,17 +44,13 @@ describe('ReferenceSearcher with TS', () => {
           const variable: MyInterface;`,
         ]
       );
-      const items = searchNodes([
-        NodeKind.InterfaceDeclaration,
-        NodeKind.VariableDeclaration,
-      ]);
 
-      expect(items).toHaveLength(2);
-      expect(searcher.search(items).length).toBe(1);
+      expect(foundNodes).toHaveLength(2);
+      expect(referenceSearcher.search(foundNodes).length).toBe(1);
     });
 
     test('should find function references', () => {
-      init(
+      const items = init(
         [
           '/index.ts',
           `export interface MyInterface {}
@@ -111,19 +76,13 @@ describe('ReferenceSearcher with TS', () => {
            const v3 = () => myFunction();`,
         ]
       );
-      const items = searchNodes([
-        NodeKind.InterfaceDeclaration,
-        NodeKind.ClassDeclaration,
-        NodeKind.VariableDeclaration,
-        NodeKind.FunctionDeclaration,
-      ]);
 
       //expect(items).toHaveLength(4);
-      expect(searcher.search(items).length).toBe(7);
+      expect(referenceSearcher.search(items).length).toBe(7);
     });
 
     test('should find vaiable references when use import alias', () => {
-      init(
+      const foundNodes = init(
         ['/index.ts', 'export interface MyInterface {}'],
         [
           '/file.ts',
@@ -131,66 +90,95 @@ describe('ReferenceSearcher with TS', () => {
         const a: alias2;`,
         ]
       );
-      const items = searchNodes([
-        NodeKind.InterfaceDeclaration,
-        NodeKind.VariableDeclaration,
-      ]);
+      const searchResult = referenceSearcher.search(foundNodes);
 
-      expect(items).toHaveLength(2);
-      const searchResult = searcher.search(items);
+      expect(foundNodes).toHaveLength(2);
       expect(searchResult.length).toBe(1);
     });
   });
 
-  describe.skip('Reference types -- to do after ClassDeclarationNode', () => {
-    test.only('should find class extends', () => {
-      init([
-        '/index.ts',
+  describe('Reference types', () => {
+    test('should find base class', () => {
+      const foundNodes = initWithOneFile(
         `export class Class1 {}
-         export class Class2 extends Class1 {}`,
-      ]);
-      const items = searchNodes([NodeKind.ClassDeclaration]);
+         export class Class2 extends Class1 {}`
+      );
 
-      const searchResult = searcher.search(items);
+      const references = referenceSearcher.search(foundNodes);
 
-      const node = searchResult[0]?.from.getNode();
-      //const tsNode = searchResult[0]?.from.getTsNode();
+      expect(references).toHaveLength(1);
+      expectReference(references[0], {
+        from: foundNodes[1],
+        to: foundNodes[0],
+        type: 'Extends',
+      });
+    });
 
-      if (node) {
-        //ts.isClassDeclaration(tsNode)
-        // const clause = tsNode.heritageClauses?.find(
-        //   hc => hc.token === NodeKind.ExtendsKeyword
-        // );
-        // clause &&
-        //   console.log(clause.types.map(t => tsPrinter.nodePrinter.prepare(t)));
-        // console.log(
-        //   node
-        //     .getTsType()
-        //     .getBaseTypes()
-        //     ?.map(t => prepareToPrint(t))
-        // );
-        // console.log(prepareToPrint(searchResult[0]?.to.getNode().getTsType()));
-        // console.log(
-        //   prepareToPrint(searchResult[0]?.from.getNode().getTsType())
-        // );
-      }
+    test('should find class implemented class', () => {
+      const foundNodes = initWithOneFile(
+        `export class Class1 {}
+         export class Class2 implements Class1 {}`
+      );
 
-      // node &&
-      //   console.log(
-      //     util.inspect(tsPrinter.nodePrinter.prepare(node), {
-      //       colors: true,
-      //       depth: 5,
-      //       compact: true,
-      //     })
-      //   );
-      expect(searchResult.length).toBe(1);
+      const references = referenceSearcher.search(foundNodes);
+
+      expect(references).toHaveLength(1);
+      expectReference(references[0], {
+        from: foundNodes[1],
+        to: foundNodes[0],
+        type: 'Implements',
+      });
+    });
+
+    test('should find class implemented interface', () => {
+      const foundNodes = initWithOneFile(
+        `export interface Interface1 {}
+         export class Class2 implements Interface1 {}`
+      );
+
+      const references = referenceSearcher.search(foundNodes);
+
+      expect(references).toHaveLength(1);
+      expectReference(references[0], {
+        from: foundNodes[1],
+        to: foundNodes[0],
+        type: 'Implements',
+      });
+    });
+
+    test('should find interface extends interface', () => {
+      const foundNodes = initWithOneFile(
+        `export interface Interface1 {}
+         export interface Interface2 extends Interface1 {}`
+      );
+
+      const references = referenceSearcher.search(foundNodes);
+
+      expect(references).toHaveLength(1);
+      expectReference(references[0], {
+        from: foundNodes[1],
+        to: foundNodes[0],
+        type: 'Extends',
+      });
     });
   });
+
+  // HELPERS
+  function initWithOneFile(content: string) {
+    return init(['/index.ts', content]);
+  }
 
   function init(...files: [name: string, content: string][]) {
     program = createProgram(files);
-    searcher = new ReferenceSearcher(program.getTypeChecker());
+    referenceSearcher = new ReferenceSearcher(program.getTypeChecker());
     nodeSearcher = new NodeSearcher(program.getContext());
+
+    return searchNodes([
+      NodeKind.InterfaceDeclaration,
+      NodeKind.ClassDeclaration,
+      NodeKind.VariableDeclaration,
+      NodeKind.FunctionDeclaration,
+    ]);
   }
 
   function searchNodes(kinds: NodeKind[]) {
@@ -200,5 +188,14 @@ describe('ReferenceSearcher with TS', () => {
       sourceFiles.map(sf => sf),
       kinds
     );
+  }
+
+  function expectReference(
+    received: Reference,
+    expected: {from: FoundNode; to: FoundNode; type: ReferenceType}
+  ) {
+    expect(received.from).toBe(expected.from);
+    expect(received.to).toBe(expected.to);
+    expect(received.type).toBe(expected.type);
   }
 });
