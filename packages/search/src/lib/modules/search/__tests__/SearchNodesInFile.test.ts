@@ -1,6 +1,6 @@
-import {SourceFile} from '@lib/modules/compiler/domain/SourceFile';
-import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {createProgram} from 'src/tests-common/utils/builders/createProgram';
+import {SourceFile} from '@imm/ts-common/src/lib/modules/compiler/domain/SourceFile';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
+import {createProgram} from '@imm/ts-common/src/tests/utils/builders/createProgram';
 import {NodeSearcher} from '../NodeSearcher';
 
 describe('Search Nodes in Files', () => {

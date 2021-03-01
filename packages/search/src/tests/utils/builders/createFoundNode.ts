@@ -1,10 +1,10 @@
-import {Node} from '@lib/modules/compiler/domain/Node';
-import {Program} from '@lib/modules/compiler/domain/Program';
-import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
-import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {FoundNode} from '@lib/modules/search/model/FoundNode';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
+import {Program} from '@imm/ts-common/src/lib/modules/compiler/domain/Program';
+import {ProgramContext} from '@imm/ts-common/src/lib/modules/compiler/domain/ProgramContext';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
+import {createTsNodeStub} from '@imm/ts-common/src/tests/utils/builders/createNodeStub';
+import {FoundNode} from '@lib2/modules/search/model/FoundNode';
 import ts from 'typescript';
-import {createTsNodeStub} from '../../../tests-common/utils/builders/createNodeStub';
 
 export function createFoundNodeWithNode(node: Node) {
   return new FoundNode(node);

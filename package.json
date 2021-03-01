@@ -6,11 +6,13 @@
   "license": "MIT",
   "private": "true",
   "workspaces": [
-    "packages/*"
+    "packages/**"
   ],
   "scripts": {
-    "search": "yarn workspace code-extractor-search",
-    "ts": "yarn workspace ts-common",
+    "test": "yarn jest",
+    "test:watch": "yarn jest --watch",
+    "search": "yarn workspace @imm/code-extractor-search",
+    "ts": "yarn workspace @imm/ts-common",
     "postinstall": "husky install"
   },
   "devDependencies": {

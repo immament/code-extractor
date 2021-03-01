@@ -1,12 +1,12 @@
-import {Node} from '@lib/modules/compiler/domain/Node';
-import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
-import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {Reference} from '@lib/modules/search/model/Reference';
-import ts from 'typescript';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
+import {ProgramContext} from '@imm/ts-common/src/lib/modules/compiler/domain/ProgramContext';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
 import {
   createTsNodeStub,
   createTsNodeStubWithChilds,
-} from '../../../tests-common/utils/builders/createNodeStub';
+} from '@imm/ts-common/src/tests/utils/builders/createNodeStub';
+import {Reference} from '@lib2/modules/search/model/Reference';
+import ts from 'typescript';
 import {createFoundNode, createFoundNodeWithNode} from './createFoundNode';
 
 export function createReferenceStub(context: ProgramContext) {

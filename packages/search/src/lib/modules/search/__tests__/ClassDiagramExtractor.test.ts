@@ -1,6 +1,6 @@
-import {Program} from '@lib/modules/compiler/domain/Program';
-import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {createFoundNode} from 'src/tests/utils/builders/createFoundNode';
+import {Program} from '@imm/ts-common/src/lib/modules/compiler/domain/Program';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
+import {createFoundNode} from '@tests2/utils/builders/createFoundNode';
 import ts from 'typescript';
 import {ClassDiagramExtractor} from '../ClassDiagramExtractor';
 import {ClassDiagramLink} from '../model/ClassDiagram.model';
@@ -11,7 +11,7 @@ import {mockReferenceSearch} from './ReferenceSearcher.mock';
 
 jest.mock('../NodeSearcher');
 jest.mock('../ReferenceSearcher');
-jest.mock('@lib/modules/compiler/domain/Program');
+jest.mock('@imm/ts-common/src/lib/modules/compiler/domain/Program');
 
 describe('ClassDiagramExtractor', () => {
   let program: Program;

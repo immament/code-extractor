@@ -1,6 +1,6 @@
-import {Cache} from '@lib/common/Cache';
-import {Node} from '../compiler/domain/Node';
-import {SymbolIml} from '../compiler/domain/SymbolIml';
+import {Cache} from '@imm/ts-common/src/lib/common/Cache';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
+import {SymbolIml} from '@imm/ts-common/src/lib/modules/compiler/domain/SymbolIml';
 import {FoundNode} from './model/FoundNode';
 
 export class FoundNodeCache {

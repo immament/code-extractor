@@ -1,4 +1,4 @@
-import {Node} from '@lib/modules/compiler/domain/Node';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
 import {FoundNode} from './FoundNode';
 
 export type ReferenceType = 'Implements' | 'Extends' | 'Aggregation' | 'Use';

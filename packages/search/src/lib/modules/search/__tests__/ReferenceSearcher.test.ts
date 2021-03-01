@@ -1,18 +1,18 @@
-import {Node} from '@lib/modules/compiler/domain/Node';
-import {Program} from '@lib/modules/compiler/domain/Program';
-import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
-import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {NodeStub} from 'src/tests-common/stubs/NodeStub';
-import {createTsTypeChecker} from 'src/tests-common/stubs/TypeCheckerStub';
-import {createTsNodeStub} from 'src/tests-common/utils/builders/createNodeStub';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
+import {Program} from '@imm/ts-common/src/lib/modules/compiler/domain/Program';
+import {ProgramContext} from '@imm/ts-common/src/lib/modules/compiler/domain/ProgramContext';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
+import {TypeChecker} from '@imm/ts-common/src/lib/modules/compiler/domain/TypeChecker';
+import {NodeStub} from '@imm/ts-common/src/tests/stubs/NodeStub';
+import {createTsTypeChecker} from '@imm/ts-common/src/tests/stubs/TypeCheckerStub';
+import {createTsNodeStub} from '@imm/ts-common/src/tests/utils/builders/createNodeStub';
 import {
   AddFromObjectArgs,
   TreeBuilderWithSymbols,
-} from 'src/tests-common/utils/builders/TreeBuilderWithSymbols';
-import {expectReferences} from 'src/tests-common/utils/expects';
-import {referencesToNodeIds} from 'src/tests/utils/stub-mappers';
+} from '@imm/ts-common/src/tests/utils/builders/TreeBuilderWithSymbols';
 import ts from 'typescript';
-import {TypeChecker} from '../../compiler/domain/TypeChecker';
+import {expectReferences} from '../../../../tests/utils/expects';
+import {referencesToNodeIds} from '../../../../tests/utils/stub-mappers';
 import {FoundNode} from '../model/FoundNode';
 import {ReferenceSearcher} from '../ReferenceSearcher';
 

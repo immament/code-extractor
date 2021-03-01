@@ -8,11 +8,12 @@
     "module": "commonjs",
     "lib": ["es2019"],
     "paths": {
-      "@tests/*": ["src/tests-common/*"],
-      "@lib/*": ["src/lib/*"]
+      "@lib2/*": ["src/lib/*"],
+      "@tests2/*": ["src/tests/*"]
     },
     "noEmitOnError": false
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "build"]
+  "exclude": ["node_modules", "build"],
+  "references": [{"path": "../ts-common"}]
 }

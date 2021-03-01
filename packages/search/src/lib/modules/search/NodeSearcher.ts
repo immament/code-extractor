@@ -1,6 +1,6 @@
-import {Node} from '../compiler/domain/Node';
-import {ProgramContext} from '../compiler/domain/ProgramContext';
-import {SourceFile} from '../compiler/domain/SourceFile';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
+import {ProgramContext} from '@imm/ts-common/src/lib/modules/compiler/domain/ProgramContext';
+import {SourceFile} from '@imm/ts-common/src/lib/modules/compiler/domain/SourceFile';
 import {FoundNode} from './model/FoundNode';
 
 export class NodeSearcher {

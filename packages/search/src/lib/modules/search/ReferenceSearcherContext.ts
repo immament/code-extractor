@@ -1,4 +1,4 @@
-import {Node} from '../compiler/domain/Node';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
 import {FoundNodeCache} from './FoundNodeCache';
 import {FoundNode} from './model/FoundNode';
 import {Reference, ReferenceType} from './model/Reference';

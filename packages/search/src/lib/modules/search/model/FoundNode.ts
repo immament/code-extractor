@@ -1,4 +1,5 @@
-import {Node} from '@lib/modules/compiler/domain/Node';
+//import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
 export class FoundNode {
   private kind: number;
 

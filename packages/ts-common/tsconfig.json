@@ -1,16 +1,20 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "rootDir": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": "src",
+    "rootDir": "src",
     "outDir": "build",
     "esModuleInterop": true,
     "module": "commonjs",
     "lib": ["es2019"],
     "paths": {
-      "@tests/*": ["src/tests/*"],
-      "@lib/*": ["src/lib/*"]
-    }
+      "@tests/*": ["tests/*"],
+      "@lib/*": ["lib/*"]
+    },
+    "composite": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "build"]

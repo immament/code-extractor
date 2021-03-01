@@ -1,5 +1,5 @@
-import {Program} from '../compiler/domain/Program';
-import {NodeKind} from '../compiler/domain/SyntaxKind';
+import {Program} from '@imm/ts-common/src/lib/modules/compiler/domain/Program';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
 import {
   ClassDiagram,
   ClassDiagramElement,

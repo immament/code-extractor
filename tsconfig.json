@@ -5,6 +5,10 @@
     "lib": ["es2019"],
     "esModuleInterop": true,
     "noEmitOnError": false,
-    "outDir": "out"
+    "outDir": "out",
+    "baseUrl": "./packages",
+    "paths": {
+      "@imm/*": ["*"]
+    }
   }
 }

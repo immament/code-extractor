@@ -1,6 +1,6 @@
-import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {createProgram} from 'src/tests-common/utils/builders/createProgram';
-import {Program} from '../../compiler/domain/Program';
+import {Program} from '@imm/ts-common/src/lib/modules/compiler/domain/Program';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
+import {createProgram} from '@imm/ts-common/src/tests/utils/builders/createProgram';
 import {FoundNode} from '../model/FoundNode';
 import {Reference, ReferenceType} from '../model/Reference';
 import {NodeSearcher} from '../NodeSearcher';

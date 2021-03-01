@@ -1,8 +1,8 @@
-import {ClassDeclaration} from '../compiler/domain/ClassDeclaration';
-import {InterfaceDeclaration} from '../compiler/domain/InterfaceDeclaration';
-import {Node} from '../compiler/domain/Node';
-import {NodeKind} from '../compiler/domain/SyntaxKind';
-import {TypeChecker} from '../compiler/domain/TypeChecker';
+import {ClassDeclaration} from '@imm/ts-common/src/lib/modules/compiler/domain/ClassDeclaration';
+import {InterfaceDeclaration} from '@imm/ts-common/src/lib/modules/compiler/domain/InterfaceDeclaration';
+import {Node} from '@imm/ts-common/src/lib/modules/compiler/domain/Node';
+import {NodeKind} from '@imm/ts-common/src/lib/modules/compiler/domain/SyntaxKind';
+import {TypeChecker} from '@imm/ts-common/src/lib/modules/compiler/domain/TypeChecker';
 import {FoundNode} from './model/FoundNode';
 import {ReferenceSearcherContext} from './ReferenceSearcherContext';
 

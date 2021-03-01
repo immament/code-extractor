@@ -1,18 +1,21 @@
-const {pathsToModuleNameMapper} = require('ts-jest/utils');
-const {compilerOptions} = require('./tsconfig.json');
+const rootPathPrefix = '<rootDir>/packages/ts-common/';
 
 module.exports = {
+  displayName: 'ts-common',
   coverageDirectory: 'coverage',
   coverageProvider: 'babel',
-  //coverageReporters: ['clover'],
+  rootDir: '../..',
+  roots: [rootPathPrefix + '/src/'],
   testEnvironment: 'node',
-  testMatch: ['<rootDir>/src/**/__tests__/**/*.test.ts?(x)'],
-  preset: 'ts-jest',
+  testMatch: [rootPathPrefix + '/src/**/__tests__/**/*.test.ts?(x)'],
+
   moduleNameMapper: {
-    ...pathsToModuleNameMapper(compilerOptions.paths, {
-      prefix: '<rootDir>/',
-    }),
-    '^src/(.*)$': '<rootDir>/src/$1',
+    '^@tests/(.*)$': rootPathPrefix + 'src/tests/$1',
+    '^@lib/(.*)$': rootPathPrefix + 'src/lib/$1',
+    '^src/(.*)$': rootPathPrefix + 'src/$1',
   },
-  modulePathIgnorePatterns: ['<rootDir>/build', '<rootDir>/coverage'],
+  modulePathIgnorePatterns: [
+    rootPathPrefix + 'build',
+    rootPathPrefix + 'coverage',
+  ],
 };
