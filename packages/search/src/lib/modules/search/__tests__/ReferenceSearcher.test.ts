@@ -2,15 +2,15 @@ import {Node} from '@lib/modules/compiler/domain/Node';
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
 import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {NodeStub} from '@tests/stubs/NodeStub';
-import {createTsTypeChecker} from '@tests/stubs/TypeCheckerStub';
-import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
+import {NodeStub} from 'src/tests-common/stubs/NodeStub';
+import {createTsTypeChecker} from 'src/tests-common/stubs/TypeCheckerStub';
+import {createTsNodeStub} from 'src/tests-common/utils/builders/createNodeStub';
 import {
   AddFromObjectArgs,
   TreeBuilderWithSymbols,
-} from '@tests/utils/builders/TreeBuilderWithSymbols';
-import {expectReferences} from '@tests/utils/expects';
-import {referencesToNodeIds} from '@tests/utils/stub-mappers';
+} from 'src/tests-common/utils/builders/TreeBuilderWithSymbols';
+import {expectReferences} from 'src/tests-common/utils/expects';
+import {referencesToNodeIds} from 'src/tests/utils/stub-mappers';
 import ts from 'typescript';
 import {TypeChecker} from '../../compiler/domain/TypeChecker';
 import {FoundNode} from '../model/FoundNode';

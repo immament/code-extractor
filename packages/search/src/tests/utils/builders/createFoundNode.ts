@@ -4,7 +4,7 @@ import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
 import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
 import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import ts from 'typescript';
-import {createTsNodeStub} from './createNodeStub';
+import {createTsNodeStub} from '../../../tests-common/utils/builders/createNodeStub';
 
 export function createFoundNodeWithNode(node: Node) {
   return new FoundNode(node);

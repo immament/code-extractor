@@ -1,7 +1,6 @@
-import {NodeStub} from '@tests/stubs/NodeStub';
-import ts from 'typescript';
-
 import {Reference} from '@lib/modules/search/model/Reference';
+import {NodeStub} from 'src/tests-common/stubs/NodeStub';
+import ts from 'typescript';
 
 export const asNodeStub = (node: ts.Node) => (node as unknown) as NodeStub;
 

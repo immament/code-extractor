@@ -1,4 +1,4 @@
-import {createProgram} from '@tests/utils/builders/createProgram';
+import {createProgram} from 'src/tests-common/utils/builders/createProgram';
 import ts from 'typescript';
 import {ProgramContext} from '../ProgramContext';
 import {SourceFile} from '../SourceFile';

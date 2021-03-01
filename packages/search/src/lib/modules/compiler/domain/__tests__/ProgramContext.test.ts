@@ -1,5 +1,5 @@
-import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
-import {createProgram} from '@tests/utils/builders/createProgram';
+import {createTsNodeStub} from 'src/tests-common/utils/builders/createNodeStub';
+import {createProgram} from 'src/tests-common/utils/builders/createProgram';
 import {ProgramContext} from '../ProgramContext';
 import {NodeKind} from '../SyntaxKind';
 

@@ -1,4 +1,4 @@
-import {declarationsFromText} from '@tests/utils/builders/createProgram';
+import {declarationsFromText} from 'src/tests-common/utils/builders/createProgram';
 import {InterfaceDeclaration} from '../domain/InterfaceDeclaration';
 
 describe('InterfaceDeclaration', () => {

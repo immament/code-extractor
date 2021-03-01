@@ -1,6 +1,6 @@
 import {FoundNode} from '@lib/modules/search/model/FoundNode';
 import {Reference} from '@lib/modules/search/model/Reference';
-import {asNodeStub, referencesToNodeIds} from './stub-mappers';
+import {asNodeStub, referencesToNodeIds} from '../../tests/utils/stub-mappers';
 
 export function expectReferences(refernces: Reference[]) {
   return {

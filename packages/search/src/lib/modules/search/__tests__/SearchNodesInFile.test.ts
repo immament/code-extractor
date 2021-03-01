@@ -1,6 +1,6 @@
 import {SourceFile} from '@lib/modules/compiler/domain/SourceFile';
 import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {createProgram} from '@tests/utils/builders/createProgram';
+import {createProgram} from 'src/tests-common/utils/builders/createProgram';
 import {NodeSearcher} from '../NodeSearcher';
 
 describe('Search Nodes in Files', () => {

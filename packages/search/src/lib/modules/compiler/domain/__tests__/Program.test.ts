@@ -1,4 +1,4 @@
-import {createProgram} from '@tests/utils/builders/createProgram';
+import {createProgram} from 'src/tests-common/utils/builders/createProgram';
 
 describe('Program', () => {
   test('should create ts.Program', () => {

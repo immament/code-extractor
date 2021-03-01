@@ -1,4 +1,4 @@
-import {mockFn} from '@tests/utils/jest-utils';
+import {mockFn} from 'src/tests-common/utils/jest-utils';
 import * as real from '../ReferenceSearcher';
 
 export const mockReferenceSearch = mockFn<

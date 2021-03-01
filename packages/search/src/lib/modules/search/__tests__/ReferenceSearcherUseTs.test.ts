@@ -1,5 +1,5 @@
 import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {createProgram} from '@tests/utils/builders/createProgram';
+import {createProgram} from 'src/tests-common/utils/builders/createProgram';
 import {Program} from '../../compiler/domain/Program';
 import {FoundNode} from '../model/FoundNode';
 import {Reference, ReferenceType} from '../model/Reference';

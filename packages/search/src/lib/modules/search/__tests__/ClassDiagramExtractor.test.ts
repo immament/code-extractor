@@ -1,6 +1,6 @@
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {createFoundNode} from '@tests/utils/builders/createFoundNode';
+import {createFoundNode} from 'src/tests/utils/builders/createFoundNode';
 import ts from 'typescript';
 import {ClassDiagramExtractor} from '../ClassDiagramExtractor';
 import {ClassDiagramLink} from '../model/ClassDiagram.model';

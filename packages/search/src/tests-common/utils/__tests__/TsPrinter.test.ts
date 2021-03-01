@@ -1,12 +1,12 @@
 import {Program} from '@lib/modules/compiler/domain/Program';
 import {ProgramContext} from '@lib/modules/compiler/domain/ProgramContext';
 import {NodeKind} from '@lib/modules/compiler/domain/SyntaxKind';
-import {NodeStub} from '@tests/stubs/NodeStub';
 import chalk from 'chalk';
-import {createFoundNode} from '../builders/createFoundNode';
+import {NodeStub} from 'src/tests-common/stubs/NodeStub';
+import {createFoundNode} from '../../../tests/utils/builders/createFoundNode';
+import {createReferenceStub} from '../../../tests/utils/builders/createReferenceStub';
 import {createTsNodeStub} from '../builders/createNodeStub';
 import {createSourceFile} from '../builders/createSourceFile';
-import {createReferenceStub} from '../builders/stubCreators';
 import {PrintNodeCallback} from '../print/NodePrinter';
 import {TsPrinter} from '../print/TsPrinter';
 

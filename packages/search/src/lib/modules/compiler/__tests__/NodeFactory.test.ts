@@ -1,5 +1,5 @@
-import {createTsNodeStub} from '@tests/utils/builders/createNodeStub';
-import {createProgramContextStub} from '@tests/utils/builders/stubCreators';
+import {createTsNodeStub} from 'src/tests-common/utils/builders/createNodeStub';
+import {createProgramContextStub} from 'src/tests-common/utils/builders/stubCreators';
 import {ProgramContext} from '../domain/ProgramContext';
 import {SourceFile} from '../domain/SourceFile';
 import {NodeKind} from '../domain/SyntaxKind';

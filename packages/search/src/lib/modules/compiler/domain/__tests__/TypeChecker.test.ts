@@ -1,6 +1,6 @@
 import {TypeChecker} from '@lib/modules/compiler/domain/TypeChecker';
-import {createProgram} from '@tests/utils/builders/createProgram';
-import {searchNode} from '@tests/utils/node-utils';
+import {createProgram} from 'src/tests-common/utils/builders/createProgram';
+import {searchNode} from 'src/tests-common/utils/node-utils';
 import {Node} from '../Node';
 import {NodeKind} from '../SyntaxKind';
 

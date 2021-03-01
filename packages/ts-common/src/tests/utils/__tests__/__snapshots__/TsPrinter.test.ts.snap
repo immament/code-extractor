@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Print node with callback should printNode without childs 1`] = `
+"ClassDeclaration 252
+ Identifier 78"
+`;
+
+exports[`TsPrinter with changed options should print item 1`] = `
+Array [
+  "Item - fileName:",
+  "",
+  "-",
+  "FirstStatement text-232",
+  "-",
+]
+`;
+
+exports[`TsPrinter with changed options should print node with childs 1`] = `"SourceFile class MyClass { myMe- ClassDeclaration class MyClass { myMe-  Identifier MyClass-  MethodDeclaration myMethod() {}-   Identifier myMethod-   Block {}- EndOfFileToken "`;
+
+exports[`TsPrinter with changed options should print references 1`] = `"From node: Identifier text-78-FROM:-  ClassDeclaration text-252-   Identifier text-78-   MethodDeclaration text-165-TO:-  FirstStatement text-232-From node: Identifier text-78-FROM:-  ClassDeclaration text-252-   Identifier text-78-   MethodDeclaration text-165-TO:-  FirstStatement text-232-From node: Identifier text-78-FROM:-  ClassDeclaration text-252-   Identifier text-78-   MethodDeclaration text-165-TO:-  FirstStatement text-232"`;
+
+exports[`TsPrinter with changed options should printNode without childs 1`] = `"ClassDeclaration text-252"`;
+
+exports[`TsPrinter with changed options should printNodeWithoutChilds 1`] = `"ClassDeclaration text-252"`;
+
+exports[`TsPrinter with default options should print node with childs 1`] = `
+"SourceFile
+ ClassDeclaration
+  Identifier
+  MethodDeclaration
+   Identifier
+   Block
+ EndOfFileToken"
+`;
+
+exports[`TsPrinter with default options should print references 1`] = `
+"[36mFrom node: [39mIdentifier
+[36mFROM:[39m
+  ClassDeclaration
+   Identifier
+   MethodDeclaration
+[36mTO:[39m
+  FirstStatement
+[36mFrom node: [39mIdentifier
+[36mFROM:[39m
+  ClassDeclaration
+   Identifier
+   MethodDeclaration
+[36mTO:[39m
+  FirstStatement
+[36mFrom node: [39mIdentifier
+[36mFROM:[39m
+  ClassDeclaration
+   Identifier
+   MethodDeclaration
+[36mTO:[39m
+  FirstStatement"
+`;
+
+exports[`TsPrinter with default options should print references without fromNode 1`] = `
+"
+[36mFROM:[39m
+  ClassDeclaration
+   Identifier
+   MethodDeclaration
+[36mTO:[39m
+  FirstStatement"
+`;
+
+exports[`TsPrinter with default options should printNode without childs result match snampshot 1`] = `"ClassDeclaration"`;
+
+exports[`TsPrinter with default options should printNodeWithoutChilds result match snampshot 1`] = `"ClassDeclaration"`;

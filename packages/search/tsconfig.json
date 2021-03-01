@@ -8,7 +8,7 @@
     "module": "commonjs",
     "lib": ["es2019"],
     "paths": {
-      "@tests/*": ["src/tests/*"],
+      "@tests/*": ["src/tests-common/*"],
       "@lib/*": ["src/lib/*"]
     },
     "noEmitOnError": false
